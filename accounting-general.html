@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار الكفاءة المحاسبية | مؤمن أحمد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+  body{ display:flex; align-items:flex-start; justify-content:center; padding:32px 16px 80px; }
+  .sheet{
+    width:100%; max-width:720px; background:#FBF8EF;
+    border:1px solid var(--line);
+    box-shadow:0 2px 0 var(--line), 0 18px 40px -20px rgba(26,34,56,0.45);
+    position:relative; overflow:hidden;
+  }
+  header.top{
+    background:var(--ledger); color:var(--paper);
+    padding:26px 32px 22px; border-bottom:3px double var(--gold);
+  }
+  header.top a.back{ color:var(--gold-light); font-size:12.5px; text-decoration:none; }
+  header.top h1{ color:var(--paper); font-size:28px; margin:10px 0 6px; }
+  header.top p{ margin:0; font-size:13.5px; color:#C9CFC5; line-height:1.7; }
+
+  .tally{ display:flex; align-items:center; gap:10px; padding:14px 32px; background:var(--paper-dark); border-bottom:1px solid var(--line); font-size:12.5px; }
+  .tally .label{ color:var(--ledger); font-weight:700; white-space:nowrap; }
+  .tally-marks{ flex:1; display:flex; gap:3px; flex-wrap:wrap; align-items:flex-end; min-height:16px; }
+  .mark{ width:2px; height:14px; background:var(--line); border-radius:1px; }
+  .mark.done{ background:var(--gold); }
+  .mark.bundle{ margin-left:6px; }
+  .tally .count{ font-weight:700; color:var(--ink); white-space:nowrap; }
+
+  main{ padding:30px 32px 20px; }
+  .qnum{ font-family:'Aref Ruqaa', serif; font-size:15px; color:var(--gold); margin-bottom:6px; }
+  .qtext{ font-size:18px; font-weight:700; line-height:1.75; margin-bottom:20px; }
+  .options{ display:flex; flex-direction:column; gap:10px; }
+  .opt{ display:flex; align-items:center; gap:12px; padding:13px 16px; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:15px; line-height:1.6; }
+  .opt:hover{ border-color:var(--gold); background:#FFFDF6; }
+  .opt.selected{ border-color:var(--ledger); background:#EFF5F0; box-shadow:inset 3px 0 0 var(--ledger); }
+  .opt input{ accent-color:var(--ledger); width:17px; height:17px; flex-shrink:0; }
+
+  .navrow{ display:flex; justify-content:space-between; align-items:center; padding:18px 32px 28px; }
+  .hint{ font-size:12.5px; color:var(--muted); }
+  button.navbtn{ font-family:'Tajawal', sans-serif; font-weight:700; font-size:14.5px; padding:12px 26px; border:none; cursor:pointer; background:var(--ledger); color:var(--paper); }
+  button.navbtn:hover:not(:disabled){ background:var(--ledger-light); }
+  button.navbtn:disabled{ background:#C9C2AE; color:#8A8271; cursor:not-allowed; }
+
+  .gate{ padding:34px 32px 30px; }
+  .gate p{ line-height:1.9; font-size:15px; margin:0 0 16px; color:var(--ink-soft); }
+  .gate label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
+  .gate input{ width:100%; padding:12px 14px; border:1px solid var(--line); background:#fff; font-family:'Tajawal', sans-serif; font-size:15px; margin-bottom:16px; }
+  .gate .req{ color:var(--red); }
+  .gate .err{ color:var(--red); font-size:12.5px; margin-top:-10px; margin-bottom:14px; display:none; }
+
+  .intro ul{ margin:0 0 22px; padding-right:20px; line-height:1.9; font-size:14.5px; color:var(--ink-soft); }
+  .startbtn{ width:100%; padding:15px; font-size:16px; }
+
+  .results{ padding:0; text-align:center; }
+  .stamp-zone{ padding:44px 32px 10px; display:flex; flex-direction:column; align-items:center; }
+  .stamp{
+    width:168px; height:168px; border:5px solid var(--red); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; flex-direction:column; color:var(--red);
+    transform:scale(2.4) rotate(-14deg); opacity:0;
+    animation:stampdown .5s cubic-bezier(.2,.9,.3,1.1) forwards; animation-delay:.15s; position:relative;
+  }
+  .stamp::before{ content:''; position:absolute; inset:8px; border:1.5px solid var(--red); border-radius:50%; }
+  .stamp .pct{ font-family:'Aref Ruqaa', serif; font-size:38px; font-weight:700; line-height:1; }
+  .stamp .lbl{ font-size:11px; letter-spacing:1px; margin-top:4px; }
+  @keyframes stampdown{
+    0%{ transform:scale(2.4) rotate(-14deg); opacity:0; }
+    60%{ transform:scale(0.92) rotate(-14deg); opacity:1; }
+    100%{ transform:scale(1) rotate(-14deg); opacity:1; }
+  }
+  .grade-title{ font-size:26px; margin:20px 0 6px; }
+  .grade-desc{ font-size:14.5px; color:var(--ink-soft); max-width:480px; margin:0 auto 26px; line-height:1.8; padding:0 20px; }
+  .score-row{ display:flex; justify-content:center; gap:36px; padding:18px 20px; border-top:1px dashed var(--line); border-bottom:1px dashed var(--line); margin-bottom:26px; }
+  .score-item .num{ font-size:22px; font-weight:900; color:var(--ledger); }
+  .score-item .txt{ font-size:11.5px; color:var(--muted); }
+  .btnrow{ display:flex; gap:10px; justify-content:center; padding:0 32px 34px; flex-wrap:wrap; }
+  .savenote{ font-size:12px; color:var(--muted); margin-bottom:18px; }
+
+  .review{ display:none; text-align:right; padding:24px 32px 34px; }
+  .review.show{ display:block; }
+  .rq{ border:1px solid var(--line); background:#fff; padding:16px 18px; margin-bottom:14px; }
+  .rq .rqtext{ font-weight:700; margin-bottom:10px; line-height:1.7; }
+  .rq .rline{ font-size:13.5px; padding:6px 10px; margin-bottom:4px; line-height:1.6; }
+  .rq .rline.wrong{ background:#FBEAEA; color:var(--red); }
+  .rq .rline.right{ background:#EAF3EC; color:var(--ledger); }
+
+  @media (max-width:520px){
+    header.top{ padding:20px 20px 18px; } main{ padding:22px 20px 14px; }
+    .navrow{ padding:14px 20px 24px; } .gate{ padding:26px 20px 24px; }
+    .qtext{ font-size:16.5px; } .review{ padding:20px 18px 26px; }
+  }
+  @media (prefers-reduced-motion: reduce){ .stamp{ animation:none; opacity:1; transform:scale(1) rotate(-14deg); } }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header class="top">
+    <a class="back" href="/#tools">→ رجوع للبورتفوليو</a>
+    <h1>اختبار الكفاءة المحاسبية</h1>
+    <p>يستهدف مستوى المحاسب العام ومدير الحسابات — ٣٠ سؤالاً متدرج الصعوبة.</p>
+  </header>
+
+  <div id="gate-screen" class="gate">
+    <p>قبل ما تبدأ، محتاجين اسمك عشان نسجّل نتيجتك. البيانات دي بتتسجل في قاعدة بيانات خاصة بالاختبار.</p>
+    <label>الاسم بالكامل <span class="req">*</span></label>
+    <input type="text" id="gateName" placeholder="اكتب اسمك هنا">
+    <div class="err" id="gateErr">من فضلك اكتب اسمك للمتابعة</div>
+    <label>رقم الهاتف (اختياري)</label>
+    <input type="text" id="gatePhone" placeholder="01xxxxxxxxx">
+    <button class="navbtn startbtn" onclick="submitGate()">التالي</button>
+  </div>
+
+  <div id="intro-screen" class="intro" style="display:none; padding:8px 32px 30px;">
+    <ul>
+      <li>٣٠ سؤال اختيار من متعدد، سؤال واحد في كل مرة.</li>
+      <li>لا يوجد وقت محدد — خذ وقتك.</li>
+      <li>بعد آخر سؤال تظهر نتيجتك فورًا مع تصنيف مستوى الأداء.</li>
+      <li>يمكنك مراجعة الإجابات الصحيحة بعد إنهاء الاختبار.</li>
+    </ul>
+    <button class="navbtn startbtn" onclick="startExam()">ابدأ الاختبار</button>
+  </div>
+
+  <div id="exam-screen" style="display:none;">
+    <div class="tally">
+      <span class="label">التقدّم</span>
+      <div class="tally-marks" id="tallyMarks"></div>
+      <span class="count" id="tallyCount">٠ / ٣٠</span>
+    </div>
+    <main>
+      <div class="qnum" id="qnum">السؤال ١</div>
+      <div class="qtext" id="qtext"></div>
+      <div class="options" id="options"></div>
+    </main>
+    <div class="navrow">
+      <span class="hint" id="hint">اختر إجابة للمتابعة</span>
+      <button class="navbtn" id="nextBtn" disabled onclick="nextQuestion()">التالي</button>
+    </div>
+  </div>
+
+  <div id="results-screen" class="results" style="display:none;">
+    <div class="stamp-zone">
+      <div class="stamp" id="stampEl"><div class="pct" id="stampPct">--%</div><div class="lbl">النتيجة</div></div>
+      <div class="grade-title" id="gradeTitle"></div>
+      <div class="grade-desc" id="gradeDesc"></div>
+    </div>
+    <div class="score-row">
+      <div class="score-item"><div class="num" id="correctNum">0</div><div class="txt">إجابات صحيحة</div></div>
+      <div class="score-item"><div class="num" id="wrongNum">0</div><div class="txt">إجابات خاطئة</div></div>
+      <div class="score-item"><div class="num" id="pctNum">0%</div><div class="txt">النسبة الكلية</div></div>
+    </div>
+    <div class="savenote" id="saveNote">جارِ حفظ نتيجتك...</div>
+    <div class="btnrow">
+      <button class="navbtn" style="background:transparent;color:var(--ledger);border:1.5px solid var(--ledger);" onclick="toggleReview()">مراجعة الإجابات</button>
+      <button class="navbtn" style="background:var(--gold);color:#2B1E06;" onclick="location.reload()">إعادة الاختبار</button>
+      <a href="/#tools" class="navbtn" style="background:transparent;color:var(--ink-soft);border:1.5px solid var(--line); text-decoration:none; display:inline-flex; align-items:center;">رجوع للبورتفوليو</a>
+    </div>
+    <div class="review" id="reviewBox"></div>
+  </div>
+
+</div>
+
+<script src="/assets/supabase-config.js"></script>
+<script>
+const QUESTIONS = [
+  {q:"عند شراء بضاعة بالأجل، القيد المحاسبي الصحيح هو:", o:["من ح/ المشتريات - إلى ح/ الموردين","من ح/ الموردين - إلى ح/ المشتريات","من ح/ الصندوق - إلى ح/ المشتريات","من ح/ المبيعات - إلى ح/ العملاء"], c:0},
+  {q:"أي القوائم المالية التالية تُظهر المركز المالي للمنشأة في لحظة زمنية معينة؟", o:["قائمة الدخل","قائمة التدفقات النقدية","قائمة المركز المالي (الميزانية)","قائمة التغير في حقوق الملكية"], c:2},
+  {q:"مصروف مقدم (Prepaid Expense) يُصنَّف في قائمة المركز المالي ضمن:", o:["أصول متداولة","التزامات متداولة","حقوق الملكية","إيرادات مؤجلة"], c:0},
+  {q:"عند تسجيل إهلاك أصل ثابت بطريقة القسط الثابت، القيد يكون:", o:["من ح/ الأصل - إلى ح/ مصروف الإهلاك","من ح/ مصروف الإهلاك - إلى ح/ مجمع الإهلاك","من ح/ مجمع الإهلاك - إلى ح/ الأصل","من ح/ الأرباح المحتجزة - إلى ح/ الأصل"], c:1},
+  {q:"معدل ضريبة القيمة المضافة العام في مصر حاليًا هو:", o:["10%","14%","15%","20%"], c:1},
+  {q:"الفرق الجوهري بين الإيراد المستحق (Accrued Revenue) والإيراد المقبوض مقدمًا (Unearned Revenue) هو:", o:["لا فرق بينهما محاسبيًا","الأول إيراد مكتسب لم يُحصَّل بعد، والثاني مبلغ مُحصَّل ولم يُكتسب بعد","الأول التزام والثاني أصل","كلاهما يظهران في قائمة الدخل فقط دون الميزانية"], c:1},
+  {q:"نسبة التداول (Current Ratio) تُحسب بقسمة:", o:["الأصول المتداولة على الالتزامات المتداولة","صافي الربح على المبيعات","حقوق الملكية على إجمالي الأصول","المخزون على المبيعات"], c:0},
+  {q:"شركة لديها أصول متداولة 300,000 جنيه والتزامات متداولة 150,000 جنيه ومخزون 100,000 جنيه. نسبة السيولة السريعة (Quick Ratio) تساوي:", o:["1.33","2.0","0.66","3.0"], c:0},
+  {q:"عند اكتشاف خطأ في ترحيل قيد لفترة سابقة تم إقفال حساباتها، الإجراء الصحيح هو:", o:["تجاهل الخطأ لأن الفترة مُقفلة","تعديل الأرصدة الافتتاحية للأرباح المحتجزة مع الإفصاح عنه","تسجيله كمصروف استثنائي في الفترة الحالية فقط","حذف القيد الأصلي من الدفاتر القديمة"], c:1},
+  {q:"في نظام التكاليف، \"التكلفة الثابتة\" تتميز بأنها:", o:["تتغير طرديًا مع حجم الإنتاج","لا تتغير إجماليها بتغير حجم الإنتاج ضمن مدى معين","تساوي صفرًا عند التوقف عن الإنتاج","تُحسب فقط في نهاية السنة المالية"], c:1},
+  {q:"نقطة التعادل (Break-even Point) هي المستوى الذي عنده:", o:["يتساوى الإيراد الكلي مع التكلفة الكلية","يتحقق أقصى ربح ممكن","تكون التكلفة المتغيرة صفرًا","يتساوى المخزون أول المدة بآخر المدة"], c:0},
+  {q:"منتج سعر بيعه 100 جنيه، وتكلفته المتغيرة 60 جنيه للوحدة، والتكاليف الثابتة الشهرية 80,000 جنيه. عدد الوحدات اللازمة لتحقيق نقطة التعادل هو:", o:["800 وحدة","1,333 وحدة","2,000 وحدة","400 وحدة"], c:2},
+  {q:"عند إعداد الموازنة التقديرية المرنة (Flexible Budget)، الهدف الأساسي هو:", o:["تثبيت الأرقام بغض النظر عن حجم النشاط الفعلي","تعديل الأرقام المخططة بما يتناسب مع مستوى النشاط الفعلي لتحليل الانحرافات بدقة","إلغاء الحاجة لمقارنة الفعلي بالمخطط","حساب الضرائب المستحقة فقط"], c:1},
+  {q:"انحراف سعر المواد الخام (Material Price Variance) يُحسب بالصيغة:", o:["(السعر الفعلي - السعر المعياري) × الكمية الفعلية المشتراة","(الكمية الفعلية - الكمية المعيارية) × السعر المعياري","السعر الفعلي × الكمية المعيارية","السعر المعياري × الكمية الفعلية المباعة"], c:0},
+  {q:"إذا كان الانحراف الفعلي لتكلفة العمالة المباشرة أعلى من المعياري، وكان السبب زيادة الأجر بالساعة، فهذا يُصنَّف كـ:", o:["انحراف كفاءة عمالة غير مواتٍ","انحراف سعر (معدل) عمالة غير مواتٍ","انحراف حجم ثابت","لا يُعتبر انحرافًا محاسبيًا"], c:1},
+  {q:"الضريبة التي يقوم بها الممول بخصمها من المورد عند الدفع وتوريدها لمصلحة الضرائب تُعرف باسم:", o:["ضريبة الدمغة","الضريبة على القيمة المضافة فقط","الخصم والإضافة (الضريبة تحت حساب الضريبة)","الرسوم الجمركية"], c:2},
+  {q:"عند احتساب الوعاء الضريبي لضريبة الدخل على الأرباح التجارية والصناعية، المصروفات غير القابلة للخصم ضريبيًا مثل الغرامات والجزاءات:", o:["تُخصم بالكامل من صافي الربح المحاسبي", "تُضاف إلى صافي الربح المحاسبي للوصول للربح الضريبي", "لا تدخل في الإقرار الضريبي إطلاقًا", "تُخصم فقط إذا تجاوزت 5% من الإيرادات"], c:1},
+  {q:"الفرق بين الضريبة المؤجلة (Deferred Tax) والضريبة الحالية (Current Tax) ينشأ أساسًا من:", o:["اختلاف أسعار الصرف","الفروق المؤقتة بين المعالجة المحاسبية والمعالجة الضريبية للبنود", "عدم دفع الضريبة نهائيًا", "تغير رأس المال المُصدر"], c:1},
+  {q:"مبدأ \"الفصل بين السلطات\" (Segregation of Duties) في الرقابة الداخلية يهدف أساسًا إلى:", o:["تسريع دورة العمل المستندية فقط", "تقليل فرص الغش والخطأ بمنع فرد واحد من التحكم الكامل في عملية ما من بدايتها لنهايتها", "تقليل عدد الموظفين المطلوبين", "إلغاء الحاجة للمراجعة الداخلية"], c:1},
+  {q:"عند تسوية كشف حساب البنك (Bank Reconciliation)، الشيكات المُصدرة ولم تُصرف بعد من البنك (Outstanding Checks) يتم:", o:["إضافتها لرصيد الدفاتر", "خصمها من رصيد كشف البنك", "خصمها من رصيد الدفاتر", "تجاهلها لأنها غير مؤثرة"], c:1},
+  {q:"طريقة تقييم المخزون \"الوارد أخيرًا صادر أولًا\" (LIFO) غير مسموح باستخدامها وفقًا لمعايير:", o:["المحاسبة المصرية فقط", "المعايير الدولية لإعداد التقارير المالية (IFRS)", "قانون الضرائب المصري فقط", "لا يوجد قيد عليها في أي نظام"], c:1},
+  {q:"عند إعداد قائمة التدفقات النقدية بالطريقة غير المباشرة، يبدأ إعداد النشاط التشغيلي من:", o:["إجمالي المبيعات النقدية", "صافي الربح ثم التسوية بالبنود غير النقدية والتغير في رأس المال العامل", "رصيد النقدية أول المدة مباشرة", "إجمالي الأصول الثابتة"], c:1},
+  {q:"شركة اشترت آلة بمبلغ 200,000 جنيه، بقيمة تخريدية 20,000 جنيه، وعمر إنتاجي 6 سنوات. قسط الإهلاك السنوي بطريقة القسط الثابت يساوي:", o:["33,333 جنيه", "30,000 جنيه", "36,667 جنيه", "20,000 جنيه"], c:1},
+  {q:"عند تقييم مشروع استثماري، \"صافي القيمة الحالية\" (NPV) الموجب يعني:", o:["أن المشروع يحقق عائدًا أقل من تكلفة رأس المال ويجب رفضه", "أن التدفقات النقدية المخصومة للمشروع تفوق الاستثمار الأولي، وهو مؤشر لقبول المشروع", "أن المشروع لا يحتاج لتمويل خارجي", "أنه لا علاقة له بقرار القبول أو الرفض"], c:1},
+  {q:"عند توزيع التكاليف الصناعية غير المباشرة (Overheads) على مراكز التكلفة، الأساس الأكثر شيوعًا للتحميل هو:", o:["عدد ساعات العمل المباشر أو ساعات الآلة", "رقم الفاتورة الضريبية", "تاريخ الشراء", "اسم المورد"], c:0},
+  {q:"عند إعداد الموازنة النقدية التقديرية (Cash Budget)، الهدف الرئيسي هو:", o:["تحديد صافي الربح المتوقع", "توقع تدفقات ومدفوعات النقدية لتفادي العجز أو الفائض النقدي غير المخطط", "حساب الضريبة المستحقة فقط", "تحديد سعر بيع المنتج"], c:1},
+  {q:"إذا اكتشف مدير الحسابات أن هناك تلاعبًا محتملًا في تسجيل الإيرادات من قِبل أحد المحاسبين، الإجراء المهني السليم أولًا هو:", o:["تجاهل الأمر حفاظًا على العلاقة الوظيفية", "توثيق الملاحظات والتصعيد وفق سياسة الشركة للحوكمة والمراجعة الداخلية دون تسريع اتهامات غير مؤكدة", "تعديل القيود بنفسه دون الرجوع لأحد", "إبلاغ العميل مباشرة قبل التحقق الداخلي"], c:1},
+  {q:"العائد على حقوق الملكية (ROE) يقيس بشكل أساسي:", o:["كفاءة إدارة المخزون", "مدى قدرة الشركة على تحقيق ربح لكل جنيه من أموال الملاك المستثمرة", "نسبة الاقتراض إلى الأصول", "معدل دوران الأصول الثابتة فقط"], c:1},
+  {q:"عند دمج القوائم المالية لشركة أم وشركات تابعة، المعاملات البينية بين الشركات (مثل مبيعات داخلية) يجب:", o:["إضافتها لتضخيم الإيرادات الموحدة", "استبعادها بالكامل لتفادي ازدواج احتساب الإيراد والتكلفة على مستوى المجموعة", "تسجيلها في حساب مستقل دون التأثير على القوائم", "تجاهلها لأنها غير جوهرية دائمًا"], c:1},
+  {q:"من أهم مؤشرات الإنذار المبكر بوجود مشكلة في السيولة لدى شركة رغم أنها تحقق أرباحًا محاسبية هي:", o:["ارتفاع صافي الربح المحاسبي مقابل تدفق نقدي تشغيلي سالب أو ضعيف بشكل متكرر", "زيادة رأس المال المصدر", "ثبات سعر السهم", "انخفاض عدد الموظفين"], c:0}
+];
+
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let examStartedAt = null;
+let taker = { name:'', phone:'' };
+
+function submitGate(){
+  const name = document.getElementById('gateName').value.trim();
+  const phone = document.getElementById('gatePhone').value.trim();
+  if(!name){
+    document.getElementById('gateErr').style.display = 'block';
+    return;
+  }
+  taker.name = name;
+  taker.phone = phone;
+  document.getElementById('gate-screen').style.display = 'none';
+  document.getElementById('intro-screen').style.display = 'block';
+}
+
+function startExam(){
+  examStartedAt = new Date().toISOString();
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('exam-screen').style.display = 'block';
+  buildTally();
+  renderQuestion();
+}
+
+function buildTally(){
+  const wrap = document.getElementById('tallyMarks');
+  wrap.innerHTML = '';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const m = document.createElement('div');
+    m.className = 'mark';
+    if((i+1)%5===0) m.classList.add('bundle');
+    wrap.appendChild(m);
+  }
+}
+function updateTally(){
+  const marks = document.querySelectorAll('.mark');
+  marks.forEach((m,i)=>{ if(i < current) m.classList.add('done'); else m.classList.remove('done'); });
+  const ar = n => n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+  document.getElementById('tallyCount').textContent = `${ar(current)} / ${ar(QUESTIONS.length)}`;
+}
+function renderQuestion(){
+  const item = QUESTIONS[current];
+  const ar = n => n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+  document.getElementById('qnum').textContent = `السؤال ${ar(current+1)}`;
+  document.getElementById('qtext').textContent = item.q;
+  const optWrap = document.getElementById('options');
+  optWrap.innerHTML = '';
+  item.o.forEach((optText, idx) => {
+    const label = document.createElement('label');
+    label.className = 'opt' + (answers[current]===idx ? ' selected' : '');
+    label.innerHTML = `<input type="radio" name="opt" ${answers[current]===idx?'checked':''}> <span>${optText}</span>`;
+    label.onclick = () => selectOption(idx);
+    optWrap.appendChild(label);
+  });
+  document.getElementById('nextBtn').disabled = answers[current]===null;
+  document.getElementById('nextBtn').textContent = current === QUESTIONS.length-1 ? 'إنهاء الاختبار' : 'التالي';
+  document.getElementById('hint').textContent = answers[current]===null ? 'اختر إجابة للمتابعة' : '';
+  updateTally();
+}
+function selectOption(idx){
+  answers[current] = idx;
+  document.querySelectorAll('.opt').forEach((el,i)=> el.classList.toggle('selected', i===idx));
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('hint').textContent = '';
+}
+function nextQuestion(){
+  if(current < QUESTIONS.length-1){ current++; renderQuestion(); }
+  else{ showResults(); }
+}
+
+async function showResults(){
+  document.getElementById('exam-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'block';
+
+  let correctCount = 0;
+  answers.forEach((a,i)=>{ if(a === QUESTIONS[i].c) correctCount++; });
+  const total = QUESTIONS.length;
+  const wrongCount = total - correctCount;
+  const pct = Math.round((correctCount/total)*100);
+
+  document.getElementById('correctNum').textContent = correctCount;
+  document.getElementById('wrongNum').textContent = wrongCount;
+  document.getElementById('pctNum').textContent = pct + '%';
+  document.getElementById('stampPct').textContent = pct + '%';
+
+  let title, desc, stampColor;
+  if(pct >= 85){
+    title = 'جاهز لمستوى مدير حسابات';
+    desc = 'أداء قوي وشامل يغطي الأساسيات والتحليل المالي والتكاليف والقرارات الإدارية.';
+    stampColor = 'var(--ledger)';
+  } else if(pct >= 65){
+    title = 'محاسب عام متمكّن';
+    desc = 'أساسيات محاسبية سليمة، مع فجوات في بعض جوانب التحليل الإداري أو التكاليف.';
+    stampColor = 'var(--gold)';
+  } else {
+    title = 'يحتاج إلى تطوير';
+    desc = 'هناك فجوات واضحة في أساسيات أو تطبيقات محاسبية مهمة.';
+    stampColor = 'var(--red)';
+  }
+  document.getElementById('gradeTitle').textContent = title;
+  document.getElementById('gradeDesc').textContent = desc;
+  document.getElementById('stampEl').style.borderColor = stampColor;
+  document.getElementById('stampEl').style.color = stampColor;
+
+  buildReview();
+  await saveAttempt(correctCount, wrongCount, total, pct, title);
+}
+
+async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
+  const noteEl = document.getElementById('saveNote');
+  try{
+    const detailedAnswers = QUESTIONS.map((q,i)=>({
+      question:q.q, selected: answers[i], correct: q.c, isCorrect: answers[i]===q.c
+    }));
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/exam_attempts_accounting_general`, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer':'return=minimal'
+      },
+      body: JSON.stringify({
+        full_name: taker.name,
+        phone: taker.phone || null,
+        correct_count: correctCount,
+        wrong_count: wrongCount,
+        total_questions: total,
+        percentage: pct,
+        grade_label: gradeLabel,
+        answers: detailedAnswers,
+        started_at: examStartedAt,
+        user_agent: navigator.userAgent
+      })
+    });
+    noteEl.textContent = res.ok ? 'تم حفظ نتيجتك بنجاح ✓' : 'تعذّر حفظ النتيجة، لكن تقدر تراجع إجاباتك تحت.';
+  } catch(err){
+    noteEl.textContent = 'تعذّر حفظ النتيجة (مشكلة في الاتصال)، لكن تقدر تراجع إجاباتك تحت.';
+  }
+}
+
+function buildReview(){
+  const box = document.getElementById('reviewBox');
+  box.innerHTML = '';
+  const ar = n => n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+  QUESTIONS.forEach((item, i) => {
+    const userAns = answers[i];
+    const isCorrect = userAns === item.c;
+    const div = document.createElement('div');
+    div.className = 'rq';
+    div.innerHTML = `
+      <div class="rqtext">${ar(i+1)}. ${item.q}</div>
+      ${!isCorrect ? `<div class="rline wrong">إجابتك: ${item.o[userAns]}</div>` : ''}
+      <div class="rline right">الإجابة الصحيحة: ${item.o[item.c]}</div>
+    `;
+    box.appendChild(div);
+  });
+}
+function toggleReview(){ document.getElementById('reviewBox').classList.toggle('show'); }
+</script>
+</body>
+</html>
