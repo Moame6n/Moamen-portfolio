@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم | نتائج الاختبارات</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+  body{ padding:0; }
+  .topbar{
+    background:var(--ledger); color:var(--paper); padding:18px 0;
+    border-bottom:3px double var(--gold);
+  }
+  .topbar .container{ display:flex; justify-content:space-between; align-items:center; }
+  .topbar h1{ color:var(--paper); font-size:22px; }
+  .topbar .who{ font-size:13px; color:#C9CFC5; }
+  .topbar button{ background:transparent; border:1px solid var(--gold-light); color:var(--gold-light); padding:8px 16px; font-size:13px; cursor:pointer; font-family:'Tajawal',sans-serif; }
+  .topbar button:hover{ background:var(--gold-light); color:#2B1E06; }
+
+  .wrap{ max-width:1100px; margin:0 auto; padding:30px 24px 60px; }
+
+  .login-box{
+    max-width:380px; margin:80px auto; background:#FBF8EF; border:1px solid var(--line);
+    box-shadow:0 2px 0 var(--line); padding:36px 30px;
+  }
+  .login-box h2{ font-size:22px; margin-bottom:8px; text-align:center; }
+  .login-box p{ font-size:13px; color:var(--muted); text-align:center; margin-bottom:24px; }
+  .login-box label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
+  .login-box input{ width:100%; padding:11px 12px; border:1px solid var(--line); background:#fff; font-family:'Tajawal',sans-serif; font-size:14px; margin-bottom:16px; }
+  .login-box button{ width:100%; padding:13px; font-size:14.5px; }
+  .login-err{ color:var(--red); font-size:12.5px; text-align:center; margin-top:10px; display:none; }
+
+  .stats-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+  @media (max-width:760px){ .stats-row{ grid-template-columns:repeat(2,1fr); } }
+  .stat-card{ background:#FBF8EF; border:1px solid var(--line); padding:18px; text-align:center; }
+  .stat-card .num{ font-size:26px; font-weight:900; color:var(--ledger); }
+  .stat-card .lbl{ font-size:12px; color:var(--muted); margin-top:4px; }
+
+  .toolbar{ display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+  .toolbar select, .toolbar input{
+    padding:10px 12px; border:1px solid var(--line); background:#fff;
+    font-family:'Tajawal',sans-serif; font-size:13.5px;
+  }
+  table{ width:100%; border-collapse:collapse; background:#FBF8EF; border:1px solid var(--line); }
+  thead th{ background:var(--ledger); color:var(--paper); font-size:12.5px; padding:12px 10px; text-align:right; }
+  tbody td{ padding:11px 10px; font-size:13.5px; border-bottom:1px solid var(--line); }
+  tbody tr:hover{ background:#F5F1E4; }
+  .grade-pill{ padding:3px 10px; font-size:11.5px; font-weight:700; display:inline-block; }
+  .grade-pill.high{ background:#EAF3EC; color:var(--ledger); }
+  .grade-pill.mid{ background:#FBF1DE; color:#8A6117; }
+  .grade-pill.low{ background:#FBEAEA; color:var(--red); }
+  .empty-state{ text-align:center; padding:60px 20px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div id="loginView" class="login-box">
+  <h2>لوحة التحكم</h2>
+  <p>سجّل دخولك عشان تشوف نتائج المتقدمين لأي اختبار</p>
+  <label>البريد الإلكتروني</label>
+  <input type="email" id="loginEmail" value="admin@moamen.exams">
+  <label>كلمة المرور</label>
+  <input type="password" id="loginPass" placeholder="••••••••">
+  <button class="btn btn-primary" onclick="doLogin()">دخول</button>
+  <div class="login-err" id="loginErr">بيانات الدخول غير صحيحة</div>
+</div>
+
+<div id="dashView" style="display:none;">
+  <div class="topbar">
+    <div class="container">
+      <h1>لوحة نتائج الاختبارات</h1>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span class="who" id="whoEmail"></span>
+        <button onclick="doLogout()">تسجيل الخروج</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="stats-row">
+      <div class="stat-card"><div class="num" id="statCount">0</div><div class="lbl">عدد المتقدمين</div></div>
+      <div class="stat-card"><div class="num" id="statAvg">0%</div><div class="lbl">متوسط النسبة</div></div>
+      <div class="stat-card"><div class="num" id="statTop">0%</div><div class="lbl">أعلى نتيجة</div></div>
+      <div class="stat-card"><div class="num" id="statPass">0</div><div class="lbl">نسبة النجاح (≥65%)</div></div>
+    </div>
+
+    <div class="toolbar">
+      <select id="examSelect" onchange="loadAttempts()"></select>
+      <input type="text" id="searchBox" placeholder="بحث بالاسم..." oninput="renderTable()">
+    </div>
+
+    <div id="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>الاسم</th><th>الهاتف</th><th>النسبة</th><th>صح</th><th>خطأ</th><th>التصنيف</th><th>تاريخ الإنهاء</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">لا توجد نتائج مسجلة بعد لهذا الاختبار</div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/supabase-config.js"></script>
+<script>
+let session = null;
+let allExams = [];
+let currentAttempts = [];
+
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = sessionStorage.getItem('admin_session');
+  if(saved){
+    session = JSON.parse(saved);
+    showDashboard();
+  }
+});
+
+async function doLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginErr');
+  errEl.style.display = 'none';
+  try{
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ email, password })
+    });
+    if(!res.ok){ errEl.style.display = 'block'; return; }
+    const data = await res.json();
+    session = { access_token: data.access_token, email };
+    sessionStorage.setItem('admin_session', JSON.stringify(session));
+    showDashboard();
+  }catch(e){
+    errEl.textContent = 'تعذّر الاتصال بالسيرفر';
+    errEl.style.display = 'block';
+  }
+}
+function doLogout(){
+  sessionStorage.removeItem('admin_session');
+  session = null;
+  document.getElementById('dashView').style.display = 'none';
+  document.getElementById('loginView').style.display = 'block';
+}
+
+async function showDashboard(){
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('dashView').style.display = 'block';
+  document.getElementById('whoEmail').textContent = session.email;
+  await loadExamsList();
+}
+
+function authHeaders(){
+  return {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${session.access_token}`
+  };
+}
+
+async function loadExamsList(){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/exams?select=*&order=created_at.asc`, { headers: authHeaders() });
+  if(!res.ok){ return; }
+  allExams = await res.json();
+  const sel = document.getElementById('examSelect');
+  sel.innerHTML = allExams.map(e => `<option value="${e.table_name}">${e.title}</option>`).join('');
+  if(allExams.length) loadAttempts();
+}
+
+async function loadAttempts(){
+  const tableName = document.getElementById('examSelect').value;
+  if(!tableName) return;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${tableName}?select=*&order=finished_at.desc`, { headers: authHeaders() });
+  if(!res.ok){
+    currentAttempts = [];
+    renderTable();
+    return;
+  }
+  currentAttempts = await res.json();
+  renderStats();
+  renderTable();
+}
+
+function renderStats(){
+  const n = currentAttempts.length;
+  document.getElementById('statCount').textContent = n;
+  if(n === 0){
+    document.getElementById('statAvg').textContent = '0%';
+    document.getElementById('statTop').textContent = '0%';
+    document.getElementById('statPass').textContent = '0%';
+    return;
+  }
+  const avg = Math.round(currentAttempts.reduce((s,a)=>s+Number(a.percentage),0)/n);
+  const top = Math.max(...currentAttempts.map(a=>Number(a.percentage)));
+  const passCount = currentAttempts.filter(a=>Number(a.percentage)>=65).length;
+  document.getElementById('statAvg').textContent = avg + '%';
+  document.getElementById('statTop').textContent = top + '%';
+  document.getElementById('statPass').textContent = Math.round((passCount/n)*100) + '%';
+}
+
+function gradeClass(pct){
+  if(pct >= 85) return 'high';
+  if(pct >= 65) return 'mid';
+  return 'low';
+}
+
+function renderTable(){
+  const search = (document.getElementById('searchBox').value || '').trim().toLowerCase();
+  const rows = currentAttempts.filter(a => !search || (a.full_name||'').toLowerCase().includes(search));
+  const body = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  if(rows.length === 0){
+    body.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  body.innerHTML = rows.map(a => `
+    <tr>
+      <td>${escapeHtml(a.full_name || '—')}</td>
+      <td>${escapeHtml(a.phone || '—')}</td>
+      <td><b>${a.percentage}%</b></td>
+      <td>${a.correct_count}</td>
+      <td>${a.wrong_count}</td>
+      <td><span class="grade-pill ${gradeClass(Number(a.percentage))}">${escapeHtml(a.grade_label || '')}</span></td>
+      <td>${new Date(a.finished_at).toLocaleString('ar-EG')}</td>
+    </tr>
+  `).join('');
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+</script>
+</body>
+</html>
