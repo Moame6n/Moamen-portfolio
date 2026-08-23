@@ -157,37 +157,36 @@ async function showDashboard(){
   if(allExams.length) loadAttempts();
 }
 
-async function callRpc(tableName){
+async function callRpc(examSlug){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_exam_results`, {
     method:'POST',
     headers:{
       'Content-Type':'application/json',
       'apikey': SUPABASE_ANON_KEY
     },
-    body: JSON.stringify({ p_table_name: tableName, p_passphrase: passphrase })
+    body: JSON.stringify({ p_exam_slug: examSlug, p_passphrase: passphrase })
   });
   if(!res.ok) return null;
   return res.json();
 }
 
 async function loadExamsList(){
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/exams?select=*&order=created_at.asc`, {
-    headers:{ 'apikey': SUPABASE_ANON_KEY }
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/list_exam_slugs`, {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
   });
   if(!res.ok){ return false; }
   allExams = await res.json();
   const sel = document.getElementById('examSelect');
-  sel.innerHTML = allExams.map(e => `<option value="${e.table_name}">${e.title}</option>`).join('');
-  if(!allExams.length) return true;
-  // verify passphrase against the first exam table
-  const data = await callRpc(allExams[0].table_name);
-  return data !== null;
+  sel.innerHTML = allExams.map(e => `<option value="${e.exam_slug}">${e.exam_title} (${e.attempts})</option>`).join('');
+  return true;
 }
 
 async function loadAttempts(){
-  const tableName = document.getElementById('examSelect').value;
-  if(!tableName) return;
-  const data = await callRpc(tableName);
+  const slug = document.getElementById('examSelect').value;
+  if(!slug) return;
+  const data = await callRpc(slug);
   if(data === null){
     currentAttempts = [];
     renderTable();
