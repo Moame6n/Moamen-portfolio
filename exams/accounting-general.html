@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>اختبار الكفاءة المحاسبية | مؤمن أحمد</title>
+<meta name="description" content="٣٠ سؤال متدرج الصعوبة يغطي مستوى المحاسب العام ومدير الحسابات، مع نتيجة فورية وتصنيف مستوى.">
+<meta name="icon" content="clipboard-check">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
@@ -172,6 +174,11 @@
 
 <script src="/assets/supabase-config.js"></script>
 <script>
+// ==== EXAM IDENTITY — change these two lines when duplicating this file for a new exam ====
+const EXAM_SLUG = 'accounting-general';
+const EXAM_TITLE = 'اختبار الكفاءة المحاسبية';
+// ============================================================================================
+
 const QUESTIONS = [
   {q:"عند شراء بضاعة بالأجل، القيد المحاسبي الصحيح هو:", o:["من ح/ المشتريات - إلى ح/ الموردين","من ح/ الموردين - إلى ح/ المشتريات","من ح/ الصندوق - إلى ح/ المشتريات","من ح/ المبيعات - إلى ح/ العملاء"], c:0},
   {q:"أي القوائم المالية التالية تُظهر المركز المالي للمنشأة في لحظة زمنية معينة؟", o:["قائمة الدخل","قائمة التدفقات النقدية","قائمة المركز المالي (الميزانية)","قائمة التغير في حقوق الملكية"], c:2},
@@ -331,7 +338,7 @@ async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
     const detailedAnswers = QUESTIONS.map((q,i)=>({
       question:q.q, selected: answers[i], correct: q.c, isCorrect: answers[i]===q.c
     }));
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/exam_attempts_accounting_general`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/exam_attempts`, {
       method:'POST',
       headers:{
         'Content-Type':'application/json',
@@ -340,6 +347,8 @@ async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
         'Prefer':'return=minimal'
       },
       body: JSON.stringify({
+        exam_slug: EXAM_SLUG,
+        exam_title: EXAM_TITLE,
         full_name: taker.name,
         phone: taker.phone || null,
         correct_count: correctCount,
