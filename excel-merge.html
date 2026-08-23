@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أداة دمج ملفات إكسيل | مؤمن أحمد</title>
+<meta name="description" content="ارفع أكتر من ملف إكسيل بأعمدة مختلفة، وهتتدمج تلقائيًا في جدول واحد جاهز للتحميل.">
+<meta name="icon" content="bar-chart-3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<style>
+  body{ padding:0; }
+  .page-hero{ padding:50px 0 10px; }
+  .page-hero .back{ display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12.5px; color:var(--emerald); text-decoration:none; margin-bottom:18px; }
+  .page-hero .back svg{ width:14px; height:14px; }
+  .page-hero h1{ font-size:30px; margin-bottom:10px; }
+  .page-hero p{ color:var(--text-soft); font-size:15px; max-width:640px; line-height:1.85; }
+
+  .wrap{ padding:20px 0 70px; }
+
+  .dropzone{
+    border:2px dashed var(--border-soft); border-radius:var(--radius);
+    padding:44px 24px; text-align:center; cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+    background:var(--surface);
+  }
+  .dropzone.drag{ border-color:var(--emerald); background:rgba(61,220,151,0.05); }
+  .dropzone svg{ width:36px; height:36px; color:var(--emerald); margin:0 auto 14px; }
+  .dropzone .title{ font-weight:700; font-size:15.5px; margin-bottom:6px; }
+  .dropzone .sub{ font-size:12.5px; color:var(--muted); }
+  #fileInput{ display:none; }
+
+  .filelist{ margin-top:18px; display:flex; flex-direction:column; gap:8px; }
+  .file-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--surface); border:1px solid var(--border-soft); border-radius:9px;
+    padding:11px 14px; font-size:13.5px;
+  }
+  .file-row .name{ display:flex; align-items:center; gap:8px; overflow:hidden; }
+  .file-row .name svg{ width:16px; height:16px; color:var(--gold); flex-shrink:0; }
+  .file-row .rows{ font-family:var(--mono); font-size:11.5px; color:var(--muted); white-space:nowrap; }
+  .file-row .remove{ background:none; border:none; color:var(--red); cursor:pointer; padding:2px; }
+  .file-row .remove svg{ width:15px; height:15px; }
+
+  .actions-row{ display:flex; gap:12px; margin-top:22px; flex-wrap:wrap; }
+
+  .stats-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:26px 0; }
+  @media (max-width:640px){ .stats-row{ grid-template-columns:1fr; } }
+  .stat-card{ background:var(--surface); border:1px solid var(--border-soft); border-radius:10px; padding:16px; text-align:center; }
+  .stat-card .num{ font-family:var(--mono); font-size:22px; font-weight:700; color:var(--emerald); }
+  .stat-card .lbl{ font-size:11.5px; color:var(--muted); margin-top:4px; }
+
+  .table-scroll{
+    overflow:auto; max-height:480px; border:1px solid var(--border-soft); border-radius:10px;
+    background:var(--surface);
+  }
+  table{ width:100%; border-collapse:collapse; font-size:12.5px; white-space:nowrap; }
+  thead th{
+    background:var(--surface-2); color:var(--emerald); font-family:var(--mono); font-weight:600;
+    padding:10px 12px; text-align:right; position:sticky; top:0; border-bottom:1px solid var(--border-soft);
+  }
+  tbody td{ padding:9px 12px; border-bottom:1px solid var(--border-soft); color:var(--text-soft); }
+  tbody td.src-col{ color:var(--gold); font-family:var(--mono); font-size:11px; }
+  tbody tr:hover td{ background:var(--surface-2); }
+  .empty-cell{ color:var(--muted); }
+
+  .hint-box{
+    margin-top:14px; padding:12px 14px; border-radius:8px; font-size:12.5px;
+    background:rgba(224,177,92,0.08); border-right:3px solid var(--gold); color:var(--text-soft); line-height:1.8;
+  }
+  .error-box{
+    margin-top:14px; padding:12px 14px; border-radius:8px; font-size:12.5px;
+    background:rgba(240,97,109,0.08); border-right:3px solid var(--red); color:var(--red); display:none;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <div class="brand"><span class="dot"></span>مؤمن <span>أحمد</span></div>
+    <button class="navtoggle" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
+    <nav id="mainNav">
+      <a href="/#home">الرئيسية</a>
+      <a href="/#about">من أنا؟</a>
+      <a href="/#services">خدماتي</a>
+      <a href="/tools-exams.html">الأدوات والاختبارات</a>
+      <a href="/#portfolio">أعمالي</a>
+      <a href="/#blog">مدونتي</a>
+      <a href="/#contact">تواصل معي</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <a href="/tools-exams.html" class="back"><i data-lucide="arrow-right"></i> رجوع للأدوات والاختبارات</a>
+    <div class="eyebrow">أداة</div>
+    <h1>دمج ملفات إكسيل</h1>
+    <p>ارفع أكتر من ملف إكسيل (حتى لو أعمدتهم مختلفة تمامًا)، وهتتحول تلقائيًا لجدول واحد موحّد جاهز للتحميل — كل عمود جديد بيتضاف تلقائي، والخلايا الفاضية بتفضل فاضية بدل ما تتحذف بيانات.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="container">
+
+    <div class="dropzone" id="dropzone">
+      <i data-lucide="upload-cloud"></i>
+      <div class="title">اسحب ملفات الإكسيل هنا، أو دوس للاختيار</div>
+      <div class="sub">.xlsx / .xls / .csv — تقدر تختار أكتر من ملف مرة واحدة</div>
+      <input type="file" id="fileInput" multiple accept=".xlsx,.xls,.csv">
+    </div>
+
+    <div class="filelist" id="fileList"></div>
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="actions-row">
+      <button class="btn btn-primary" id="mergeBtn" disabled><i data-lucide="merge"></i> ادمج الملفات</button>
+      <button class="btn btn-gold" id="downloadBtn" style="display:none;"><i data-lucide="download"></i> تحميل الملف الموحّد</button>
+      <button class="btn btn-outline" id="resetBtn" style="display:none;"><i data-lucide="rotate-ccw"></i> البدء من جديد</button>
+    </div>
+
+    <div id="resultsArea" style="display:none;">
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="statFiles">0</div><div class="lbl">ملفات مدموجة</div></div>
+        <div class="stat-card"><div class="num" id="statRows">0</div><div class="lbl">إجمالي الصفوف</div></div>
+        <div class="stat-card"><div class="num" id="statCols">0</div><div class="lbl">إجمالي الأعمدة</div></div>
+      </div>
+      <div class="table-scroll">
+        <table id="previewTable"></table>
+      </div>
+      <div class="hint-box">عرض أول 200 صف فقط للمعاينة — الملف اللي هتحمّله فيه كل الصفوف كاملة.</div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div style="margin-bottom:10px;">
+      <a href="https://wa.me/201154960694" target="_blank">واتساب</a>
+      <a href="https://www.linkedin.com/in/moamen-ahmed-900921223" target="_blank">LinkedIn</a>
+      <a href="https://www.facebook.com/acc.mo.men.ahmed.mohamed" target="_blank">Facebook</a>
+    </div>
+    جميع الحقوق محفوظة © 2026 مؤمن أحمد
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+
+let loadedFiles = []; // { name, rows: [{...}], columns: [...] }
+let mergedRows = [];
+let mergedColumns = [];
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileListEl = document.getElementById('fileList');
+const mergeBtn = document.getElementById('mergeBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const resetBtn = document.getElementById('resetBtn');
+const errorBox = document.getElementById('errorBox');
+const resultsArea = document.getElementById('resultsArea');
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('drag');
+  handleFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+function showError(msg){
+  errorBox.textContent = msg;
+  errorBox.style.display = 'block';
+}
+function clearError(){
+  errorBox.style.display = 'none';
+  errorBox.textContent = '';
+}
+
+async function handleFiles(fileArray){
+  clearError();
+  for(const file of fileArray){
+    try{
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[firstSheetName];
+      const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+      if(rows.length === 0){
+        showError(`الملف "${file.name}" فاضي أو مفيهوش بيانات قابلة للقراءة في أول شيت.`);
+        continue;
+      }
+
+      const columns = Object.keys(rows[0]);
+      loadedFiles.push({ name: file.name, rows, columns, sheetUsed: firstSheetName });
+    }catch(err){
+      showError(`تعذّر قراءة الملف "${file.name}" — تأكد إنه ملف إكسيل صحيح.`);
+    }
+  }
+  renderFileList();
+}
+
+function renderFileList(){
+  fileListEl.innerHTML = loadedFiles.map((f, idx) => `
+    <div class="file-row">
+      <div class="name"><i data-lucide="file-spreadsheet"></i> ${escapeHtml(f.name)}</div>
+      <div class="rows">${f.rows.length} صف · ${f.columns.length} عمود</div>
+      <button class="remove" onclick="removeFile(${idx})"><i data-lucide="x"></i></button>
+    </div>
+  `).join('');
+  lucide.createIcons();
+  mergeBtn.disabled = loadedFiles.length === 0;
+}
+
+function removeFile(idx){
+  loadedFiles.splice(idx, 1);
+  renderFileList();
+}
+
+mergeBtn.addEventListener('click', () => {
+  if(loadedFiles.length === 0) return;
+  clearError();
+
+  // Union of all columns across all files, preserving first-seen order.
+  // This is the core "hardest case" handling: files don't need matching structures.
+  const columnSet = [];
+  loadedFiles.forEach(f => {
+    f.columns.forEach(c => { if(!columnSet.includes(c)) columnSet.push(c); });
+  });
+
+  mergedColumns = ['__المصدر__', ...columnSet];
+  mergedRows = [];
+  loadedFiles.forEach(f => {
+    f.rows.forEach(row => {
+      const merged = { '__المصدر__': f.name };
+      columnSet.forEach(col => { merged[col] = (col in row) ? row[col] : ''; });
+      mergedRows.push(merged);
+    });
+  });
+
+  renderResults();
+});
+
+function renderResults(){
+  document.getElementById('statFiles').textContent = loadedFiles.length;
+  document.getElementById('statRows').textContent = mergedRows.length;
+  document.getElementById('statCols').textContent = mergedColumns.length - 1;
+
+  const table = document.getElementById('previewTable');
+  const previewRows = mergedRows.slice(0, 200);
+  let html = '<thead><tr>' + mergedColumns.map(c => `<th>${escapeHtml(c === '__المصدر__' ? 'الملف المصدر' : c)}</th>`).join('') + '</tr></thead><tbody>';
+  previewRows.forEach(r => {
+    html += '<tr>' + mergedColumns.map(c => {
+      const val = r[c];
+      if(c === '__المصدر__') return `<td class="src-col">${escapeHtml(val)}</td>`;
+      return val === '' ? `<td class="empty-cell">—</td>` : `<td>${escapeHtml(String(val))}</td>`;
+    }).join('') + '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+
+  resultsArea.style.display = 'block';
+  downloadBtn.style.display = 'inline-flex';
+  resetBtn.style.display = 'inline-flex';
+  mergeBtn.disabled = true;
+}
+
+downloadBtn.addEventListener('click', () => {
+  const exportRows = mergedRows.map(r => {
+    const out = {};
+    mergedColumns.forEach(c => { out[c === '__المصدر__' ? 'الملف المصدر' : c] = r[c]; });
+    return out;
+  });
+  const ws = XLSX.utils.json_to_sheet(exportRows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'الملف الموحد');
+  XLSX.writeFile(wb, 'ملف-مدموج.xlsx');
+});
+
+resetBtn.addEventListener('click', () => {
+  loadedFiles = [];
+  mergedRows = [];
+  mergedColumns = [];
+  fileInput.value = '';
+  renderFileList();
+  resultsArea.style.display = 'none';
+  downloadBtn.style.display = 'none';
+  resetBtn.style.display = 'none';
+  clearError();
+});
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+</script>
+</body>
+</html>
