@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -7,93 +6,144 @@
 <title>مؤمن أحمد | محاسب مالي ومطوّر أدوات محاسبية</title>
 <meta name="description" content="مؤمن أحمد — محاسب مالي، وبانِي أدوات وحلول تقنية للمحاسبين: اختبارات كفاءة، أدوات إكسيل، وأنظمة محاسبية.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
+  /* ===== Hero ===== */
   .hero{
-    background:var(--ledger); color:var(--paper);
-    padding:90px 0 80px; text-align:center; position:relative;
-    border-bottom:3px double var(--gold);
+    padding:70px 0 60px; position:relative; overflow:hidden;
+    border-bottom:1px solid var(--border-soft);
   }
-  .hero .eyebrow{ color:var(--gold-light); }
-  .hero h1{ color:var(--paper); font-size:42px; margin-bottom:14px; }
-  .hero p{ color:#C9CFC5; font-size:16px; max-width:560px; margin:0 auto 30px; line-height:1.8; }
-  .hero .actions{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .hero-grid{
+    display:grid; grid-template-columns:1.1fr 1fr; gap:40px; align-items:center;
+  }
+  @media (max-width:900px){ .hero-grid{ grid-template-columns:1fr; } .hero-visual{ order:-1; } }
+  .hero h1{ font-size:40px; line-height:1.2; margin-bottom:16px; letter-spacing:-1px; }
+  .hero h1 .accent{ color:var(--emerald); }
+  .hero p.lead{ color:var(--text-soft); font-size:16px; max-width:480px; margin:0 0 30px; line-height:1.85; }
+  .hero .actions{ display:flex; gap:14px; flex-wrap:wrap; }
+  .badge-row{ display:flex; gap:10px; margin-bottom:22px; flex-wrap:wrap; }
+  .pill{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-soft);
+    background:var(--surface); border:1px solid var(--border-soft);
+    padding:6px 12px; border-radius:20px; display:flex; align-items:center; gap:6px;
+  }
+  .pill svg{ width:13px; height:13px; color:var(--emerald); }
 
-  .about-grid{ display:grid; grid-template-columns:220px 1fr; gap:40px; align-items:start; }
+  /* ===== Hero illustration ===== */
+  .hero-visual{ position:relative; display:flex; align-items:center; justify-content:center; }
+  .hero-visual svg{ width:100%; max-width:440px; height:auto; }
+  .glow-blob{
+    position:absolute; width:340px; height:340px; border-radius:50%;
+    background:radial-gradient(circle, rgba(61,220,151,0.16), transparent 70%);
+    filter:blur(10px); z-index:0;
+  }
+  .type-line{ transform-origin:right; animation:typeIn 3.2s ease-in-out infinite; }
+  .type-line.l2{ animation-delay:.4s; }
+  .type-line.l3{ animation-delay:.8s; }
+  .type-line.l4{ animation-delay:1.2s; }
+  @keyframes typeIn{
+    0%{ transform:scaleX(0); opacity:0; }
+    15%{ transform:scaleX(1); opacity:1; }
+    75%{ transform:scaleX(1); opacity:1; }
+    90%{ transform:scaleX(0); opacity:0; }
+    100%{ transform:scaleX(0); opacity:0; }
+  }
+  .cursor-blink{ animation:blink 1s step-end infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .float-item{ animation:floaty 4s ease-in-out infinite; }
+  .float-item.f2{ animation-delay:.7s; }
+  .float-item.f3{ animation-delay:1.4s; }
+  @keyframes floaty{
+    0%,100%{ transform:translateY(0px); }
+    50%{ transform:translateY(-10px); }
+  }
+
+  /* ===== About ===== */
+  .about-grid{ display:grid; grid-template-columns:1fr 1.3fr; gap:44px; align-items:start; }
   @media (max-width:700px){ .about-grid{ grid-template-columns:1fr; } }
-  .avatar{
-    width:180px; height:180px; border-radius:50%;
-    background:var(--ledger); color:var(--gold-light);
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Aref Ruqaa', serif; font-size:56px; font-weight:700;
-    border:4px solid var(--gold); margin:0 auto;
+  .id-card{
+    background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius);
+    padding:28px; text-align:center;
   }
-  .skill{ margin-bottom:14px; }
-  .skill .label{ display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:5px; font-weight:700; }
-  .skill .bar{ height:8px; background:var(--paper-dark); border:1px solid var(--line); }
-  .skill .bar span{ display:block; height:100%; background:var(--gold); }
-
-  .service-icon, .tool-icon, .proj-icon{
-    width:46px; height:46px; border-radius:50%;
-    background:var(--ledger); color:var(--gold-light);
+  .id-avatar{
+    width:96px; height:96px; border-radius:50%; margin:0 auto 16px;
+    background:linear-gradient(135deg, var(--emerald-dim), var(--surface-2));
     display:flex; align-items:center; justify-content:center;
-    font-size:20px; margin-bottom:14px;
+    font-size:32px; font-weight:800; color:var(--emerald); border:1px solid var(--emerald-dim);
   }
-  .card h3{ font-size:18px; margin-bottom:8px; }
-  .card p{ font-size:14px; color:var(--ink-soft); line-height:1.75; margin:0; }
+  .id-card h3{ font-size:18px; margin-bottom:4px; }
+  .id-card .role{ font-family:var(--mono); font-size:12px; color:var(--muted); margin-bottom:18px; }
+  .id-row{ display:flex; justify-content:space-between; font-size:12.5px; padding:9px 0; border-top:1px solid var(--border-soft); color:var(--text-soft); }
+  .id-row span:first-child{ color:var(--muted); }
 
+  .skill{ margin-bottom:16px; }
+  .skill .label{ display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:6px; font-weight:600; }
+  .skill .label .pct{ font-family:var(--mono); color:var(--emerald); }
+  .skill .bar{ height:6px; background:var(--surface-2); border-radius:4px; overflow:hidden; }
+  .skill .bar span{ display:block; height:100%; background:linear-gradient(90deg, var(--emerald-dim), var(--emerald)); border-radius:4px; }
+
+  /* ===== Services / Tools / Portfolio cards ===== */
+  .card h3{ font-size:17px; margin-bottom:8px; }
+  .card p{ font-size:13.5px; color:var(--text-soft); line-height:1.75; margin:0; }
   .tool-card{ display:flex; flex-direction:column; }
   .tool-card .btn{ margin-top:16px; align-self:flex-start; }
   .badge{
-    display:inline-block; font-size:11px; padding:3px 10px;
-    background:var(--paper-dark); color:var(--muted); border:1px solid var(--line);
-    margin-bottom:10px; font-weight:700;
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:var(--mono); font-size:10.5px; padding:4px 10px; border-radius:20px;
+    background:var(--surface-2); color:var(--muted); border:1px solid var(--border-soft);
+    margin-bottom:12px; font-weight:600;
   }
-  .badge.live{ background:#EAF3EC; color:var(--ledger); border-color:var(--ledger); }
+  .badge.live{ background:rgba(61,220,151,0.1); color:var(--emerald); border-color:var(--emerald-dim); }
+  .badge.live::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--emerald); box-shadow:0 0 6px var(--emerald); }
 
   /* calculator */
-  .calc-box{ background:#fff; border:1px solid var(--line); padding:20px; margin-top:14px; }
+  .calc-box{ background:var(--bg); border:1px solid var(--border-soft); border-radius:10px; padding:18px; margin-top:14px; }
   .calc-row{ display:flex; gap:10px; margin-bottom:10px; align-items:center; flex-wrap:wrap; }
-  .calc-row label{ font-size:13px; font-weight:700; width:120px; }
+  .calc-row label{ font-size:12.5px; font-weight:600; width:110px; color:var(--text-soft); }
   .calc-row input{
-    flex:1; min-width:120px; padding:9px 10px; border:1px solid var(--line);
-    font-family:'Tajawal', sans-serif; font-size:14px; background:#FBF8EF;
+    flex:1; min-width:100px; padding:9px 10px; border:1px solid var(--border-soft); border-radius:8px;
+    font-family:var(--mono); font-size:13.5px; background:var(--surface); color:var(--text);
   }
   .calc-result{
-    margin-top:12px; padding:12px 14px; font-weight:700; font-size:14px;
-    border-right:4px solid var(--gold);
+    margin-top:12px; padding:12px 14px; font-weight:700; font-size:13.5px; border-radius:8px;
+    border-right:3px solid var(--muted); font-family:var(--mono);
   }
-  .calc-result.balanced{ background:#EAF3EC; color:var(--ledger); border-color:var(--ledger); }
-  .calc-result.unbalanced{ background:#FBEAEA; color:var(--red); border-color:var(--red); }
+  .calc-result.balanced{ background:rgba(61,220,151,0.08); color:var(--emerald); border-color:var(--emerald); }
+  .calc-result.unbalanced{ background:rgba(240,97,109,0.08); color:var(--red); border-color:var(--red); }
 
-  .blog-date{ font-size:12px; color:var(--gold); font-weight:700; margin-bottom:6px; }
+  .blog-date{ font-family:var(--mono); font-size:11.5px; color:var(--gold); font-weight:600; margin-bottom:8px; }
 
   .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:36px; }
   @media (max-width:700px){ .contact-grid{ grid-template-columns:1fr; } }
-  .contact-item{ margin-bottom:18px; }
-  .contact-item .lbl{ font-size:12px; color:var(--gold); font-weight:700; margin-bottom:3px; }
-  .contact-item .val{ font-size:15px; }
-  .social-row{ display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+  .contact-item{ display:flex; align-items:flex-start; gap:12px; margin-bottom:20px; }
+  .contact-item .ic{ width:36px; height:36px; border-radius:9px; background:var(--surface); border:1px solid var(--border-soft); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--emerald); }
+  .contact-item .ic svg{ width:16px; height:16px; }
+  .contact-item .lbl{ font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:3px; }
+  .contact-item .val{ font-size:14.5px; }
+  .social-row{ display:flex; gap:10px; margin-top:6px; flex-wrap:wrap; }
   .social-row a{
-    padding:9px 16px; border:1px solid var(--ledger); font-size:13px; font-weight:700;
-    text-decoration:none; color:var(--ledger);
+    padding:9px 16px; border:1px solid var(--border-soft); border-radius:8px; font-size:13px; font-weight:600;
+    text-decoration:none; color:var(--text-soft); display:inline-flex; align-items:center; gap:7px;
   }
-  .social-row a:hover{ background:var(--ledger); color:var(--paper); }
+  .social-row a svg{ width:14px; height:14px; }
+  .social-row a:hover{ border-color:var(--emerald); color:var(--emerald); }
 
   #contactForm{ display:flex; flex-direction:column; gap:12px; }
   #contactForm input, #contactForm textarea{
-    padding:11px 12px; border:1px solid var(--line); background:#fff;
-    font-family:'Tajawal', sans-serif; font-size:14px;
+    padding:12px 14px; border:1px solid var(--border-soft); border-radius:9px; background:var(--surface); color:var(--text);
+    font-family:var(--sans); font-size:14px;
   }
   #contactForm textarea{ min-height:110px; resize:vertical; }
+  #contactForm input:focus, #contactForm textarea:focus{ outline:none; border-color:var(--emerald); }
 </style>
 </head>
 <body>
 
 <header class="site-nav">
   <div class="container">
-    <div class="brand">مؤمن <span>أحمد</span></div>
+    <div class="brand"><span class="dot"></span>مؤمن <span>أحمد</span></div>
     <button class="navtoggle" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
     <nav id="mainNav">
       <a href="#home">الرئيسية</a>
@@ -108,13 +158,59 @@
 </header>
 
 <section id="home" class="hero">
-  <div class="container">
-    <div class="eyebrow">محاسب مالي · مطوّر أدوات محاسبية</div>
-    <h1>مرحبًا، أنا مؤمن أحمد</h1>
-    <p>محاسب مالي أبني أدوات وأنظمة تقنية تخدم المحاسبين — من اختبارات الكفاءة إلى أنظمة ERP وأدوات معالجة البيانات.</p>
-    <div class="actions">
-      <a href="#tools" class="btn btn-gold">جرّب اختبار الكفاءة المحاسبية</a>
-      <a href="#contact" class="btn btn-outline" style="border-color:var(--gold);color:var(--paper);">تواصل معي</a>
+  <div class="container hero-grid">
+    <div>
+      <div class="badge-row">
+        <span class="pill"><i data-lucide="terminal"></i> Accounting × Code</span>
+        <span class="pill"><i data-lucide="map-pin"></i> القاهرة، مصر</span>
+      </div>
+      <h1>مرحبًا، أنا <span class="accent">مؤمن أحمد</span><br>محاسب مالي بيبني أدوات فعلية</h1>
+      <p class="lead">أدمج المحاسبة المالية بالتقنية — من اختبارات الكفاءة إلى أنظمة ERP وأدوات معالجة بيانات حقيقية تخدم محاسبين.</p>
+      <div class="actions">
+        <a href="#tools" class="btn btn-primary"><i data-lucide="play"></i> جرّب اختبار الكفاءة</a>
+        <a href="#contact" class="btn btn-outline"><i data-lucide="mail"></i> تواصل معي</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="glow-blob"></div>
+      <svg viewBox="0 0 440 380" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:relative; z-index:1;">
+        <ellipse cx="220" cy="330" rx="150" ry="18" fill="#121926"/>
+        <!-- person -->
+        <rect x="150" y="150" width="70" height="90" rx="24" fill="#161F2E" stroke="#232E40"/>
+        <circle cx="185" cy="130" r="26" fill="#1B2433" stroke="#232E40"/>
+        <path d="M160 210 L140 240" stroke="#232E40" stroke-width="10" stroke-linecap="round"/>
+        <path d="M210 210 L230 235" stroke="#232E40" stroke-width="10" stroke-linecap="round"/>
+        <!-- desk -->
+        <rect x="90" y="270" width="260" height="10" rx="4" fill="#1B2433"/>
+        <!-- laptop base -->
+        <path d="M150 268 L290 268 L300 248 L140 248 Z" fill="#161F2E" stroke="#232E40"/>
+        <!-- laptop screen -->
+        <rect x="150" y="150" width="140" height="98" rx="8" fill="#0E1420" stroke="#232E40" stroke-width="2"/>
+        <rect x="160" y="162" width="120" height="74" rx="4" fill="#0A0E13"/>
+        <!-- typing lines -->
+        <rect class="type-line" x="170" y="176" width="60" height="6" rx="3" fill="#3DDC97"/>
+        <rect class="type-line l2" x="170" y="190" width="90" height="6" rx="3" fill="#E0B15C"/>
+        <rect class="type-line l3" x="170" y="204" width="45" height="6" rx="3" fill="#3DDC97"/>
+        <rect class="type-line l4" x="170" y="218" width="75" height="6" rx="3" fill="#7C8BA0"/>
+        <rect class="cursor-blink" x="170" y="176" width="3" height="40" fill="#3DDC97"/>
+        <!-- floating chart -->
+        <g class="float-item">
+          <rect x="335" y="150" width="16" height="70" rx="8" fill="none" stroke="#232E40"/>
+          <rect x="341" y="185" width="4" height="35" rx="2" fill="#3DDC97"/>
+        </g>
+        <g class="float-item f2" transform="translate(345,90)">
+          <circle cx="14" cy="14" r="26" fill="#161F2E" stroke="#E0B15C" stroke-width="2"/>
+          <text x="14" y="20" font-family="JetBrains Mono" font-size="16" fill="#E0B15C" text-anchor="middle">$</text>
+        </g>
+        <g class="float-item f3" transform="translate(60,110)">
+          <circle cx="16" cy="16" r="24" fill="#161F2E" stroke="#3DDC97" stroke-width="2"/>
+          <polyline points="7,20 13,13 18,17 25,8" fill="none" stroke="#3DDC97" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <g class="float-item f2" transform="translate(70,220)">
+          <rect width="34" height="26" rx="6" fill="#161F2E" stroke="#232E40"/>
+          <path d="M6 18 L10 12 L14 16 L20 8 L28 8" fill="none" stroke="#E0B15C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
     </div>
   </div>
 </section>
@@ -124,36 +220,43 @@
     <div class="eyebrow">من أنا؟</div>
     <h2 class="section-title">محاسب مالي محترف، وشغوف بالتقنية</h2>
     <div class="about-grid" style="margin-top:30px;">
-      <div class="avatar">م أ</div>
+      <div class="id-card">
+        <div class="id-avatar">م أ</div>
+        <h3>مؤمن أحمد</h3>
+        <div class="role">Financial Accountant · Tool Builder</div>
+        <div class="id-row"><span>الشركة</span><span>Xceed / WE Telecom</span></div>
+        <div class="id-row"><span>المؤهل</span><span>بكالوريوس تجارة — الأزهر</span></div>
+        <div class="id-row"><span>المدينة</span><span>القاهرة، مصر</span></div>
+      </div>
       <div>
-        <p style="font-size:15px; line-height:1.9; color:var(--ink-soft); margin-bottom:24px;">
+        <p style="font-size:15px; line-height:1.9; color:var(--text-soft); margin-bottom:26px;">
           أنا مؤمن أحمد، محاسب مالي حاصل على بكالوريوس تجارة تخصص محاسبة من كلية التجارة – جامعة الأزهر.
           أعمل حاليًا في خدمة العملاء بشركة Xceed (المُشغّلة لصالح WE Telecom Egypt)، وخلفيتي تمتد من المحاسبة
           إلى تطوير الويب بلغة Python وهندسة البرومبت والذكاء الاصطناعي. أؤمن بأن أكبر فرصة لأي محاسب اليوم هي
           الجمع بين المعرفة المحاسبية والأدوات التقنية — ولذلك أبني أدوات فعلية تحل مشاكل محاسبين حقيقيين، بدل
           الاكتفاء بالمعرفة النظرية.
         </p>
-        <div class="skill"><div class="label"><span>المحاسبة المالية</span><span>95%</span></div><div class="bar"><span style="width:95%"></span></div></div>
-        <div class="skill"><div class="label"><span>Excel وتحليل البيانات</span><span>90%</span></div><div class="bar"><span style="width:90%"></span></div></div>
-        <div class="skill"><div class="label"><span>تطوير الويب (Python / JS)</span><span>75%</span></div><div class="bar"><span style="width:75%"></span></div></div>
-        <div class="skill"><div class="label"><span>هندسة البرومبت وأدوات AI</span><span>80%</span></div><div class="bar"><span style="width:80%"></span></div></div>
+        <div class="skill"><div class="label"><span>المحاسبة المالية</span><span class="pct">95%</span></div><div class="bar"><span style="width:95%"></span></div></div>
+        <div class="skill"><div class="label"><span>Excel وتحليل البيانات</span><span class="pct">90%</span></div><div class="bar"><span style="width:90%"></span></div></div>
+        <div class="skill"><div class="label"><span>تطوير الويب (Python / JS)</span><span class="pct">75%</span></div><div class="bar"><span style="width:75%"></span></div></div>
+        <div class="skill"><div class="label"><span>هندسة البرومبت وأدوات AI</span><span class="pct">80%</span></div><div class="bar"><span style="width:80%"></span></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="services" style="background:var(--paper-dark);">
+<section id="services" style="background:var(--bg-alt);">
   <div class="container">
     <div class="eyebrow">خدماتي</div>
     <h2 class="section-title">إزاي أقدر أساعدك</h2>
     <p class="section-desc">خدمات محاسبية تقليدية، ممزوجة بخبرتي في بناء أدوات تقنية.</p>
     <div class="grid grid-3">
-      <div class="card"><div class="service-icon">🎓</div><h3>تدريب محاسبي</h3><p>دورات في المحاسبة المالية، تحليل البيانات، واستخدام Excel وأدوات المحاسبة الحديثة.</p></div>
-      <div class="card"><div class="service-icon">✍️</div><h3>كتابة مقالات محاسبية</h3><p>محتوى محاسبي ومالي متخصص بطريقة مبسطة تناسب المبتدئين والمحترفين.</p></div>
-      <div class="card"><div class="service-icon">📄</div><h3>إعداد سير ذاتية</h3><p>سير ذاتية احترافية للمحاسبين، متوافقة مع أنظمة تتبع المتقدمين (ATS).</p></div>
-      <div class="card"><div class="service-icon">💬</div><h3>استشارات أونلاين</h3><p>جلسات استشارية لحل المشكلات المحاسبية واتخاذ القرارات المالية الصحيحة.</p></div>
-      <div class="card"><div class="service-icon">🛠️</div><h3>أدوات محاسبية مخصصة</h3><p>بناء أدوات ويب تحل مشاكل فعلية — دمج ملفات إكسيل، اختبارات تقييم، أنظمة تقارير.</p></div>
-      <div class="card"><div class="service-icon">🤖</div><h3>حلول مدعومة بالذكاء الاصطناعي</h3><p>دمج أدوات AI في العمل المحاسبي — من المراجعة الآلية إلى أتمتة التقارير.</p></div>
+      <div class="card"><div class="icon-chip"><i data-lucide="graduation-cap"></i></div><h3>تدريب محاسبي</h3><p>دورات في المحاسبة المالية، تحليل البيانات، واستخدام Excel وأدوات المحاسبة الحديثة.</p></div>
+      <div class="card"><div class="icon-chip gold"><i data-lucide="pen-line"></i></div><h3>كتابة مقالات محاسبية</h3><p>محتوى محاسبي ومالي متخصص بطريقة مبسطة تناسب المبتدئين والمحترفين.</p></div>
+      <div class="card"><div class="icon-chip"><i data-lucide="file-text"></i></div><h3>إعداد سير ذاتية</h3><p>سير ذاتية احترافية للمحاسبين، متوافقة مع أنظمة تتبع المتقدمين (ATS).</p></div>
+      <div class="card"><div class="icon-chip gold"><i data-lucide="message-circle"></i></div><h3>استشارات أونلاين</h3><p>جلسات استشارية لحل المشكلات المحاسبية واتخاذ القرارات المالية الصحيحة.</p></div>
+      <div class="card"><div class="icon-chip"><i data-lucide="wrench"></i></div><h3>أدوات محاسبية مخصصة</h3><p>بناء أدوات ويب تحل مشاكل فعلية — دمج ملفات إكسيل، اختبارات تقييم، أنظمة تقارير.</p></div>
+      <div class="card"><div class="icon-chip gold"><i data-lucide="bot"></i></div><h3>حلول مدعومة بالذكاء الاصطناعي</h3><p>دمج أدوات AI في العمل المحاسبي — من المراجعة الآلية إلى أتمتة التقارير.</p></div>
     </div>
   </div>
 </section>
@@ -166,45 +269,45 @@
     <div class="grid grid-3">
       <div class="card tool-card">
         <span class="badge live">شغّال الآن</span>
-        <div class="tool-icon">📝</div>
+        <div class="icon-chip"><i data-lucide="clipboard-check"></i></div>
         <h3>اختبار الكفاءة المحاسبية</h3>
         <p>٣٠ سؤال متدرج الصعوبة يغطي مستوى المحاسب العام ومدير الحسابات، مع نتيجة فورية وتصنيف مستوى.</p>
-        <a href="/exams/accounting-general.html" class="btn btn-primary">ابدأ الاختبار</a>
+        <a href="/exams/accounting-general.html" class="btn btn-primary"><i data-lucide="arrow-left"></i> ابدأ الاختبار</a>
       </div>
       <div class="card tool-card">
         <span class="badge">قيد التطوير</span>
-        <div class="tool-icon">📊</div>
+        <div class="icon-chip gold"><i data-lucide="bar-chart-3"></i></div>
         <h3>أداة دمج ومطابقة ملفات إكسيل</h3>
         <p>أداة متصفح تساعد المحاسبين على دمج وتسوية شيتات إكسيل مختلفة الأعمدة، وإخراج تقرير جاهز.</p>
       </div>
       <div class="card tool-card">
         <span class="badge live">تفاعلية</span>
-        <div class="tool-icon">⚖️</div>
+        <div class="icon-chip"><i data-lucide="scale"></i></div>
         <h3>حاسبة المعادلة المحاسبية</h3>
         <p>تأكد سريعًا إن الأصول = الالتزامات + حقوق الملكية.</p>
         <div class="calc-box">
           <div class="calc-row"><label>الأصول</label><input type="number" id="calcAssets" placeholder="0" oninput="calcBalance()"></div>
           <div class="calc-row"><label>الالتزامات</label><input type="number" id="calcLiab" placeholder="0" oninput="calcBalance()"></div>
           <div class="calc-row"><label>حقوق الملكية</label><input type="number" id="calcEquity" placeholder="0" oninput="calcBalance()"></div>
-          <div class="calc-result" id="calcResult">أدخل القيم للتحقق من التوازن</div>
+          <div class="calc-result" id="calcResult" style="border-color:var(--border-soft); color:var(--text-soft);">أدخل القيم للتحقق من التوازن</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="portfolio" style="background:var(--paper-dark);">
+<section id="portfolio" style="background:var(--bg-alt);">
   <div class="container">
     <div class="eyebrow">معرض الأعمال</div>
     <h2 class="section-title">مشاريع بنيتها</h2>
     <p class="section-desc">مشاريع تقنية حقيقية — مش قوالب — بعضها للاستخدام الشخصي، وبعضها منتجات كاملة.</p>
     <div class="grid grid-3">
-      <div class="card"><div class="proj-icon">🏢</div><h3>رَقِيّ</h3><p>نظام ERP متعدد الصفحات (React/TypeScript/Vite) منشور عبر Cloudflare Pages.</p></div>
-      <div class="card"><div class="proj-icon">🔍</div><h3>مُدقِّق</h3><p>أداة تدقيق قوائم مالية عربية مدعومة بالذكاء الاصطناعي، بمحاكاة وكلاء متوازية.</p></div>
-      <div class="card"><div class="proj-icon">📥</div><h3>الشبّاك</h3><p>أداة Flask لتحميل الفيديو والصوت بواجهة ويب، مع نظام احتياطي لفيسبوك.</p></div>
-      <div class="card"><div class="proj-icon">🍽️</div><h3>مطعمي ERP Pro</h3><p>نظام ERP تجاري لمطاعم (Flask/SQLite) بمحاسبة متوافقة مع IFRS وصلاحيات مستخدمين.</p></div>
-      <div class="card"><div class="proj-icon">💬</div><h3>بوت تليجرام محاسبي</h3><p>بوت بآليات اشتراك إجباري وروابط أفلييت، يعمل على Pydroid 3.</p></div>
-      <div class="card"><div class="proj-icon">🧩</div><h3>مُهندس البرومبت</h3><p>شات بوت هندسة برومبت (Vanilla JS + Gemini API) منشور على GitHub Pages.</p></div>
+      <div class="card"><div class="icon-chip"><i data-lucide="building-2"></i></div><h3>رَقِيّ</h3><p>نظام ERP متعدد الصفحات (React/TypeScript/Vite) منشور عبر Cloudflare Pages.</p></div>
+      <div class="card"><div class="icon-chip gold"><i data-lucide="search-check"></i></div><h3>مُدقِّق</h3><p>أداة تدقيق قوائم مالية عربية مدعومة بالذكاء الاصطناعي، بمحاكاة وكلاء متوازية.</p></div>
+      <div class="card"><div class="icon-chip"><i data-lucide="download"></i></div><h3>الشبّاك</h3><p>أداة Flask لتحميل الفيديو والصوت بواجهة ويب، مع نظام احتياطي لفيسبوك.</p></div>
+      <div class="card"><div class="icon-chip gold"><i data-lucide="utensils"></i></div><h3>مطعمي ERP Pro</h3><p>نظام ERP تجاري لمطاعم (Flask/SQLite) بمحاسبة متوافقة مع IFRS وصلاحيات مستخدمين.</p></div>
+      <div class="card"><div class="icon-chip"><i data-lucide="send"></i></div><h3>بوت تليجرام محاسبي</h3><p>بوت بآليات اشتراك إجباري وروابط أفلييت، يعمل على Pydroid 3.</p></div>
+      <div class="card"><div class="icon-chip gold"><i data-lucide="terminal-square"></i></div><h3>مُهندس البرومبت</h3><p>شات بوت هندسة برومبت (Vanilla JS + Gemini API) منشور على GitHub Pages.</p></div>
     </div>
   </div>
 </section>
@@ -236,20 +339,20 @@
   </div>
 </section>
 
-<section id="contact" style="background:var(--paper-dark);">
+<section id="contact" style="background:var(--bg-alt);">
   <div class="container">
     <div class="eyebrow">تواصل معي</div>
     <h2 class="section-title">لنبقى على تواصل</h2>
     <p class="section-desc">لو محتاج استشارة محاسبية، أو عايز تتكلم عن أي من الأدوات، تواصل معايا بأي طريقة من دول.</p>
     <div class="contact-grid">
       <div>
-        <div class="contact-item"><div class="lbl">العنوان</div><div class="val">القاهرة، مصر</div></div>
-        <div class="contact-item"><div class="lbl">الهاتف</div><div class="val">+201124316097</div></div>
-        <div class="contact-item"><div class="lbl">البريد الإلكتروني</div><div class="val">moamenahmd85@gmail.com</div></div>
+        <div class="contact-item"><div class="ic"><i data-lucide="map-pin"></i></div><div><div class="lbl">العنوان</div><div class="val">القاهرة، مصر</div></div></div>
+        <div class="contact-item"><div class="ic"><i data-lucide="phone"></i></div><div><div class="lbl">الهاتف</div><div class="val">+201124316097</div></div></div>
+        <div class="contact-item"><div class="ic"><i data-lucide="mail"></i></div><div><div class="lbl">البريد الإلكتروني</div><div class="val">moamenahmd85@gmail.com</div></div></div>
         <div class="social-row">
-          <a href="https://wa.me/201154960694" target="_blank">واتساب</a>
-          <a href="https://www.linkedin.com/in/moamen-ahmed-900921223" target="_blank">LinkedIn</a>
-          <a href="https://www.facebook.com/acc.mo.men.ahmed.mohamed" target="_blank">Facebook</a>
+          <a href="https://wa.me/201154960694" target="_blank"><i data-lucide="message-circle"></i> واتساب</a>
+          <a href="https://www.linkedin.com/in/moamen-ahmed-900921223" target="_blank"><i data-lucide="linkedin"></i> LinkedIn</a>
+          <a href="https://www.facebook.com/acc.mo.men.ahmed.mohamed" target="_blank"><i data-lucide="facebook"></i> Facebook</a>
         </div>
       </div>
       <form id="contactForm" onsubmit="return sendContact(event)">
@@ -257,7 +360,7 @@
         <input type="email" placeholder="البريد الإلكتروني" required>
         <input type="text" placeholder="الموضوع">
         <textarea placeholder="الرسالة" required></textarea>
-        <button type="submit" class="btn btn-primary">إرسال الرسالة</button>
+        <button type="submit" class="btn btn-primary"><i data-lucide="send"></i> إرسال الرسالة</button>
       </form>
     </div>
   </div>
@@ -275,6 +378,8 @@
 </footer>
 
 <script>
+lucide.createIcons();
+
 function calcBalance(){
   const a = parseFloat(document.getElementById('calcAssets').value) || 0;
   const l = parseFloat(document.getElementById('calcLiab').value) || 0;
@@ -282,6 +387,8 @@ function calcBalance(){
   const box = document.getElementById('calcResult');
   if(a===0 && l===0 && e===0){
     box.className = 'calc-result';
+    box.style.borderColor = 'var(--border-soft)';
+    box.style.color = 'var(--text-soft)';
     box.textContent = 'أدخل القيم للتحقق من التوازن';
     return;
   }
