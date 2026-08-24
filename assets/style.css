@@ -18,6 +18,45 @@
   --sans: 'Tajawal', sans-serif;
   --radius:14px;
 }
+
+/* Light "day" theme — same ledger-terminal identity, flipped for daylight reading */
+:root[data-theme="light"]{
+  --bg:#F3F0E6;
+  --bg-alt:#EAE5D6;
+  --surface:#FFFFFF;
+  --surface-2:#F1EEE2;
+  --border:#DAD3BE;
+  --border-soft:#E4DFCE;
+  --text:#1A2238;
+  --text-soft:#4A5568;
+  --muted:#7A7364;
+  --emerald:#1D9A6C;
+  --emerald-dim:#B9EAD5;
+  --gold:#A8752C;
+  --gold-dim:#F1DFB8;
+  --red:#C23B49;
+}
+:root[data-theme="light"] body{
+  background-image:
+    radial-gradient(circle at 18% 0%, rgba(29,154,108,0.06), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(168,117,44,0.05), transparent 40%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
+}
+:root[data-theme="light"] .btn-primary{ color:#F3FBF7; }
+
+/* Theme toggle button */
+.theme-toggle{
+  width:34px; height:34px; border-radius:9px;
+  background:var(--surface-2); border:1px solid var(--border-soft); color:var(--text-soft);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  flex-shrink:0;
+}
+.theme-toggle:hover{ border-color:var(--emerald); color:var(--emerald); }
+.theme-toggle svg{ width:16px; height:16px; }
+.theme-toggle .icon-moon{ display:block; }
+.theme-toggle .icon-sun{ display:none; }
+:root[data-theme="light"] .theme-toggle .icon-moon{ display:none; }
+:root[data-theme="light"] .theme-toggle .icon-sun{ display:block; }
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{
