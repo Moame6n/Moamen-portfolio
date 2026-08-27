@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار  في المحاسبة الإدارية | مؤمن أحمد</title>
+<meta name="description" content="اختبار يغطي أساسيات محاسبة التكاليف — عناصر التكلفة، أنظمة التكاليف، نقطة التعادل، وتحليل الانحرافات.">
+<meta name="icon" content="clipboard-check">
+<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/exams/managerial-accounting-test.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="اختبار  في المحاسبة الإدارية | مؤمن أحمد">
+<meta property="og:description" content="اختبار يغطي أساسيات محاسبة التكاليف — عناصر التكلفة، أنظمة التكاليف، نقطة التعادل، وتحليل الانحرافات.">
+<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/exams/managerial-accounting-test.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0E13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script src="/assets/theme.js"></script>
+<style>
+  body{ display:flex; align-items:flex-start; justify-content:center; padding:32px 16px 80px; }
+  .sheet{
+    width:100%; max-width:720px; background:var(--surface);
+    border:1px solid var(--border-soft);
+    box-shadow:0 2px 0 var(--border-soft), 0 18px 40px -20px rgba(26,34,56,0.45);
+    position:relative; overflow:hidden;
+  }
+  header.top{
+    background:var(--surface); color:var(--text);
+    padding:26px 32px 22px; border-bottom:2px solid var(--emerald);
+    position:relative;
+  }
+  header.top a.back{ color:var(--emerald); font-size:12.5px; text-decoration:none; }
+  header.top h1{ color:var(--text); font-size:28px; margin:10px 0 6px; }
+  header.top p{ margin:0; font-size:13.5px; color:var(--text-soft); line-height:1.7; }
+
+  .tally{ display:flex; align-items:center; gap:10px; padding:14px 32px; background:var(--surface-2); border-bottom:1px solid var(--border-soft); font-size:12.5px; }
+  .tally .label{ color:var(--emerald); font-weight:700; white-space:nowrap; }
+  .tally-marks{ flex:1; display:flex; gap:3px; flex-wrap:wrap; align-items:flex-end; min-height:16px; }
+  .mark{ width:2px; height:14px; background:var(--border-soft); border-radius:1px; }
+  .mark.done{ background:var(--gold); }
+  .mark.bundle{ margin-left:6px; }
+  .tally .count{ font-weight:700; color:var(--text); white-space:nowrap; }
+
+  main{ padding:30px 32px 20px; }
+  .qnum{ font-family:var(--sans); font-size:15px; color:var(--gold); margin-bottom:6px; }
+  .qtext{ font-size:18px; font-weight:700; line-height:1.75; margin-bottom:20px; }
+  .options{ display:flex; flex-direction:column; gap:10px; }
+  .opt{ display:flex; align-items:center; gap:12px; padding:13px 16px; border:1px solid var(--border-soft); background:var(--surface); cursor:pointer; font-size:15px; line-height:1.6; }
+  .opt:hover{ border-color:var(--gold); background:var(--surface-2); }
+  .opt.selected{ border-color:var(--emerald); background:rgba(61,220,151,0.08); box-shadow:inset 3px 0 0 var(--emerald); }
+  .opt input{ accent-color:var(--emerald); width:17px; height:17px; flex-shrink:0; }
+
+  .navrow{ display:flex; justify-content:space-between; align-items:center; padding:18px 32px 28px; }
+  .hint{ font-size:12.5px; color:var(--muted); }
+  button.navbtn{ font-family:'Tajawal', sans-serif; font-weight:700; font-size:14.5px; padding:12px 26px; border:none; cursor:pointer; background:var(--emerald); color:var(--bg); }
+  button.navbtn:hover:not(:disabled){ background:var(--surface-2); }
+  button.navbtn:disabled{ background:var(--surface-2); color:var(--muted); cursor:not-allowed; }
+
+  /* ===== Leaderboard — mobile-first by design, this is the primary target device ===== */
+  .lb-wrap{ padding:22px 20px 4px; }
+  .lb-title{
+    display:flex; align-items:center; gap:8px; font-size:15px; font-weight:700;
+    color:var(--text); margin-bottom:12px;
+  }
+  .lb-title .trophy{ font-size:18px; }
+  .lb-list{ display:flex; flex-direction:column; gap:6px; }
+  .lb-row{
+    display:flex; align-items:center; gap:10px; padding:9px 12px;
+    background:var(--surface); border:1px solid var(--border-soft); border-radius:9px;
+    min-width:0; /* required so name truncation works inside flex on small screens */
+  }
+  .lb-row.top1{ border-color:var(--gold); background:rgba(224,177,92,0.08); }
+  .lb-row.top2{ border-color:#B9C2CF; }
+  .lb-row.top3{ border-color:#C98A4B; }
+  .lb-rank{
+    width:24px; height:24px; border-radius:50%; background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-family:var(--mono); font-size:11px; font-weight:700; color:var(--text-soft);
+  }
+  .lb-row.top1 .lb-rank{ background:var(--gold); color:#241A05; }
+  .lb-row.top2 .lb-rank{ background:#B9C2CF; color:#1A2238; }
+  .lb-row.top3 .lb-rank{ background:#C98A4B; color:#241A05; }
+  .lb-name{
+    flex:1; min-width:0; font-size:13.5px; color:var(--text);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .lb-pct{
+    flex-shrink:0; font-family:var(--mono); font-size:13px; font-weight:700; color:var(--emerald);
+  }
+  .lb-empty{ font-size:12.5px; color:var(--muted); text-align:center; padding:18px 10px; }
+  .lb-loading{ font-size:12.5px; color:var(--muted); text-align:center; padding:18px 10px; }
+  /* on wider screens, allow the whole leaderboard to breathe a bit more — still same simple list */
+  @media (min-width:520px){
+    .lb-wrap{ padding:26px 32px 6px; }
+    .lb-name{ font-size:14.5px; }
+  }
+
+  .gate{ padding:34px 32px 30px; }
+  .gate p{ line-height:1.9; font-size:15px; margin:0 0 16px; color:var(--text-soft); }
+  .gate label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
+  .gate input{ width:100%; padding:12px 14px; border:1px solid var(--border-soft); background:var(--surface); color:var(--text); font-family:'Tajawal', sans-serif; font-size:15px; margin-bottom:16px; }
+  .gate .req{ color:var(--red); }
+  .gate .err{ color:var(--red); font-size:12.5px; margin-top:-10px; margin-bottom:14px; display:none; }
+
+  .intro ul{ margin:0 0 22px; padding-right:20px; line-height:1.9; font-size:14.5px; color:var(--text-soft); }
+  .startbtn{ width:100%; padding:15px; font-size:16px; }
+
+  .results{ padding:0; text-align:center; }
+  .stamp-zone{ padding:44px 32px 10px; display:flex; flex-direction:column; align-items:center; }
+  .stamp{
+    width:168px; height:168px; border:5px solid var(--red); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; flex-direction:column; color:var(--red);
+    transform:scale(2.4) rotate(-14deg); opacity:0;
+    animation:stampdown .5s cubic-bezier(.2,.9,.3,1.1) forwards; animation-delay:.15s; position:relative;
+  }
+  .stamp::before{ content:''; position:absolute; inset:8px; border:1.5px solid var(--red); border-radius:50%; }
+  .stamp .pct{ font-family:var(--sans); font-size:38px; font-weight:700; line-height:1; }
+  .stamp .lbl{ font-size:11px; letter-spacing:1px; margin-top:4px; }
+  @keyframes stampdown{
+    0%{ transform:scale(2.4) rotate(-14deg); opacity:0; }
+    60%{ transform:scale(0.92) rotate(-14deg); opacity:1; }
+    100%{ transform:scale(1) rotate(-14deg); opacity:1; }
+  }
+  .grade-title{ font-size:26px; margin:20px 0 6px; }
+  .grade-desc{ font-size:14.5px; color:var(--text-soft); max-width:480px; margin:0 auto 26px; line-height:1.8; padding:0 20px; }
+  .score-row{ display:flex; justify-content:center; gap:36px; padding:18px 20px; border-top:1px dashed var(--border-soft); border-bottom:1px dashed var(--border-soft); margin-bottom:26px; }
+  .score-item .num{ font-size:22px; font-weight:900; color:var(--emerald); }
+  .score-item .txt{ font-size:11.5px; color:var(--muted); }
+  .btnrow{ display:flex; gap:10px; justify-content:center; padding:0 32px 34px; flex-wrap:wrap; }
+  .savenote{ font-size:12px; color:var(--muted); margin-bottom:18px; }
+
+  .review{ display:none; text-align:right; padding:24px 32px 34px; }
+  .review.show{ display:block; }
+  .rq{ border:1px solid var(--border-soft); background:var(--surface); padding:16px 18px; margin-bottom:14px; }
+  .rq .rqtext{ font-weight:700; margin-bottom:10px; line-height:1.7; }
+  .rq .rline{ font-size:13.5px; padding:6px 10px; margin-bottom:4px; line-height:1.6; }
+  .rq .rline.wrong{ background:rgba(240,97,109,0.08); color:var(--red); }
+  .rq .rline.right{ background:rgba(61,220,151,0.08); color:var(--emerald); }
+
+  @media (max-width:520px){
+    header.top{ padding:20px 20px 18px; } main{ padding:22px 20px 14px; }
+    .navrow{ padding:14px 20px 24px; } .gate{ padding:26px 20px 24px; }
+    .qtext{ font-size:16.5px; } .review{ padding:20px 18px 26px; }
+  }
+  @media (prefers-reduced-motion: reduce){ .stamp{ animation:none; opacity:1; transform:scale(1) rotate(-14deg); } }
+  #errBanner{
+    display:none; background:#8B3A3A; color:#fff; font-size:13px;
+    padding:12px 16px; text-align:center; direction:ltr; word-break:break-word;
+  }
+</style>
+</head>
+<body>
+<div id="errBanner"></div>
+<div class="sheet">
+
+  <header class="top" style="position:relative;">
+    <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري" style="position:absolute; top:26px; left:32px;">
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <a class="back" href="/#tools">→ رجوع للبورتفوليو</a>
+    <h1>اختبار الكفاءة المحاسبية</h1>
+    <p>اختبار يغطي أساسيات محاسبة التكاليف — عناصر التكلفة، أنظمة التكاليف، نقطة التعادل، وتحليل الانحرافات.</p>
+  </header>
+
+  <div class="lb-wrap">
+    <div class="lb-title"><span class="trophy">🏆</span> لوحة الصدارة</div>
+    <div class="lb-list" id="leaderboardList">
+      <div class="lb-loading">جارِ تحميل الترتيب...</div>
+    </div>
+  </div>
+
+  <div id="gate-screen" class="gate">
+    <p>قبل ما تبدأ، محتاجين اسمك عشان نسجّل نتيجتك. البيانات دي بتتسجل في قاعدة بيانات خاصة بالاختبار.</p>
+    <label>الاسم بالكامل <span class="req">*</span></label>
+    <input type="text" id="gateName" placeholder="اكتب اسمك هنا">
+    <div class="err" id="gateErr">من فضلك اكتب اسمك للمتابعة</div>
+    <label>رقم الهاتف (اختياري)</label>
+    <input type="text" id="gatePhone" placeholder="01xxxxxxxxx">
+    <button class="navbtn startbtn" id="gateNextBtn" type="button">التالي</button>
+  </div>
+
+  <div id="intro-screen" class="intro" style="display:none; padding:8px 32px 30px;">
+    <ul>
+      <li>٣٠ سؤال اختيار من متعدد، سؤال واحد في كل مرة.</li>
+      <li>لا يوجد وقت محدد — خذ وقتك.</li>
+      <li>بعد آخر سؤال تظهر نتيجتك فورًا مع تصنيف مستوى الأداء.</li>
+      <li>يمكنك مراجعة الإجابات الصحيحة بعد إنهاء الاختبار.</li>
+    </ul>
+    <button class="navbtn startbtn" id="startExamBtn" type="button">ابدأ الاختبار</button>
+  </div>
+
+  <div id="exam-screen" style="display:none;">
+    <div class="tally">
+      <span class="label">التقدّم</span>
+      <div class="tally-marks" id="tallyMarks"></div>
+      <span class="count" id="tallyCount">٠ / ٣٠</span>
+    </div>
+    <main>
+      <div class="qnum" id="qnum">السؤال ١</div>
+      <div class="qtext" id="qtext"></div>
+      <div class="options" id="options"></div>
+    </main>
+    <div class="navrow">
+      <span class="hint" id="hint">اختر إجابة للمتابعة</span>
+      <button class="navbtn" id="nextBtn" disabled type="button">التالي</button>
+    </div>
+  </div>
+
+  <div id="results-screen" class="results" style="display:none;">
+    <div class="stamp-zone">
+      <div class="stamp" id="stampEl"><div class="pct" id="stampPct">--%</div><div class="lbl">النتيجة</div></div>
+      <div class="grade-title" id="gradeTitle"></div>
+      <div class="grade-desc" id="gradeDesc"></div>
+    </div>
+    <div class="score-row">
+      <div class="score-item"><div class="num" id="correctNum">0</div><div class="txt">إجابات صحيحة</div></div>
+      <div class="score-item"><div class="num" id="wrongNum">0</div><div class="txt">إجابات خاطئة</div></div>
+      <div class="score-item"><div class="num" id="pctNum">0%</div><div class="txt">النسبة الكلية</div></div>
+    </div>
+    <div class="savenote" id="saveNote">جارِ حفظ نتيجتك...</div>
+    <div class="btnrow" id="shareCertRow" style="display:none;">
+      <button class="navbtn" id="shareWaBtn" type="button" style="background:#25D366; color:#0A1F0F;">مشاركة على واتساب</button>
+      <button class="navbtn" id="shareFbBtn" type="button" style="background:#1877F2; color:#fff;">مشاركة على فيسبوك</button>
+      <button class="navbtn" id="certBtn" type="button" style="background:var(--emerald); color:#08130E; display:none;">تحميل شهادة PDF</button>
+    </div>
+    <div class="btnrow">
+      <button class="navbtn" id="reviewBtn" type="button" style="background:transparent;color:var(--emerald);border:1.5px solid var(--emerald);">مراجعة الإجابات</button>
+      <button class="navbtn" id="restartBtn" type="button" style="background:var(--gold);color:#12190F;">إعادة الاختبار</button>
+      <a href="/#tools" class="navbtn" style="background:transparent;color:var(--text-soft);border:1.5px solid var(--border-soft); text-decoration:none; display:inline-flex; align-items:center;">رجوع للبورتفوليو</a>
+    </div>
+    <div class="review" id="reviewBox"></div>
+  </div>
+
+</div>
+
+<!-- Hidden certificate template — rendered off-screen, captured to image, then embedded in the PDF -->
+<div id="certTemplate" style="position:fixed; top:-9999px; left:-9999px; width:1000px; height:700px; background:#F3F0E6; font-family:'Tajawal',sans-serif; direction:rtl; box-sizing:border-box; padding:40px; border:3px solid #1D9A6C;">
+  <div style="height:100%; border:1px solid #A8752C; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:#A8752C; letter-spacing:3px; margin-bottom:18px;">CERTIFICATE OF ACHIEVEMENT</div>
+    <div style="font-size:24px; color:#4A5568; margin-bottom:10px;">تشهد منصة مؤمن أحمد بأن</div>
+    <div id="certName" style="font-size:44px; font-weight:900; color:#1D9A6C; margin-bottom:14px;">--</div>
+    <div style="font-size:22px; color:#4A5568; margin-bottom:6px;">قد اجتاز(ت) بنجاح</div>
+    <div id="certExamTitle" style="font-size:30px; font-weight:700; color:#1A2238; margin-bottom:20px;">--</div>
+    <div id="certScoreLine" style="font-size:22px; color:#4A5568; margin-bottom:36px;">--</div>
+    <div style="display:flex; justify-content:space-between; width:100%; font-size:14px; color:#7A7364; font-family:'JetBrains Mono',monospace;">
+      <span id="certDate">--</span>
+      <span>moamen-portfolio-pi.vercel.app</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="/assets/supabase-config.js"></script>
+<script>
+// ==== EXAM IDENTITY — change these two lines when duplicating this file for a new exam ====
+const EXAM_SLUG = 'managerial-accounting-test';
+const EXAM_TITLE = 'اختبار  في المحاسبة الإدارية';
+// ============================================================================================
+
+const QUESTIONS = [{"q":"الهدف الأساسي من المحاسبة الإدارية هو","o":["إعداد القوائم المالية للمستثمرين فقط","توفير المعلومات اللازمة للتخطيط والرقابة واتخاذ القرارات","حساب الضرائب فقط","تسجيل العمليات النقدية فقط"],"c":1},{"q":"التكلفة التي لا تتغير إجماليا مع تغير حجم النشاط داخل المدى الملائم تسمى","o":["تكلفه متغيره","تكلفه مختلطه","تكلفه ثابته","تكلفه تفاضليه"],"c":2},{"q":"إذا كان سعر البيع 80 جنيه والتكلفة المتغيرة للوحدة 50 جنيه فإن هامش المساهمة للوحدة يساوي","o":["20 جنيه","30 جنيه","50 جنيه","80 جنيه"],"c":1},{"q":"إذا كانت التكاليف الثابتة 60000 جنيه وهامش المساهمة للوحدة 30 جنيه فإن نقطة التعادل بالوحدات تساوي","o":["1000 وحده","1500 وحده","2000 وحده","3000 وحده"],"c":2},{"q":"هامش الأمان يعبر عن","o":["مقدار زيادة المبيعات الفعلية أو المتوقعة عن مبيعات التعادل","مقدار التكاليف الثابتة عن التكاليف المتغيرة","مقدار الربح قبل خصم الضرائب","مقدار الزيادة في التكلفة المتغيرة"],"c":0},{"q":"الموازنة التي توضح التدفقات النقدية الداخلة والخارجة والمتوقع حدوثها خلال الفترة هي","o":["موازنة المبيعات","موازنة الإنتاج","الموازنة النقدية","الموازنة الرأسمالية"],"c":2},{"q":"إذا كانت المبيعات المتوقعة 100000 جنيه والتكاليف المتغيرة 60000 جنيه فإن نسبة هامش المساهمة تساوي","o":["20 بالمائه","30 بالمائه","40 بالمائه","60 بالمائه"],"c":2},{"q":"الموازنة المرنة تختلف عن الموازنة الثابتة في أنها","o":["لا تستخدم التكاليف المتغيرة","تعدل وفقا لمستوى النشاط الفعلي","تستخدم لفترة طويلة فقط","تعتمد على البيانات التاريخية فقط"],"c":1},{"q":"التكلفة الملائمة لاتخاذ قرار إداري هي التكلفة التي","o":["حدثت في الماضي ولا يمكن تغييرها","تختلف بين البدائل ولها أثر مستقبلي","تكون ثابتة دائما","تظهر في القوائم المالية فقط"],"c":1},{"q":"عند اتخاذ قرار قبول طلب خاص بسعر أقل من السعر العادي، فإن العامل الأهم هو","o":["التكلفة التاريخية","التكاليف المستقبلية الملائمة والإيراد الإضافي","إجمالي التكاليف الثابتة دائما","تكلفة الأصول القديمة"],"c":1},{"q":"التكلفة الغارقة هي","o":["تكلفة مستقبلية تختلف بين البدائل","تكلفة يمكن تجنبها باتخاذ قرار معين","تكلفة حدثت بالفعل ولا يمكن استردادها","تكلفة متغيرة تتغير مع الإنتاج"],"c":2},{"q":"إذا كان لدى الشركة طاقة إنتاجية عاطلة، وكان تصنيع المنتج داخليا يتطلب تكلفة متغيرة 40 جنيه للوحدة، بينما يمكن شراؤه من الخارج مقابل 50 جنيه للوحدة، فإن الأفضل من حيث التكلفة هو","o":["الشراء من الخارج","التصنيع داخليا","إيقاف الإنتاج","لا يمكن اتخاذ القرار"],"c":1},{"q":"إذا كانت التكاليف الثابتة 100000 جنيه ونسبة هامش المساهمة 25 بالمائه فإن مبيعات التعادل تساوي","o":["250000 جنيه","300000 جنيه","400000 جنيه","500000 جنيه"],"c":2},{"q":"في نظام التكاليف على أساس الأنشطة ABC يتم تخصيص التكاليف غير المباشرة باستخدام","o":["عدد الوحدات المنتجة فقط","مسببات التكلفة المرتبطة بالأنشطة","إجمالي المبيعات فقط","التكاليف الثابتة فقط"],"c":1},{"q":"مركز المسؤولية الذي يكون مديره مسؤولا عن التكاليف والإيرادات معا يسمى","o":["مركز تكلفة","مركز استثمار","مركز ربح","مركز إنتاج"],"c":2},{"q":"إذا كان صافي الدخل التشغيلي 50000 جنيه وإجمالي الأصول 250000 جنيه فإن معدل العائد على الاستثمار ROI يساوي","o":["10 بالمائه","15 بالمائه","20 بالمائه","25 بالمائه"],"c":2},{"q":"بطاقة الأداء المتوازن تعتمد على عدة أبعاد رئيسية من أهمها","o":["المالي والعملاء والعمليات الداخلية والتعلم والنمو","المبيعات والمشتريات والمخزون والنقدية فقط","الأصول والخصوم وحقوق الملكية فقط","التكاليف الثابتة والمتغيرة فقط"],"c":0},{"q":"إذا كان المنتج س يحقق هامش مساهمة 30 جنيه ويستهلك 3 ساعات من المورد النادر، بينما المنتج ص يحقق هامش مساهمة 24 جنيه ويستهلك ساعتين، فأي المنتجين يجب إعطاؤه الأولوية؟","o":["المنتج س","المنتج ص","المنتجين متساويين","لا يمكن تحديد ذلك"],"c":1},{"q":"إذا كان الانحراف في سعر المواد المباشرة غير موات والانحراف في كمية المواد موات، فإن أحد التفسيرات المحتملة هو","o":["شراء مواد أرخص أدت إلى زيادة الهدر","شراء مواد أعلى جودة بسعر مرتفع أدت إلى تقليل الكمية المستخدمة","انخفاض سعر المواد مع زيادة الكمية المستخدمة","عدم وجود أي علاقة بين الانحرافين"],"c":1},{"q":"إذا كانت الشركة تحقق مبيعات قدرها 300000 جنيه، وتكاليف متغيرة قدرها 180000 جنيه، وتكاليف ثابتة قدرها 80000 جنيه، فإن الربح التشغيلي يساوي","o":["20000 جنيه","40000 جنيه","60000 جنيه","120000 جنيه"],"c":1}];
+
+function showFatalError(msg){
+  const banner = document.getElementById('errBanner');
+  if(!banner) { alert(msg); return; }
+  banner.textContent = 'حصل خطأ: ' + msg + ' — لو استمرت المشكلة ابعت الرسالة دي للمطوّر.';
+  banner.style.display = 'block';
+}
+window.addEventListener('error', function(e){
+  showFatalError(e.message || 'خطأ غير معروف في تحميل الصفحة');
+});
+
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let examStartedAt = null;
+let taker = { name:'', phone:'' };
+
+function submitGate(){
+  const name = document.getElementById('gateName').value.trim();
+  const phone = document.getElementById('gatePhone').value.trim();
+  if(!name){
+    document.getElementById('gateErr').style.display = 'block';
+    return;
+  }
+  taker.name = name;
+  taker.phone = phone;
+  document.getElementById('gate-screen').style.display = 'none';
+  document.getElementById('intro-screen').style.display = 'block';
+}
+
+function startExam(){
+  examStartedAt = new Date().toISOString();
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('exam-screen').style.display = 'block';
+  buildTally();
+  renderQuestion();
+}
+
+function buildTally(){
+  const wrap = document.getElementById('tallyMarks');
+  wrap.innerHTML = '';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const m = document.createElement('div');
+    m.className = 'mark';
+    if((i+1)%5===0) m.classList.add('bundle');
+    wrap.appendChild(m);
+  }
+}
+function updateTally(){
+  const marks = document.querySelectorAll('.mark');
+  marks.forEach((m,i)=>{ if(i < current) m.classList.add('done'); else m.classList.remove('done'); });
+  const ar = n => n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+  document.getElementById('tallyCount').textContent = `${ar(current)} / ${ar(QUESTIONS.length)}`;
+}
+function renderQuestion(){
+  const item = QUESTIONS[current];
+  const ar = n => n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+  document.getElementById('qnum').textContent = `السؤال ${ar(current+1)}`;
+  document.getElementById('qtext').textContent = item.q;
+  const optWrap = document.getElementById('options');
+  optWrap.innerHTML = '';
+  item.o.forEach((optText, idx) => {
+    const label = document.createElement('label');
+    label.className = 'opt' + (answers[current]===idx ? ' selected' : '');
+    label.innerHTML = `<input type="radio" name="opt" ${answers[current]===idx?'checked':''}> <span>${optText}</span>`;
+    label.onclick = () => selectOption(idx);
+    optWrap.appendChild(label);
+  });
+  document.getElementById('nextBtn').disabled = answers[current]===null;
+  document.getElementById('nextBtn').textContent = current === QUESTIONS.length-1 ? 'إنهاء الاختبار' : 'التالي';
+  document.getElementById('hint').textContent = answers[current]===null ? 'اختر إجابة للمتابعة' : '';
+  updateTally();
+}
+function selectOption(idx){
+  answers[current] = idx;
+  document.querySelectorAll('.opt').forEach((el,i)=> el.classList.toggle('selected', i===idx));
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('hint').textContent = '';
+}
+function nextQuestion(){
+  if(current < QUESTIONS.length-1){ current++; renderQuestion(); }
+  else{ showResults(); }
+}
+
+async function showResults(){
+  document.getElementById('exam-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'block';
+
+  let correctCount = 0;
+  answers.forEach((a,i)=>{ if(a === QUESTIONS[i].c) correctCount++; });
+  const total = QUESTIONS.length;
+  const wrongCount = total - correctCount;
+  const pct = Math.round((correctCount/total)*100);
+
+  document.getElementById('correctNum').textContent = correctCount;
+  document.getElementById('wrongNum').textContent = wrongCount;
+  document.getElementById('pctNum').textContent = pct + '%';
+  document.getElementById('stampPct').textContent = pct + '%';
+
+  let title, desc, stampColor;
+  if(pct >= 85){
+    title = 'جاهز لمستوى مدير حسابات';
+    desc = 'أداء قوي وشامل يغطي الأساسيات والتحليل المالي والتكاليف والقرارات الإدارية.';
+    stampColor = 'var(--emerald)';
+  } else if(pct >= 65){
+    title = 'محاسب عام متمكّن';
+    desc = 'أساسيات محاسبية سليمة، مع فجوات في بعض جوانب التحليل الإداري أو التكاليف.';
+    stampColor = 'var(--gold)';
+  } else {
+    title = 'يحتاج إلى تطوير';
+    desc = 'هناك فجوات واضحة في أساسيات أو تطبيقات محاسبية مهمة.';
+    stampColor = 'var(--red)';
+  }
+  document.getElementById('gradeTitle').textContent = title;
+  document.getElementById('gradeDesc').textContent = desc;
+  document.getElementById('stampEl').style.borderColor = stampColor;
+  document.getElementById('stampEl').style.color = stampColor;
+
+  setupShareAndCert(pct, title);
+
+  buildReview();
+  await saveAttempt(correctCount, wrongCount, total, pct, title);
+}
+
+function setupShareAndCert(pct, gradeTitle){
+  const row = document.getElementById('shareCertRow');
+  const examUrl = window.location.href.split('?')[0];
+  const waText = `خدت اختبار ${EXAM_TITLE} وحصلت على ${pct}% (${gradeTitle})! جرب اختبارك من هنا: ${examUrl}`;
+
+  document.getElementById('shareWaBtn').onclick = () => {
+    window.open(`https://wa.me/?text=${encodeURIComponent(waText)}`, '_blank');
+  };
+  document.getElementById('shareFbBtn').onclick = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(examUrl)}`, '_blank', 'width=580,height=520');
+  };
+
+  const certBtn = document.getElementById('certBtn');
+  if(pct >= 65){
+    certBtn.style.display = 'inline-flex';
+    certBtn.onclick = () => generateCertificate(pct, gradeTitle);
+  } else {
+    certBtn.style.display = 'none';
+  }
+
+  row.style.display = 'flex';
+}
+
+async function generateCertificate(pct, gradeTitle){
+  const certBtn = document.getElementById('certBtn');
+  const originalLabel = certBtn.textContent;
+  certBtn.disabled = true;
+  certBtn.textContent = 'جارِ التجهيز...';
+
+  try{
+    document.getElementById('certName').textContent = taker.name || 'المتقدم';
+    document.getElementById('certExamTitle').textContent = EXAM_TITLE;
+    document.getElementById('certScoreLine').textContent = `النتيجة: ${pct}%  —  ${gradeTitle}`;
+    document.getElementById('certDate').textContent = new Date().toLocaleDateString('ar-EG');
+
+    const template = document.getElementById('certTemplate');
+    const canvas = await html2canvas(template, { scale: 2, backgroundColor: '#F3F0E6' });
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    doc.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
+    doc.save(`certificate-${EXAM_SLUG}.pdf`);
+  }catch(err){
+    alert('حصل خطأ أثناء توليد الشهادة، حاول تاني.');
+  }finally{
+    certBtn.disabled = false;
+    certBtn.textContent = originalLabel;
+  }
+}
+
+async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
+  const noteEl = document.getElementById('saveNote');
+  try{
+    const detailedAnswers = QUESTIONS.map((q,i)=>({
+      question:q.q, selected: answers[i], correct: q.c, isCorrect: answers[i]===q.c
+    }));
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/exam_attempts`, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer':'return=minimal'
+      },
+      body: JSON.stringify({
+        exam_slug: EXAM_SLUG,
+        exam_title: EXAM_TITLE,
+        full_name: taker.name,
+        phone: taker.phone || null,
+        correct_count: correctCount,
+        wrong_count: wrongCount,
+        total_questions: total,
+        percentage: pct,
+        grade_label: gradeLabel,
+        answers: detailedAnswers,
+        started_at: examStartedAt,
+        user_agent: navigator.userAgent
+      })
+    });
+    noteEl.textContent = res.ok ? 'تم حفظ نتيجتك بنجاح ✓' : 'تعذّر حفظ النتيجة، لكن تقدر تراجع إجاباتك تحت.';
+    if(res.ok) loadLeaderboard();
+  } catch(err){
+    noteEl.textContent = 'تعذّر حفظ النتيجة (مشكلة في الاتصال)، لكن تقدر تراجع إجاباتك تحت.';
+  }
+}
+
+async function loadLeaderboard(){
+  const listEl = document.getElementById('leaderboardList');
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_leaderboard`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ p_exam_slug: EXAM_SLUG })
+    });
+    if(!res.ok) throw new Error('failed');
+    const data = await res.json();
+
+    if(!data.length){
+      listEl.innerHTML = '<div class="lb-empty">كن أول من يدخل السباق — ابدأ الاختبار وسجّل أول نتيجة!</div>';
+      return;
+    }
+
+    const medalClass = i => i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+    listEl.innerHTML = data.map((row, i) => `
+      <div class="lb-row ${medalClass(i)}">
+        <div class="lb-rank">${i+1}</div>
+        <div class="lb-name">${escapeHtmlLb(row.full_name)}</div>
+        <div class="lb-pct">${row.percentage}%</div>
+      </div>
+    `).join('');
+  }catch(err){
+    listEl.innerHTML = '<div class="lb-empty">تعذّر تحميل لوحة الصدارة حاليًا.</div>';
+  }
+}
+
+function escapeHtmlLb(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+loadLeaderboard();
+
+function buildReview(){
+  const box = document.getElementById('reviewBox');
+  box.innerHTML = '';
+  const ar = n => n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+  QUESTIONS.forEach((item, i) => {
+    const userAns = answers[i];
+    const isCorrect = userAns === item.c;
+    const div = document.createElement('div');
+    div.className = 'rq';
+    div.innerHTML = `
+      <div class="rqtext">${ar(i+1)}. ${item.q}</div>
+      ${!isCorrect ? `<div class="rline wrong">إجابتك: ${item.o[userAns]}</div>` : ''}
+      <div class="rline right">الإجابة الصحيحة: ${item.o[item.c]}</div>
+    `;
+    box.appendChild(div);
+  });
+}
+function toggleReview(){ document.getElementById('reviewBox').classList.toggle('show'); }
+
+document.addEventListener('DOMContentLoaded', function(){
+  try{
+    document.getElementById('gateNextBtn').addEventListener('click', submitGate);
+    document.getElementById('startExamBtn').addEventListener('click', startExam);
+    document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+    document.getElementById('reviewBtn').addEventListener('click', toggleReview);
+    document.getElementById('restartBtn').addEventListener('click', function(){ location.reload(); });
+  }catch(e){
+    showFatalError('تعذّر تجهيز أزرار الصفحة (' + e.message + ')');
+  }
+});
+</script>
+</body>
+</html>
