@@ -58,6 +58,45 @@
   button.navbtn:hover:not(:disabled){ background:var(--surface-2); }
   button.navbtn:disabled{ background:var(--surface-2); color:var(--muted); cursor:not-allowed; }
 
+  /* ===== Leaderboard — mobile-first by design, this is the primary target device ===== */
+  .lb-wrap{ padding:22px 20px 4px; }
+  .lb-title{
+    display:flex; align-items:center; gap:8px; font-size:15px; font-weight:700;
+    color:var(--text); margin-bottom:12px;
+  }
+  .lb-title .trophy{ font-size:18px; }
+  .lb-list{ display:flex; flex-direction:column; gap:6px; }
+  .lb-row{
+    display:flex; align-items:center; gap:10px; padding:9px 12px;
+    background:var(--surface); border:1px solid var(--border-soft); border-radius:9px;
+    min-width:0; /* required so name truncation works inside flex on small screens */
+  }
+  .lb-row.top1{ border-color:var(--gold); background:rgba(224,177,92,0.08); }
+  .lb-row.top2{ border-color:#B9C2CF; }
+  .lb-row.top3{ border-color:#C98A4B; }
+  .lb-rank{
+    width:24px; height:24px; border-radius:50%; background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-family:var(--mono); font-size:11px; font-weight:700; color:var(--text-soft);
+  }
+  .lb-row.top1 .lb-rank{ background:var(--gold); color:#241A05; }
+  .lb-row.top2 .lb-rank{ background:#B9C2CF; color:#1A2238; }
+  .lb-row.top3 .lb-rank{ background:#C98A4B; color:#241A05; }
+  .lb-name{
+    flex:1; min-width:0; font-size:13.5px; color:var(--text);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .lb-pct{
+    flex-shrink:0; font-family:var(--mono); font-size:13px; font-weight:700; color:var(--emerald);
+  }
+  .lb-empty{ font-size:12.5px; color:var(--muted); text-align:center; padding:18px 10px; }
+  .lb-loading{ font-size:12.5px; color:var(--muted); text-align:center; padding:18px 10px; }
+  /* on wider screens, allow the whole leaderboard to breathe a bit more — still same simple list */
+  @media (min-width:520px){
+    .lb-wrap{ padding:26px 32px 6px; }
+    .lb-name{ font-size:14.5px; }
+  }
+
   .gate{ padding:34px 32px 30px; }
   .gate p{ line-height:1.9; font-size:15px; margin:0 0 16px; color:var(--text-soft); }
   .gate label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
@@ -125,6 +164,13 @@
     <h1>اختبار الكفاءة المحاسبية</h1>
     <p>يستهدف مستوى المحاسب العام ومدير الحسابات — ٣٠ سؤالاً متدرج الصعوبة.</p>
   </header>
+
+  <div class="lb-wrap">
+    <div class="lb-title"><span class="trophy">🏆</span> لوحة الصدارة</div>
+    <div class="lb-list" id="leaderboardList">
+      <div class="lb-loading">جارِ تحميل الترتيب...</div>
+    </div>
+  </div>
 
   <div id="gate-screen" class="gate">
     <p>قبل ما تبدأ، محتاجين اسمك عشان نسجّل نتيجتك. البيانات دي بتتسجل في قاعدة بيانات خاصة بالاختبار.</p>
@@ -453,10 +499,46 @@ async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
       })
     });
     noteEl.textContent = res.ok ? 'تم حفظ نتيجتك بنجاح ✓' : 'تعذّر حفظ النتيجة، لكن تقدر تراجع إجاباتك تحت.';
+    if(res.ok) loadLeaderboard();
   } catch(err){
     noteEl.textContent = 'تعذّر حفظ النتيجة (مشكلة في الاتصال)، لكن تقدر تراجع إجاباتك تحت.';
   }
 }
+
+async function loadLeaderboard(){
+  const listEl = document.getElementById('leaderboardList');
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_leaderboard`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ p_exam_slug: EXAM_SLUG })
+    });
+    if(!res.ok) throw new Error('failed');
+    const data = await res.json();
+
+    if(!data.length){
+      listEl.innerHTML = '<div class="lb-empty">كن أول من يدخل السباق — ابدأ الاختبار وسجّل أول نتيجة!</div>';
+      return;
+    }
+
+    const medalClass = i => i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+    listEl.innerHTML = data.map((row, i) => `
+      <div class="lb-row ${medalClass(i)}">
+        <div class="lb-rank">${i+1}</div>
+        <div class="lb-name">${escapeHtmlLb(row.full_name)}</div>
+        <div class="lb-pct">${row.percentage}%</div>
+      </div>
+    `).join('');
+  }catch(err){
+    listEl.innerHTML = '<div class="lb-empty">تعذّر تحميل لوحة الصدارة حاليًا.</div>';
+  }
+}
+
+function escapeHtmlLb(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+loadLeaderboard();
 
 function buildReview(){
   const box = document.getElementById('reviewBox');
