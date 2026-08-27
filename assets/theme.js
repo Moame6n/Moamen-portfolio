@@ -18,3 +18,30 @@ function toggleTheme(){
     localStorage.setItem('site_theme', 'light');
   }
 }
+
+// Silent page-view logging for the admin analytics tab. Fails silently if
+// Supabase config isn't loaded yet or the request fails — never blocks the page.
+(function(){
+  function track(){
+    try{
+      if(window.location.pathname.startsWith('/admin')) return;
+      if(typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') return;
+      fetch(`${SUPABASE_URL}/rest/v1/page_views`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          path: window.location.pathname,
+          referrer: document.referrer || null,
+          user_agent: navigator.userAgent
+        })
+      }).catch(() => {});
+    }catch(e){}
+  }
+  if(document.readyState === 'complete'){ track(); }
+  else { window.addEventListener('load', track); }
+})();
