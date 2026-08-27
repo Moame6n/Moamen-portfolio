@@ -3,9 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>اختبار محاسبة تكاليف | مؤمن أحمد</title>
+<title>اختبار محاسبة التكاليف | مؤمن أحمد</title>
 <meta name="description" content="اختبار يغطي أساسيات محاسبة التكاليف — عناصر التكلفة، أنظمة التكاليف، نقطة التعادل، وتحليل الانحرافات.">
 <meta name="icon" content="clipboard-check">
+<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/exams/cost-accounting.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="اختبار محاسبة التكاليف | مؤمن أحمد">
+<meta property="og:description" content="اختبار يغطي أساسيات محاسبة التكاليف — عناصر التكلفة، أنظمة التكاليف، نقطة التعادل، وتحليل الانحرافات.">
+<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/exams/cost-accounting.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0E13">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
@@ -167,6 +175,11 @@
       <div class="score-item"><div class="num" id="pctNum">0%</div><div class="txt">النسبة الكلية</div></div>
     </div>
     <div class="savenote" id="saveNote">جارِ حفظ نتيجتك...</div>
+    <div class="btnrow" id="shareCertRow" style="display:none;">
+      <button class="navbtn" id="shareWaBtn" type="button" style="background:#25D366; color:#0A1F0F;">مشاركة على واتساب</button>
+      <button class="navbtn" id="shareFbBtn" type="button" style="background:#1877F2; color:#fff;">مشاركة على فيسبوك</button>
+      <button class="navbtn" id="certBtn" type="button" style="background:var(--emerald); color:#08130E; display:none;">تحميل شهادة PDF</button>
+    </div>
     <div class="btnrow">
       <button class="navbtn" id="reviewBtn" type="button" style="background:transparent;color:var(--emerald);border:1.5px solid var(--emerald);">مراجعة الإجابات</button>
       <button class="navbtn" id="restartBtn" type="button" style="background:var(--gold);color:#12190F;">إعادة الاختبار</button>
@@ -177,11 +190,29 @@
 
 </div>
 
+<!-- Hidden certificate template — rendered off-screen, captured to image, then embedded in the PDF -->
+<div id="certTemplate" style="position:fixed; top:-9999px; left:-9999px; width:1000px; height:700px; background:#F3F0E6; font-family:'Tajawal',sans-serif; direction:rtl; box-sizing:border-box; padding:40px; border:3px solid #1D9A6C;">
+  <div style="height:100%; border:1px solid #A8752C; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:#A8752C; letter-spacing:3px; margin-bottom:18px;">CERTIFICATE OF ACHIEVEMENT</div>
+    <div style="font-size:24px; color:#4A5568; margin-bottom:10px;">تشهد منصة مؤمن أحمد بأن</div>
+    <div id="certName" style="font-size:44px; font-weight:900; color:#1D9A6C; margin-bottom:14px;">--</div>
+    <div style="font-size:22px; color:#4A5568; margin-bottom:6px;">قد اجتاز(ت) بنجاح</div>
+    <div id="certExamTitle" style="font-size:30px; font-weight:700; color:#1A2238; margin-bottom:20px;">--</div>
+    <div id="certScoreLine" style="font-size:22px; color:#4A5568; margin-bottom:36px;">--</div>
+    <div style="display:flex; justify-content:space-between; width:100%; font-size:14px; color:#7A7364; font-family:'JetBrains Mono',monospace;">
+      <span id="certDate">--</span>
+      <span>moamen-portfolio-pi.vercel.app</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="/assets/supabase-config.js"></script>
 <script>
 // ==== EXAM IDENTITY — change these two lines when duplicating this file for a new exam ====
-const EXAM_SLUG = 'cost-accounting-test';
-const EXAM_TITLE = 'اختبار محاسبة تكاليف';
+const EXAM_SLUG = 'cost-accounting';
+const EXAM_TITLE = 'اختبار محاسبة التكاليف';
 // ============================================================================================
 
 const QUESTIONS = [{"q":"عناصر التكلفة الصناعية الثلاثة الأساسية هي:","o":["المواد المباشرة، الأجور المباشرة، التكاليف الصناعية غير المباشرة","الإيرادات، المصروفات، الأرباح","الأصول، الالتزامات، حقوق الملكية","المبيعات، المشتريات، المخزون"],"c":0},{"q":"\"التكلفة المباشرة\" هي التكلفة التي:","o":["يمكن تتبعها وربطها مباشرة بوحدة الإنتاج بسهولة","تتغير مع الزمن فقط","تخص الإدارة العليا فقط","لا يمكن قياسها نقديًا"],"c":0},{"q":"أجر عامل الصيانة في المصنع يُصنَّف كـ:","o":["تكلفة عمالة مباشرة","تكلفة عمالة غير مباشرة (ضمن التكاليف الصناعية غير المباشرة)","مصروف بيعي","مصروف إداري فقط"],"c":1},{"q":"التكلفة المتغيرة تتميز بأنها:","o":["ثابتة إجماليًا مهما تغير حجم الإنتاج","تتغير طرديًا مع حجم الإنتاج، وثابتة للوحدة الواحدة","تساوي صفرًا دائمًا","لا علاقة لها بالإنتاج إطلاقًا"],"c":1},{"q":"نظام \"تكاليف الأوامر الإنتاجية\" (Job Order Costing) يناسب أكثر:","o":["الصناعات المستمرة كالبترول والأسمنت","الصناعات التي تنتج منتجات موحدة بكميات كبيرة","الصناعات التي تنتج حسب طلب العميل (مثل الأثاث المخصص أو المقاولات)","شركات الخدمات فقط دون استثناء"],"c":2},{"q":"في نظام \"تكاليف المراحل\" (Process Costing)، تُحسب تكلفة الوحدة عن طريق:","o":["قسمة التكاليف الكلية للمرحلة على عدد الوحدات المكافئة المنتجة","ضرب سعر البيع في عدد الوحدات","جمع كل الأوامر الإنتاجية مع بعض","تجاهل التكاليف غير المباشرة"],"c":0},{"q":"مصنع لديه تكاليف ثابتة شهرية 60,000 جنيه، وسعر بيع الوحدة 50 جنيه، وتكلفة متغيرة 30 جنيه للوحدة. نقطة التعادل بالوحدات تساوي:","o":["1,200 وحدة","2,000 وحدة","3,000 وحدة","600 وحدة"],"c":2},{"q":"هامش المساهمة (Contribution Margin) يُحسب بـ:","o":["سعر البيع − التكلفة المتغيرة للوحدة","سعر البيع − التكلفة الثابتة","إجمالي الإيرادات − إجمالي التكاليف","التكلفة الثابتة ÷ عدد الوحدات"],"c":0},{"q":"عند استخدام طريقة \"التكلفة الكلية\" (Absorption Costing) بدلًا من \"التكلفة المتغيرة\" (Variable Costing)، الفرق الجوهري بينهما هو:","o":["طريقة معالجة التكاليف الصناعية الثابتة غير المباشرة ضمن تكلفة المنتج","طريقة حساب المبيعات فقط","عدم وجود أي فرق حقيقي بينهما","طريقة حساب ضريبة القيمة المضافة"],"c":0},{"q":"انحراف كفاءة المواد الخام (Material Usage/Efficiency Variance) يقيس:","o":["الفرق بين السعر الفعلي والمعياري للمادة","الفرق بين الكمية الفعلية المستخدمة والكمية المعيارية، مقوّمة بالسعر المعياري","إجمالي قيمة المشتريات","نسبة الخصم من المورد"],"c":1},{"q":"إذا كانت الكمية الفعلية المستخدمة من المواد أكبر من الكمية المعيارية لنفس مستوى الإنتاج، فهذا يعني انحراف كفاءة:","o":["موات (Favorable)","غير موات (Unfavorable)","محايد تمامًا","لا يمكن تحديده من غير معرفة السعر"],"c":1},{"q":"توزيع تكاليف الأقسام الخدمية (مثل الصيانة والمخازن) على الأقسام الإنتاجية يتم عادة باستخدام:","o":["طريقة التوزيع المباشر أو التنازلي أو المتبادل حسب أساس تحميل مناسب","تجاهلها تمامًا لأنها غير جوهرية","قسمتها بالتساوي دون أي أساس منطقي","إضافتها كاملة لتكلفة قسم واحد فقط عشوائيًا"],"c":0},{"q":"في نظام \"التكاليف على أساس الأنشطة\" (Activity-Based Costing - ABC)، التكاليف غير المباشرة تُحمَّل على المنتجات بناءً على:","o":["عدد ساعات العمل المباشر فقط دائمًا","الأنشطة الفعلية التي يستهلكها كل منتج ومحركات التكلفة الخاصة بها","سعر بيع المنتج","تاريخ إنتاج المنتج"],"c":1},{"q":"عيب رئيسي في التحميل التقليدي للتكاليف غير المباشرة (مقارنة بـ ABC) هو أنه:","o":["دقيق جدًا في كل الحالات","قد يشوّه تكلفة المنتجات عند استخدام أساس تحميل واحد لا يعكس الاستهلاك الفعلي للموارد","أسهل في التطبيق من كل الطرق الأخرى دائمًا","لا يحتاج بيانات محاسبية أصلًا"],"c":1},{"q":"\"التكلفة الغارقة\" (Sunk Cost) هي تكلفة:","o":["سيتم إنفاقها مستقبلًا","تم إنفاقها بالفعل ولا يمكن استرجاعها، ويجب تجاهلها عند اتخاذ القرارات المستقبلية","تتغير حسب حجم الإنتاج","تُحسب فقط في نهاية السنة"],"c":1},{"q":"عند المفاضلة بين \"التصنيع الداخلي\" أو \"الشراء من الخارج\" (Make or Buy) لأحد الأجزاء، التحليل السليم يعتمد أساسًا على:","o":["التكلفة الثابتة الكلية للمصنع","التكلفة الحدية (المتغيرة) الإضافية للتصنيع الداخلي مقارنة بسعر الشراء الخارجي","سعر بيع المنتج النهائي فقط","عدد العمال الحاليين بغض النظر عن التكلفة"],"c":1},{"q":"الموازنة التقديرية المرنة (Flexible Budget) تختلف عن الموازنة الثابتة في أنها:","o":["لا تتغير مهما تغير حجم النشاط","تُعدّل تلقائيًا لتناسب مستويات مختلفة من حجم النشاط الفعلي","تُلغي الحاجة لأي رقابة على التكاليف","تُستخدم فقط في القطاع الحكومي"],"c":1},{"q":"عند تحليل الانحرافات الكلية للتكاليف الصناعية غير المباشرة، \"انحراف الحجم\" (Volume Variance) ينشأ بسبب:","o":["الفرق بين حجم الإنتاج الفعلي وحجم الإنتاج المعياري (الطاقة المخطط لها)","الفرق بين السعر الفعلي والمعياري للمواد","تغير سعر البيع فقط","تغير قيمة الضريبة المستحقة"],"c":0},{"q":"في قرار \"الاستمرار في إنتاج منتج أو إيقافه\" (Keep or Drop a Product Line)، العامل الأهم في التحليل هو:","o":["إجمالي المبيعات فقط بغض النظر عن التكلفة","هل المنتج يحقق هامش مساهمة موجب يغطي جزءًا من التكاليف الثابتة المشتركة أم لا","عدد سنوات إنتاج المنتج","رأي العملاء الشخصي فقط دون أرقام"],"c":1},{"q":"عند اتخاذ قرار قبول طلبية إضافية بسعر أقل من السعر العادي (Special Order)، الشرط الأساسي لقبولها اقتصاديًا هو:","o":["أن يكون هناك طاقة إنتاجية عاطلة، وأن سعر الطلبية يغطي على الأقل التكلفة المتغيرة للوحدة","أن يكون سعر الطلبية أعلى من السعر العادي دائمًا","رفضها دائمًا مهما كانت الظروف","عدم النظر لأي تكاليف عند اتخاذ القرار"],"c":0}];
@@ -302,8 +333,63 @@ async function showResults(){
   document.getElementById('stampEl').style.borderColor = stampColor;
   document.getElementById('stampEl').style.color = stampColor;
 
+  setupShareAndCert(pct, title);
+
   buildReview();
   await saveAttempt(correctCount, wrongCount, total, pct, title);
+}
+
+function setupShareAndCert(pct, gradeTitle){
+  const row = document.getElementById('shareCertRow');
+  const examUrl = window.location.href.split('?')[0];
+  const waText = `خدت اختبار ${EXAM_TITLE} وحصلت على ${pct}% (${gradeTitle})! جرب اختبارك من هنا: ${examUrl}`;
+
+  document.getElementById('shareWaBtn').onclick = () => {
+    window.open(`https://wa.me/?text=${encodeURIComponent(waText)}`, '_blank');
+  };
+  document.getElementById('shareFbBtn').onclick = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(examUrl)}`, '_blank', 'width=580,height=520');
+  };
+
+  const certBtn = document.getElementById('certBtn');
+  if(pct >= 65){
+    certBtn.style.display = 'inline-flex';
+    certBtn.onclick = () => generateCertificate(pct, gradeTitle);
+  } else {
+    certBtn.style.display = 'none';
+  }
+
+  row.style.display = 'flex';
+}
+
+async function generateCertificate(pct, gradeTitle){
+  const certBtn = document.getElementById('certBtn');
+  const originalLabel = certBtn.textContent;
+  certBtn.disabled = true;
+  certBtn.textContent = 'جارِ التجهيز...';
+
+  try{
+    document.getElementById('certName').textContent = taker.name || 'المتقدم';
+    document.getElementById('certExamTitle').textContent = EXAM_TITLE;
+    document.getElementById('certScoreLine').textContent = `النتيجة: ${pct}%  —  ${gradeTitle}`;
+    document.getElementById('certDate').textContent = new Date().toLocaleDateString('ar-EG');
+
+    const template = document.getElementById('certTemplate');
+    const canvas = await html2canvas(template, { scale: 2, backgroundColor: '#F3F0E6' });
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    doc.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
+    doc.save(`certificate-${EXAM_SLUG}.pdf`);
+  }catch(err){
+    alert('حصل خطأ أثناء توليد الشهادة، حاول تاني.');
+  }finally{
+    certBtn.disabled = false;
+    certBtn.textContent = originalLabel;
+  }
 }
 
 async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
