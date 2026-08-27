@@ -6,6 +6,14 @@
 <title>اختبار الكفاءة المحاسبية | مؤمن أحمد</title>
 <meta name="description" content="٣٠ سؤال متدرج الصعوبة يغطي مستوى المحاسب العام ومدير الحسابات، مع نتيجة فورية وتصنيف مستوى.">
 <meta name="icon" content="clipboard-check">
+<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/exams/accounting-general.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="اختبار الكفاءة المحاسبية | مؤمن أحمد">
+<meta property="og:description" content="٣٠ سؤال متدرج الصعوبة يغطي مستوى المحاسب العام ومدير الحسابات، مع نتيجة فورية.">
+<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/exams/accounting-general.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0E13">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
@@ -167,6 +175,11 @@
       <div class="score-item"><div class="num" id="pctNum">0%</div><div class="txt">النسبة الكلية</div></div>
     </div>
     <div class="savenote" id="saveNote">جارِ حفظ نتيجتك...</div>
+    <div class="btnrow" id="shareCertRow" style="display:none;">
+      <button class="navbtn" id="shareWaBtn" type="button" style="background:#25D366; color:#0A1F0F;">مشاركة على واتساب</button>
+      <button class="navbtn" id="shareFbBtn" type="button" style="background:#1877F2; color:#fff;">مشاركة على فيسبوك</button>
+      <button class="navbtn" id="certBtn" type="button" style="background:var(--emerald); color:#08130E; display:none;">تحميل شهادة PDF</button>
+    </div>
     <div class="btnrow">
       <button class="navbtn" id="reviewBtn" type="button" style="background:transparent;color:var(--emerald);border:1.5px solid var(--emerald);">مراجعة الإجابات</button>
       <button class="navbtn" id="restartBtn" type="button" style="background:var(--gold);color:#12190F;">إعادة الاختبار</button>
@@ -177,6 +190,24 @@
 
 </div>
 
+<!-- Hidden certificate template — rendered off-screen, captured to image, then embedded in the PDF -->
+<div id="certTemplate" style="position:fixed; top:-9999px; left:-9999px; width:1000px; height:700px; background:#F3F0E6; font-family:'Tajawal',sans-serif; direction:rtl; box-sizing:border-box; padding:40px; border:3px solid #1D9A6C;">
+  <div style="height:100%; border:1px solid #A8752C; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:#A8752C; letter-spacing:3px; margin-bottom:18px;">CERTIFICATE OF ACHIEVEMENT</div>
+    <div style="font-size:24px; color:#4A5568; margin-bottom:10px;">تشهد منصة مؤمن أحمد بأن</div>
+    <div id="certName" style="font-size:44px; font-weight:900; color:#1D9A6C; margin-bottom:14px;">--</div>
+    <div style="font-size:22px; color:#4A5568; margin-bottom:6px;">قد اجتاز(ت) بنجاح</div>
+    <div id="certExamTitle" style="font-size:30px; font-weight:700; color:#1A2238; margin-bottom:20px;">--</div>
+    <div id="certScoreLine" style="font-size:22px; color:#4A5568; margin-bottom:36px;">--</div>
+    <div style="display:flex; justify-content:space-between; width:100%; font-size:14px; color:#7A7364; font-family:'JetBrains Mono',monospace;">
+      <span id="certDate">--</span>
+      <span>moamen-portfolio-pi.vercel.app</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="/assets/supabase-config.js"></script>
 <script>
 // ==== EXAM IDENTITY — change these two lines when duplicating this file for a new exam ====
@@ -333,8 +364,63 @@ async function showResults(){
   document.getElementById('stampEl').style.borderColor = stampColor;
   document.getElementById('stampEl').style.color = stampColor;
 
+  setupShareAndCert(pct, title);
+
   buildReview();
   await saveAttempt(correctCount, wrongCount, total, pct, title);
+}
+
+function setupShareAndCert(pct, gradeTitle){
+  const row = document.getElementById('shareCertRow');
+  const examUrl = window.location.href.split('?')[0];
+  const waText = `خدت اختبار ${EXAM_TITLE} وحصلت على ${pct}% (${gradeTitle})! جرب اختبارك من هنا: ${examUrl}`;
+
+  document.getElementById('shareWaBtn').onclick = () => {
+    window.open(`https://wa.me/?text=${encodeURIComponent(waText)}`, '_blank');
+  };
+  document.getElementById('shareFbBtn').onclick = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(examUrl)}`, '_blank', 'width=580,height=520');
+  };
+
+  const certBtn = document.getElementById('certBtn');
+  if(pct >= 65){
+    certBtn.style.display = 'inline-flex';
+    certBtn.onclick = () => generateCertificate(pct, gradeTitle);
+  } else {
+    certBtn.style.display = 'none';
+  }
+
+  row.style.display = 'flex';
+}
+
+async function generateCertificate(pct, gradeTitle){
+  const certBtn = document.getElementById('certBtn');
+  const originalLabel = certBtn.textContent;
+  certBtn.disabled = true;
+  certBtn.textContent = 'جارِ التجهيز...';
+
+  try{
+    document.getElementById('certName').textContent = taker.name || 'المتقدم';
+    document.getElementById('certExamTitle').textContent = EXAM_TITLE;
+    document.getElementById('certScoreLine').textContent = `النتيجة: ${pct}%  —  ${gradeTitle}`;
+    document.getElementById('certDate').textContent = new Date().toLocaleDateString('ar-EG');
+
+    const template = document.getElementById('certTemplate');
+    const canvas = await html2canvas(template, { scale: 2, backgroundColor: '#F3F0E6' });
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    doc.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
+    doc.save(`certificate-${EXAM_SLUG}.pdf`);
+  }catch(err){
+    alert('حصل خطأ أثناء توليد الشهادة، حاول تاني.');
+  }finally{
+    certBtn.disabled = false;
+    certBtn.textContent = originalLabel;
+  }
 }
 
 async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
