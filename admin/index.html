@@ -125,6 +125,7 @@
     <div class="dash-tabs">
       <button class="dash-tab active" id="tabResults" type="button">النتائج</button>
       <button class="dash-tab" id="tabCreate" type="button">إنشاء اختبار جديد</button>
+      <button class="dash-tab" id="tabAnalytics" type="button">الزيارات</button>
     </div>
 
     <div id="resultsPanel">
@@ -228,6 +229,24 @@
       <button class="btn btn-primary" id="generateExamBtn" type="button">نشر الاختبار</button>
       <div class="gen-result" id="genResult"></div>
     </div>
+
+    <div id="analyticsPanel" style="display:none;">
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="viewsTotal">0</div><div class="lbl">إجمالي الزيارات</div></div>
+        <div class="stat-card"><div class="num" id="viewsToday">0</div><div class="lbl">زيارات اليوم</div></div>
+        <div class="stat-card"><div class="num" id="views7d">0</div><div class="lbl">آخر ٧ أيام</div></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>الزيارات آخر ١٤ يوم</h3>
+        <div id="dailyChart" style="display:flex; align-items:flex-end; gap:4px; height:120px; padding-top:10px;"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>الصفحات الأكثر زيارة</h3>
+        <div id="topPagesList"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -245,6 +264,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('tabResults').addEventListener('click', () => switchTab('results'));
   document.getElementById('tabCreate').addEventListener('click', () => switchTab('create'));
+  document.getElementById('tabAnalytics').addEventListener('click', () => switchTab('analytics'));
   document.getElementById('addQuestionBtn').addEventListener('click', () => addQuestionBlock());
   document.getElementById('parseImportBtn').addEventListener('click', handleImportParse);
   document.getElementById('importDropzone').addEventListener('click', () => document.getElementById('importFileInput').click());
@@ -414,8 +434,11 @@ function escapeHtml(str){
 function switchTab(tab){
   document.getElementById('tabResults').classList.toggle('active', tab === 'results');
   document.getElementById('tabCreate').classList.toggle('active', tab === 'create');
+  document.getElementById('tabAnalytics').classList.toggle('active', tab === 'analytics');
   document.getElementById('resultsPanel').style.display = tab === 'results' ? 'block' : 'none';
   document.getElementById('createPanel').style.display = tab === 'create' ? 'block' : 'none';
+  document.getElementById('analyticsPanel').style.display = tab === 'analytics' ? 'block' : 'none';
+  if(tab === 'analytics') loadAnalytics();
 }
 
 function autoSlug(){
@@ -523,6 +546,10 @@ async function generateAndPublishExam(){
     // 2) swap the parameterized parts
     html = html.replace(/<title>[^<]*<\/title>/, `<title>${title} | مؤمن أحمد</title>`);
     html = html.replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/exams/${slug}.html">`);
+    html = html.replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${title} | مؤمن أحمد">`);
+    html = html.replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/exams/${slug}.html">`);
     html = html.replace(/const EXAM_SLUG = '[^']*';/, `const EXAM_SLUG = '${slug}';`);
     html = html.replace(/const EXAM_TITLE = '[^']*';/, `const EXAM_TITLE = '${title.replace(/'/g,"\\'")}';`);
     html = html.replace(/<p>يستهدف مستوى المحاسب العام ومدير الحسابات[^<]*<\/p>/, `<p>${desc.replace(/</g,'&lt;')}</p>`);
@@ -577,6 +604,53 @@ function showGenError(msg){
   resultEl.className = 'gen-result error';
   resultEl.textContent = msg;
   resultEl.style.display = 'block';
+}
+
+// ==================== Analytics ====================
+
+const PAGE_LABELS = {
+  '/': 'الرئيسية',
+  '/tools-exams.html': 'الأدوات والاختبارات',
+  '/exams/accounting-general.html': 'اختبار المحاسبة العام',
+  '/tools/excel-merge.html': 'أداة دمج الإكسيل'
+};
+
+async function loadAnalytics(){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_page_view_stats`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(!res.ok) return;
+  const stats = await res.json();
+
+  document.getElementById('viewsTotal').textContent = stats.total_views;
+  document.getElementById('viewsToday').textContent = stats.views_today;
+  document.getElementById('views7d').textContent = stats.views_7d;
+
+  const maxDaily = Math.max(1, ...stats.daily.map(d => d.views));
+  document.getElementById('dailyChart').innerHTML = stats.daily.map(d => {
+    const h = Math.round((d.views / maxDaily) * 100);
+    const dayLabel = new Date(d.day).toLocaleDateString('ar-EG', { day:'numeric', month:'numeric' });
+    return `
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+        <div style="font-size:10px; color:var(--muted);">${d.views || ''}</div>
+        <div style="width:100%; height:${Math.max(h,3)}px; background:var(--emerald); border-radius:3px 3px 0 0; opacity:${d.views ? 1 : 0.25};"></div>
+        <div style="font-size:9px; color:var(--muted); font-family:var(--mono);">${dayLabel}</div>
+      </div>
+    `;
+  }).join('');
+
+  const maxPath = Math.max(1, ...stats.by_path.map(p => p.views));
+  document.getElementById('topPagesList').innerHTML = stats.by_path.length ? stats.by_path.map(p => `
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+      <div style="width:130px; font-size:12.5px; flex-shrink:0;">${PAGE_LABELS[p.path] || p.path}</div>
+      <div style="flex:1; background:var(--bg); border-radius:5px; overflow:hidden; height:18px;">
+        <div style="width:${Math.round((p.views/maxPath)*100)}%; height:100%; background:var(--gold);"></div>
+      </div>
+      <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); width:30px; text-align:left;">${p.views}</div>
+    </div>
+  `).join('') : '<div class="empty-state">لسه مفيش زيارات مسجلة</div>';
 }
 
 // ==================== Import from file/text ====================
