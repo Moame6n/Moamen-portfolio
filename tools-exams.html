@@ -106,6 +106,7 @@
     <div class="subnav">
       <a href="#exams-section" class="active">الاختبارات</a>
       <a href="#tools-section">الأدوات</a>
+      <a href="#templates-section">قوالب مجانية</a>
     </div>
   </div>
 </section>
@@ -142,7 +143,18 @@
   </div>
 </section>
 
+<section id="templates-section" class="subsection">
+  <div class="container">
+    <div class="subsection-head"><i data-lucide="file-spreadsheet"></i><h2>قوالب مجانية</h2></div>
+    <p class="subsection-desc">قوالب إكسيل جاهزة تحمّلها فورًا بعد كتابة اسمك.</p>
+    <div class="grid grid-3" id="templatesGrid">
+      <div class="empty-note">جارِ التحميل...</div>
+    </div>
+  </div>
+</section>
+
 <footer class="site-footer">
+
   <div class="container">
     <div style="margin-bottom:10px;">
       <a href="https://wa.me/201154960694" target="_blank">واتساب</a>
@@ -223,9 +235,10 @@ async function readPageMeta(downloadUrl, fallbackName){
 }
 
 function cardHtml(meta, href, type){
-  const defaultIcon = type === 'exam' ? 'clipboard-check' : 'wrench';
-  const icon = meta.icon || defaultIcon;
-  const btnLabel = type === 'exam' ? 'ابدأ الاختبار' : 'افتح الأداة';
+  const defaults = { exam: 'clipboard-check', tool: 'wrench', template: 'file-spreadsheet' };
+  const labels = { exam: 'ابدأ الاختبار', tool: 'افتح الأداة', template: 'تحميل مجاني' };
+  const icon = meta.icon || defaults[type] || 'file';
+  const btnLabel = labels[type] || 'افتح';
   return `
     <div class="card tool-card">
       <span class="badge live">متاح الآن</span>
@@ -243,7 +256,8 @@ async function renderSection(folder, gridId, type, keepExisting){
 
   if(files.length === 0){
     if(!keepExisting){
-      grid.innerHTML = `<div class="empty-note">لسه مفيش ${type === 'exam' ? 'اختبارات' : 'أدوات'} مضافة هنا.</div>`;
+      const typeLabels = { exam: 'اختبارات', tool: 'أدوات', template: 'قوالب' };
+      grid.innerHTML = `<div class="empty-note">لسه مفيش ${typeLabels[type] || 'عناصر'} مضافة هنا.</div>`;
     }
     return;
   }
@@ -263,6 +277,7 @@ async function renderSection(folder, gridId, type, keepExisting){
 
 renderSection('exams', 'examsGrid', 'exam', false);
 renderSection('tools', 'toolsGrid', 'tool', true);
+renderSection('templates', 'templatesGrid', 'template', false);
 </script>
 </body>
 </html>
