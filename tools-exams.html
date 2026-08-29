@@ -244,7 +244,7 @@ async function listFolder(folder){
     if(!res.ok) return [];
     const items = await res.json();
     if(!Array.isArray(items)) return [];
-    return items.filter(it => it.type === 'file' && it.name.endsWith('.html'));
+    return items.filter(it => it.type === 'file' && it.name.endsWith('.html') && !it.name.startsWith('_'));
   }catch(e){
     return [];
   }
