@@ -126,6 +126,7 @@
       <button class="dash-tab active" id="tabResults" type="button">النتائج</button>
       <button class="dash-tab" id="tabCreate" type="button">إنشاء اختبار جديد</button>
       <button class="dash-tab" id="tabAnalytics" type="button">الزيارات</button>
+      <button class="dash-tab" id="tabTemplates" type="button">قوالب مجانية</button>
     </div>
 
     <div id="resultsPanel">
@@ -261,6 +262,51 @@
         <div id="topPagesList"></div>
       </div>
     </div>
+
+    <div id="templatesPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>1. إعدادات الاتصال بـ GitHub</h3>
+        <div class="field-row">
+          <label>GitHub Personal Access Token</label>
+          <input type="password" id="ghTokenTpl" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          <div class="hint">نفس التوكن المستخدم في تبويب الاختبارات — بيتحفظ تلقائي على جهازك.</div>
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>2. بيانات القالب</h3>
+        <div class="field-row-2">
+          <div class="field-row">
+            <label>عنوان القالب</label>
+            <input type="text" id="tplTitleInput" placeholder="مثال: قالب ميزانية شهرية">
+          </div>
+          <div class="field-row">
+            <label>الاسم المختصر بالإنجليزي (Slug)</label>
+            <input type="text" id="tplSlugInput" placeholder="monthly-budget">
+          </div>
+        </div>
+        <div class="field-row">
+          <label>وصف قصير</label>
+          <input type="text" id="tplDescInput" placeholder="سطر أو سطرين يوضحوا محتوى القالب — هيبان في الكارت وصفحة التحميل">
+        </div>
+        <div class="field-row">
+          <label>أيقونة (اختياري — من lucide.dev/icons)</label>
+          <input type="text" id="tplIconInput" placeholder="file-spreadsheet">
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>3. ملف القالب</h3>
+        <div class="dropzone" id="tplDropzone" style="padding:26px 20px;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px;" id="tplFileLabel">اسحب ملف القالب هنا (Excel, PDF, Word...) أو دوس للاختيار</div>
+          <div style="font-size:12px; color:var(--muted);">الملف ده هو اللي المستخدم هيحمّله فعليًا</div>
+          <input type="file" id="tplFileInput" style="display:none;">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="publishTplBtn" type="button">نشر القالب</button>
+      <div class="gen-result" id="tplGenResult"></div>
+    </div>
   </div>
 </div>
 
@@ -279,6 +325,27 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tabResults').addEventListener('click', () => switchTab('results'));
   document.getElementById('tabCreate').addEventListener('click', () => switchTab('create'));
   document.getElementById('tabAnalytics').addEventListener('click', () => switchTab('analytics'));
+  document.getElementById('tabTemplates').addEventListener('click', () => switchTab('templates'));
+  document.getElementById('ghTokenTpl').value = localStorage.getItem('gh_token') || '';
+  document.getElementById('ghTokenTpl').addEventListener('change', (e) => {
+    localStorage.setItem('gh_token', e.target.value.trim());
+  });
+  document.getElementById('tplTitleInput').addEventListener('input', autoSlugTpl);
+  document.getElementById('tplDropzone').addEventListener('click', () => document.getElementById('tplFileInput').click());
+  document.getElementById('tplFileInput').addEventListener('change', (e) => {
+    if(e.target.files[0]) document.getElementById('tplFileLabel').textContent = '✓ ' + e.target.files[0].name;
+  });
+  document.getElementById('tplDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('tplDropzone').classList.add('drag'); });
+  document.getElementById('tplDropzone').addEventListener('dragleave', () => document.getElementById('tplDropzone').classList.remove('drag'));
+  document.getElementById('tplDropzone').addEventListener('drop', (e) => {
+    e.preventDefault();
+    document.getElementById('tplDropzone').classList.remove('drag');
+    if(e.dataTransfer.files[0]){
+      document.getElementById('tplFileInput').files = e.dataTransfer.files;
+      document.getElementById('tplFileLabel').textContent = '✓ ' + e.dataTransfer.files[0].name;
+    }
+  });
+  document.getElementById('publishTplBtn').addEventListener('click', publishTemplate);
   document.getElementById('addQuestionBtn').addEventListener('click', () => addQuestionBlock());
   document.getElementById('parseImportBtn').addEventListener('click', handleImportParse);
   document.getElementById('importDropzone').addEventListener('click', () => document.getElementById('importFileInput').click());
@@ -449,9 +516,11 @@ function switchTab(tab){
   document.getElementById('tabResults').classList.toggle('active', tab === 'results');
   document.getElementById('tabCreate').classList.toggle('active', tab === 'create');
   document.getElementById('tabAnalytics').classList.toggle('active', tab === 'analytics');
+  document.getElementById('tabTemplates').classList.toggle('active', tab === 'templates');
   document.getElementById('resultsPanel').style.display = tab === 'results' ? 'block' : 'none';
   document.getElementById('createPanel').style.display = tab === 'create' ? 'block' : 'none';
   document.getElementById('analyticsPanel').style.display = tab === 'analytics' ? 'block' : 'none';
+  document.getElementById('templatesPanel').style.display = tab === 'templates' ? 'block' : 'none';
   if(tab === 'analytics') loadAnalytics();
 }
 
@@ -469,7 +538,20 @@ function autoSlug(){
 }
 document.addEventListener('input', (e) => {
   if(e.target && e.target.id === 'newExamSlug') e.target.dataset.touched = '1';
+  if(e.target && e.target.id === 'tplSlugInput') e.target.dataset.touched = '1';
 });
+
+function autoSlugTpl(){
+  const slugField = document.getElementById('tplSlugInput');
+  if(slugField.dataset.touched) return;
+  const title = document.getElementById('tplTitleInput').value;
+  slugField.value = title
+    .toLowerCase()
+    .replace(/[^\u0600-\u06FFa-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 60);
+}
 
 let qCounter = 0;
 
@@ -812,6 +894,125 @@ function handleImportParse(){
   }
   importResult.innerHTML = msg;
   importResult.style.display = 'block';
+}
+
+// ==================== Free template publishing ====================
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // strip the "data:<mime>;base64," prefix — GitHub's API wants raw base64
+      const result = reader.result;
+      resolve(result.substring(result.indexOf(',') + 1));
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function publishTemplate(){
+  const resultEl = document.getElementById('tplGenResult');
+  resultEl.className = 'gen-result';
+  resultEl.style.display = 'none';
+
+  const token = document.getElementById('ghTokenTpl').value.trim();
+  const title = document.getElementById('tplTitleInput').value.trim();
+  const slug = document.getElementById('tplSlugInput').value.trim();
+  const desc = document.getElementById('tplDescInput').value.trim();
+  const icon = document.getElementById('tplIconInput').value.trim();
+  const file = document.getElementById('tplFileInput').files[0];
+
+  if(!token) return showTplError('من فضلك حط GitHub Token الأول.');
+  if(!title || !slug || !desc) return showTplError('من فضلك املأ العنوان والـ slug والوصف.');
+  if(!/^[a-z0-9-]+$/.test(slug)) return showTplError('الـ slug لازم يكون حروف إنجليزي صغيرة وأرقام وشرطات بس.');
+  if(!file) return showTplError('من فضلك ارفع ملف القالب.');
+
+  const btn = document.getElementById('publishTplBtn');
+  btn.disabled = true;
+  btn.textContent = 'جارِ النشر...';
+
+  try{
+    const ext = file.name.includes('.') ? file.name.split('.').pop() : 'xlsx';
+    const filePath = `templates/files/${slug}.${ext}`;
+    const pagePath = `templates/${slug}.html`;
+    const base64Content = await fileToBase64(file);
+
+    // 1) upload the actual downloadable file
+    const fileApiUrl = `https://api.github.com/repos/Moame6n/Moamen-portfolio/contents/${filePath}`;
+    let fileSha = null;
+    const existingFile = await fetch(fileApiUrl, { headers: { 'Authorization': `token ${token}` } });
+    if(existingFile.ok){ fileSha = (await existingFile.json()).sha; }
+
+    const filePutRes = await fetch(fileApiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github+json' },
+      body: JSON.stringify({
+        message: fileSha ? `تحديث ملف قالب: ${title}` : `إضافة ملف قالب: ${title}`,
+        content: base64Content,
+        ...(fileSha ? { sha: fileSha } : {})
+      })
+    });
+    if(!filePutRes.ok){
+      const err = await filePutRes.json().catch(()=>({}));
+      throw new Error(err.message || `فشل رفع الملف (${filePutRes.status})`);
+    }
+
+    // 2) fetch the live landing-page template and clone it for this template
+    const baseRes = await fetch('https://raw.githubusercontent.com/Moame6n/Moamen-portfolio/main/templates/bank-reconciliation.html?_=' + Date.now());
+    if(!baseRes.ok) throw new Error('تعذّر جلب قالب صفحة الهبوط الأساسي من GitHub');
+    let html = await baseRes.text();
+
+    const fullFilePath = `/${filePath}`;
+    html = html.replace(/<title>[^<]*<\/title>/, `<title>${title} | مؤمن أحمد</title>`);
+    html = html.replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/templates/${slug}.html">`);
+    html = html.replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${title} | مؤمن أحمد">`);
+    html = html.replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/templates/${slug}.html">`);
+    if(icon) html = html.replace(/<meta name="icon" content="[^"]*">/, `<meta name="icon" content="${icon}">`);
+    html = html.replace(/<h1 id="tplTitle">[^<]*<\/h1>/, `<h1 id="tplTitle">${title}</h1>`);
+    html = html.replace(/<p id="tplDesc">[^<]*<\/p>/, `<p id="tplDesc">${desc.replace(/</g,'&lt;')}</p>`);
+    html = html.replace(/const TEMPLATE_SLUG = '[^']*';/, `const TEMPLATE_SLUG = '${slug}';`);
+    html = html.replace(/const TEMPLATE_TITLE = '[^']*';/, `const TEMPLATE_TITLE = '${title.replace(/'/g,"\\'")}';`);
+    html = html.replace(/const FILE_PATH = '[^']*';/, `const FILE_PATH = '${fullFilePath}';`);
+
+    // 3) publish the landing page
+    const pageApiUrl = `https://api.github.com/repos/Moame6n/Moamen-portfolio/contents/${pagePath}`;
+    let pageSha = null;
+    const existingPage = await fetch(pageApiUrl, { headers: { 'Authorization': `token ${token}` } });
+    if(existingPage.ok){ pageSha = (await existingPage.json()).sha; }
+
+    const pagePutRes = await fetch(pageApiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github+json' },
+      body: JSON.stringify({
+        message: pageSha ? `تحديث صفحة قالب: ${title}` : `إضافة صفحة قالب جديدة: ${title}`,
+        content: utf8ToBase64(html),
+        ...(pageSha ? { sha: pageSha } : {})
+      })
+    });
+    if(!pagePutRes.ok){
+      const err = await pagePutRes.json().catch(()=>({}));
+      throw new Error(err.message || `فشل نشر الصفحة (${pagePutRes.status})`);
+    }
+
+    resultEl.className = 'gen-result success';
+    resultEl.innerHTML = `تم نشر القالب بنجاح ✓ — هيبان في صفحة الأدوات والاختبارات خلال دقيقة.<br>رابط مباشر: <a href="https://moamen-portfolio-pi.vercel.app/templates/${slug}.html" target="_blank">/templates/${slug}.html</a>`;
+    resultEl.style.display = 'block';
+  }catch(err){
+    showTplError(err.message || 'حصل خطأ غير متوقع أثناء النشر');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'نشر القالب';
+  }
+}
+
+function showTplError(msg){
+  const resultEl = document.getElementById('tplGenResult');
+  resultEl.className = 'gen-result error';
+  resultEl.textContent = msg;
+  resultEl.style.display = 'block';
 }
 </script>
 </body>
