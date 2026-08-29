@@ -65,7 +65,13 @@
     color:var(--text); margin-bottom:12px;
   }
   .lb-title .trophy{ font-size:18px; }
-  .lb-list{ display:flex; flex-direction:column; gap:6px; }
+  .lb-list{
+    display:flex; flex-direction:column; gap:6px;
+    max-height:260px; overflow-y:auto; padding-left:4px;
+    scrollbar-width:thin; scrollbar-color:var(--border-soft) transparent;
+  }
+  .lb-list::-webkit-scrollbar{ width:5px; }
+  .lb-list::-webkit-scrollbar-thumb{ background:var(--border-soft); border-radius:4px; }
   .lb-row{
     display:flex; align-items:center; gap:10px; padding:9px 12px;
     background:var(--surface); border:1px solid var(--border-soft); border-radius:9px;
@@ -169,6 +175,14 @@
     <div class="lb-title"><span class="trophy">🏆</span> لوحة الصدارة</div>
     <div class="lb-list" id="leaderboardList">
       <div class="lb-loading">جارِ تحميل الترتيب...</div>
+    </div>
+  </div>
+
+  <div id="already-attempted-screen" class="gate" style="display:none;">
+    <p id="attemptedMsg" style="margin-bottom:18px;"></p>
+    <div class="btnrow" style="padding:0; justify-content:flex-start;">
+      <button class="navbtn" id="reviewPastBtn" type="button" style="background:var(--emerald); color:#08130E;">مراجعة نتيجتك</button>
+      <button class="navbtn" id="retakeAnywayBtn" type="button" style="background:transparent;color:var(--gold);border:1.5px solid var(--gold); display:none;">محاولة أخرى</button>
     </div>
   </div>
 
@@ -376,7 +390,9 @@ function nextQuestion(){
   else{ showResults(); }
 }
 
-async function showResults(){
+async function showResults(isReview){
+  document.getElementById('gate-screen').style.display = 'none';
+  document.getElementById('already-attempted-screen').style.display = 'none';
   document.getElementById('exam-screen').style.display = 'none';
   document.getElementById('results-screen').style.display = 'block';
 
@@ -411,9 +427,15 @@ async function showResults(){
   document.getElementById('stampEl').style.color = stampColor;
 
   setupShareAndCert(pct, title);
-
   buildReview();
-  await saveAttempt(correctCount, wrongCount, total, pct, title);
+
+  if(isReview){
+    document.getElementById('saveNote').textContent = 'دي مراجعة لنتيجة سابقة — متسجّلتش نتيجة جديدة.';
+  } else {
+    await saveAttempt(correctCount, wrongCount, total, pct, title);
+    saveAttemptToHistory();
+  }
+  document.getElementById('restartBtn').style.display = getAttemptHistory().length >= 2 ? 'none' : 'inline-flex';
 }
 
 function setupShareAndCert(pct, gradeTitle){
@@ -559,6 +581,56 @@ function buildReview(){
 }
 function toggleReview(){ document.getElementById('reviewBox').classList.toggle('show'); }
 
+// ==================== Device-based attempt history ====================
+// Stored per-exam in this browser only (localStorage) — lets a returning
+// visitor review their result instantly instead of retaking, and caps
+// retakes at 2 per device. Clearing browser data or using another
+// device/browser resets this, so it's a practical limit, not absolute.
+
+const HISTORY_KEY = 'exam_history_' + EXAM_SLUG;
+
+function getAttemptHistory(){
+  try{ return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+
+function saveAttemptToHistory(){
+  const history = getAttemptHistory();
+  history.push({ name: taker.name, answers: answers.slice(), finishedAt: new Date().toISOString() });
+  while(history.length > 2) history.shift();
+  try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }catch(e){}
+}
+
+function loadLastAttemptAndReview(){
+  const history = getAttemptHistory();
+  if(!history.length) return;
+  const last = history[history.length - 1];
+  taker.name = last.name;
+  answers = last.answers.slice();
+  showResults(true);
+}
+
+function checkPreviousAttempt(){
+  const history = getAttemptHistory();
+  if(history.length === 0) return false;
+
+  const msgEl = document.getElementById('attemptedMsg');
+  const retakeBtn = document.getElementById('retakeAnywayBtn');
+
+  if(history.length === 1){
+    msgEl.textContent = `أنت حليت الاختبار ده قبل كده من الجهاز ده باسم "${history[0].name}". تقدر تراجع نتيجتك، أو تجرب محاولة أخيرة.`;
+    retakeBtn.style.display = 'inline-flex';
+  } else {
+    msgEl.textContent = `استخدمت المحاولتين المتاحتين لهذا الاختبار من الجهاز ده. تقدر تراجع آخر نتيجة سجّلتها.`;
+    retakeBtn.style.display = 'none';
+  }
+
+  document.getElementById('gate-screen').style.display = 'none';
+  document.getElementById('already-attempted-screen').style.display = 'block';
+  return true;
+}
+
+
 document.addEventListener('DOMContentLoaded', function(){
   try{
     document.getElementById('gateNextBtn').addEventListener('click', submitGate);
@@ -566,6 +638,12 @@ document.addEventListener('DOMContentLoaded', function(){
     document.getElementById('nextBtn').addEventListener('click', nextQuestion);
     document.getElementById('reviewBtn').addEventListener('click', toggleReview);
     document.getElementById('restartBtn').addEventListener('click', function(){ location.reload(); });
+    document.getElementById('reviewPastBtn').addEventListener('click', loadLastAttemptAndReview);
+    document.getElementById('retakeAnywayBtn').addEventListener('click', function(){
+      document.getElementById('already-attempted-screen').style.display = 'none';
+      document.getElementById('gate-screen').style.display = 'block';
+    });
+    checkPreviousAttempt();
   }catch(e){
     showFatalError('تعذّر تجهيز أزرار الصفحة (' + e.message + ')');
   }
