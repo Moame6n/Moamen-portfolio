@@ -306,6 +306,32 @@
 
       <button class="btn btn-primary" id="publishTplBtn" type="button">نشر القالب</button>
       <div class="gen-result" id="tplGenResult"></div>
+
+      <div class="builder-card" style="margin-top:30px;">
+        <h3>إحصائيات التحميلات</h3>
+        <div class="stats-row">
+          <div class="stat-card"><div class="num" id="tplStatTotal">0</div><div class="lbl">إجمالي التحميلات</div></div>
+          <div class="stat-card"><div class="num" id="tplStatToday">0</div><div class="lbl">اليوم</div></div>
+          <div class="stat-card"><div class="num" id="tplStatWeek">0</div><div class="lbl">آخر ٧ أيام</div></div>
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>التحميلات لكل قالب</h3>
+        <div id="tplBreakdownList"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>سجل المهتمين</h3>
+        <input type="text" id="tplSearchBox" placeholder="بحث بالاسم..." style="width:100%; padding:10px 12px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text); font-family:'Tajawal',sans-serif; font-size:13.5px; margin-bottom:14px;">
+        <div id="tplLeadsTableWrap">
+          <table>
+            <thead><tr><th>الاسم</th><th>الهاتف</th><th>القالب</th><th>التاريخ</th></tr></thead>
+            <tbody id="tplLeadsBody"></tbody>
+          </table>
+          <div class="empty-state" id="tplLeadsEmpty" style="display:none;">لسه محدش حمّل أي قالب</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -346,6 +372,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
   document.getElementById('publishTplBtn').addEventListener('click', publishTemplate);
+  document.getElementById('tplSearchBox').addEventListener('input', renderTplLeadsTable);
   document.getElementById('addQuestionBtn').addEventListener('click', () => addQuestionBlock());
   document.getElementById('parseImportBtn').addEventListener('click', handleImportParse);
   document.getElementById('importDropzone').addEventListener('click', () => document.getElementById('importFileInput').click());
@@ -522,6 +549,7 @@ function switchTab(tab){
   document.getElementById('analyticsPanel').style.display = tab === 'analytics' ? 'block' : 'none';
   document.getElementById('templatesPanel').style.display = tab === 'templates' ? 'block' : 'none';
   if(tab === 'analytics') loadAnalytics();
+  if(tab === 'templates') loadTemplateStats();
 }
 
 function autoSlug(){
@@ -1013,6 +1041,69 @@ function showTplError(msg){
   resultEl.className = 'gen-result error';
   resultEl.textContent = msg;
   resultEl.style.display = 'block';
+}
+
+// ==================== Template download stats ====================
+
+let allTplLeads = [];
+
+async function loadTemplateStats(){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_template_leads`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(!res.ok) return;
+  allTplLeads = await res.json();
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const sevenDaysAgo = new Date(now.getTime() - 7*24*60*60*1000);
+
+  const total = allTplLeads.length;
+  const today = allTplLeads.filter(l => new Date(l.downloaded_at) >= startOfToday).length;
+  const week = allTplLeads.filter(l => new Date(l.downloaded_at) >= sevenDaysAgo).length;
+
+  document.getElementById('tplStatTotal').textContent = total;
+  document.getElementById('tplStatToday').textContent = today;
+  document.getElementById('tplStatWeek').textContent = week;
+
+  // breakdown per template
+  const byTemplate = {};
+  allTplLeads.forEach(l => {
+    byTemplate[l.template_title] = (byTemplate[l.template_title] || 0) + 1;
+  });
+  const breakdown = Object.entries(byTemplate).sort((a,b) => b[1]-a[1]);
+  const maxCount = Math.max(1, ...breakdown.map(b => b[1]));
+
+  document.getElementById('tplBreakdownList').innerHTML = breakdown.length ? breakdown.map(([name, count]) => `
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+      <div style="width:150px; font-size:12.5px; flex-shrink:0;">${escapeHtml(name)}</div>
+      <div style="flex:1; background:var(--bg); border-radius:5px; overflow:hidden; height:18px;">
+        <div style="width:${Math.round((count/maxCount)*100)}%; height:100%; background:var(--gold);"></div>
+      </div>
+      <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); width:70px; text-align:left;">${count} تحميل</div>
+    </div>
+  `).join('') : '<div class="empty-state">لسه مفيش تحميلات</div>';
+
+  renderTplLeadsTable();
+}
+
+function renderTplLeadsTable(){
+  const search = document.getElementById('tplSearchBox').value.trim().toLowerCase();
+  const filtered = search
+    ? allTplLeads.filter(l => (l.full_name || '').toLowerCase().includes(search))
+    : allTplLeads;
+
+  document.getElementById('tplLeadsEmpty').style.display = filtered.length ? 'none' : 'block';
+  document.getElementById('tplLeadsBody').innerHTML = filtered.map(l => `
+    <tr>
+      <td>${escapeHtml(l.full_name || '')}</td>
+      <td>${escapeHtml(l.phone || '—')}</td>
+      <td>${escapeHtml(l.template_title || '')}</td>
+      <td>${new Date(l.downloaded_at).toLocaleString('ar-EG')}</td>
+    </tr>
+  `).join('');
 }
 </script>
 </body>
