@@ -232,14 +232,20 @@
 
     <div id="analyticsPanel" style="display:none;">
       <div class="stats-row">
-        <div class="stat-card"><div class="num" id="viewsTotal">0</div><div class="lbl">إجمالي الزيارات</div></div>
-        <div class="stat-card"><div class="num" id="viewsToday">0</div><div class="lbl">زيارات اليوم</div></div>
-        <div class="stat-card"><div class="num" id="views7d">0</div><div class="lbl">آخر ٧ أيام</div></div>
+        <div class="stat-card"><div class="num" id="statSessions">0</div><div class="lbl">الزيارات (Sessions)</div></div>
+        <div class="stat-card"><div class="num" id="statUsers">0</div><div class="lbl">الزوار الفريدون (Users)</div></div>
+        <div class="stat-card"><div class="num" id="statPageviews">0</div><div class="lbl">مشاهدات الصفحة (Pageviews)</div></div>
+        <div class="stat-card"><div class="num" id="statPerSession">0</div><div class="lbl">صفحات لكل زيارة</div></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="statSessionsToday">0</div><div class="lbl">زيارات اليوم</div></div>
+        <div class="stat-card"><div class="num" id="statSessions7d">0</div><div class="lbl">زيارات آخر ٧ أيام</div></div>
       </div>
 
       <div class="builder-card">
         <h3>الزيارات آخر ١٤ يوم</h3>
         <div id="dailyChart" style="display:flex; align-items:flex-end; gap:4px; height:120px; padding-top:10px;"></div>
+        <div style="font-size:11px; color:var(--muted); margin-top:8px;">كل عمود = عدد الزيارات (Sessions) في اليوم ده</div>
       </div>
 
       <div class="builder-card">
@@ -624,18 +630,23 @@ async function loadAnalytics(){
   if(!res.ok) return;
   const stats = await res.json();
 
-  document.getElementById('viewsTotal').textContent = stats.total_views;
-  document.getElementById('viewsToday').textContent = stats.views_today;
-  document.getElementById('views7d').textContent = stats.views_7d;
+  document.getElementById('statSessions').textContent = stats.sessions.total;
+  document.getElementById('statUsers').textContent = stats.users.total;
+  document.getElementById('statPageviews').textContent = stats.pageviews.total;
+  document.getElementById('statPerSession').textContent = stats.sessions.total
+    ? (stats.pageviews.total / stats.sessions.total).toFixed(1)
+    : '0';
+  document.getElementById('statSessionsToday').textContent = stats.sessions.today;
+  document.getElementById('statSessions7d').textContent = stats.sessions.last7;
 
-  const maxDaily = Math.max(1, ...stats.daily.map(d => d.views));
+  const maxDaily = Math.max(1, ...stats.daily.map(d => d.sessions));
   document.getElementById('dailyChart').innerHTML = stats.daily.map(d => {
-    const h = Math.round((d.views / maxDaily) * 100);
+    const h = Math.round((d.sessions / maxDaily) * 100);
     const dayLabel = new Date(d.day).toLocaleDateString('ar-EG', { day:'numeric', month:'numeric' });
     return `
       <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
-        <div style="font-size:10px; color:var(--muted);">${d.views || ''}</div>
-        <div style="width:100%; height:${Math.max(h,3)}px; background:var(--emerald); border-radius:3px 3px 0 0; opacity:${d.views ? 1 : 0.25};"></div>
+        <div style="font-size:10px; color:var(--muted);">${d.sessions || ''}</div>
+        <div style="width:100%; height:${Math.max(h,3)}px; background:var(--emerald); border-radius:3px 3px 0 0; opacity:${d.sessions ? 1 : 0.25};"></div>
         <div style="font-size:9px; color:var(--muted); font-family:var(--mono);">${dayLabel}</div>
       </div>
     `;
@@ -648,7 +659,7 @@ async function loadAnalytics(){
       <div style="flex:1; background:var(--bg); border-radius:5px; overflow:hidden; height:18px;">
         <div style="width:${Math.round((p.views/maxPath)*100)}%; height:100%; background:var(--gold);"></div>
       </div>
-      <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); width:30px; text-align:left;">${p.views}</div>
+      <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); width:60px; text-align:left;">${p.views} مشاهدة</div>
     </div>
   `).join('') : '<div class="empty-state">لسه مفيش زيارات مسجلة</div>';
 }
