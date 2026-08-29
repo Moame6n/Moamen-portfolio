@@ -21,6 +21,33 @@ function toggleTheme(){
 
 // Silent page-view logging for the admin analytics tab. Fails silently if
 // Supabase config isn't loaded yet or the request fails — never blocks the page.
+//
+// Mirrors how Google Analytics defines these:
+// - client_id: a permanent random ID stored in this browser — identifies a "User"
+// - session_id: reused while the visitor stays active; a NEW one is generated
+//   only after 30 minutes of inactivity — identifies a "Session" (a "visit")
+// Neither ID contains any personal info, just a random string.
+function getClientId(){
+  let id = localStorage.getItem('_ga_client_id');
+  if(!id){
+    id = 'c_' + crypto.randomUUID();
+    localStorage.setItem('_ga_client_id', id);
+  }
+  return id;
+}
+function getSessionId(){
+  const now = Date.now();
+  const lastActivity = parseInt(localStorage.getItem('_ga_last_activity') || '0', 10);
+  let sid = localStorage.getItem('_ga_session_id');
+  const THIRTY_MIN = 30 * 60 * 1000;
+  if(!sid || (now - lastActivity) > THIRTY_MIN){
+    sid = 's_' + crypto.randomUUID();
+    localStorage.setItem('_ga_session_id', sid);
+  }
+  localStorage.setItem('_ga_last_activity', String(now));
+  return sid;
+}
+
 (function(){
   function track(){
     try{
@@ -37,7 +64,9 @@ function toggleTheme(){
         body: JSON.stringify({
           path: window.location.pathname,
           referrer: document.referrer || null,
-          user_agent: navigator.userAgent
+          user_agent: navigator.userAgent,
+          client_id: getClientId(),
+          session_id: getSessionId()
         })
       }).catch(() => {});
     }catch(e){}
