@@ -33,6 +33,14 @@
   }
   .subnav a.active{ color:var(--emerald); border-color:var(--emerald); }
 
+  .section-search{
+    width:100%; max-width:360px; padding:11px 14px; margin:4px 0 22px;
+    border:1px solid var(--border-soft); border-radius:9px;
+    background:var(--surface); color:var(--text); font-family:'Tajawal',sans-serif; font-size:14px;
+  }
+  .section-search:focus{ outline:none; border-color:var(--emerald); }
+  .subsection.hidden-tab{ display:none; }
+
   .subsection{ padding:40px 0 20px; }
   .subsection-head{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
   .subsection-head svg{ width:20px; height:20px; color:var(--emerald); }
@@ -115,6 +123,7 @@
   <div class="container">
     <div class="subsection-head"><i data-lucide="clipboard-list"></i><h2>الاختبارات</h2></div>
     <p class="subsection-desc">اختبارات كفاءة تفاعلية بنتيجة فورية.</p>
+    <input type="text" class="section-search" id="examsSearch" placeholder="دور على اختبار...">
     <div class="grid grid-3" id="examsGrid">
       <div class="empty-note">جارِ التحميل...</div>
     </div>
@@ -125,8 +134,9 @@
   <div class="container">
     <div class="subsection-head"><i data-lucide="wrench"></i><h2>الأدوات</h2></div>
     <p class="subsection-desc">أدوات عملية تخدم المحاسبين في شغلهم اليومي.</p>
+    <input type="text" class="section-search" id="toolsSearch" placeholder="دور على أداة...">
     <div class="grid grid-3" id="toolsGrid">
-      <div class="card tool-card">
+      <div class="card tool-card" data-static-name="حاسبة المعادلة المحاسبية">
         <span class="badge live">تفاعلية</span>
         <div class="icon-chip"><i data-lucide="scale"></i></div>
         <h3>حاسبة المعادلة المحاسبية</h3>
@@ -147,6 +157,7 @@
   <div class="container">
     <div class="subsection-head"><i data-lucide="file-spreadsheet"></i><h2>قوالب مجانية</h2></div>
     <p class="subsection-desc">قوالب إكسيل جاهزة تحمّلها فورًا بعد كتابة اسمك.</p>
+    <input type="text" class="section-search" id="templatesSearch" placeholder="دور على قالب...">
     <div class="grid grid-3" id="templatesGrid">
       <div class="empty-note">جارِ التحميل...</div>
     </div>
@@ -193,13 +204,35 @@ function calcBalance(){
   }
 }
 
-// subnav active-state
+// real tab switching — show only the selected section, hide the rest
+const TAB_SECTIONS = {
+  'exams-section': 'exams-section',
+  'tools-section': 'tools-section',
+  'templates-section': 'templates-section'
+};
+
+function switchSectionTab(targetId){
+  document.querySelectorAll('.subnav a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + targetId);
+  });
+  Object.values(TAB_SECTIONS).forEach(id => {
+    document.getElementById(id).classList.toggle('hidden-tab', id !== targetId);
+  });
+  window.scrollTo({ top: document.querySelector('.subnav').offsetTop - 90, behavior: 'smooth' });
+}
+
 document.querySelectorAll('.subnav a').forEach(link => {
-  link.addEventListener('click', () => {
-    document.querySelectorAll('.subnav a').forEach(a => a.classList.remove('active'));
-    link.classList.add('active');
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const targetId = link.getAttribute('href').slice(1);
+    switchSectionTab(targetId);
+    history.replaceState(null, '', '#' + targetId);
   });
 });
+
+// open directly on the right tab if the URL already has a hash (e.g. shared link)
+const initialTab = window.location.hash ? window.location.hash.slice(1) : 'exams-section';
+switchSectionTab(TAB_SECTIONS[initialTab] ? initialTab : 'exams-section');
 
 // ==== Auto-discovery: list every .html file in /exams and /tools on GitHub,
 // read its <title> + <meta name="description"> + optional <meta name="icon">,
@@ -239,8 +272,9 @@ function cardHtml(meta, href, type){
   const labels = { exam: 'ابدأ الاختبار', tool: 'افتح الأداة', template: 'تحميل مجاني' };
   const icon = meta.icon || defaults[type] || 'file';
   const btnLabel = labels[type] || 'افتح';
+  const searchKey = (meta.title + ' ' + meta.description).toLowerCase();
   return `
-    <div class="card tool-card">
+    <div class="card tool-card" data-search="${searchKey.replace(/"/g,'&quot;')}">
       <span class="badge live">متاح الآن</span>
       <div class="icon-chip"><i data-lucide="${icon}"></i></div>
       <h3>${meta.title}</h3>
@@ -278,6 +312,42 @@ async function renderSection(folder, gridId, type, keepExisting){
 renderSection('exams', 'examsGrid', 'exam', false);
 renderSection('tools', 'toolsGrid', 'tool', true);
 renderSection('templates', 'templatesGrid', 'template', false);
+
+// give the static (hand-coded) calculator card the same searchable data attribute
+// (set directly, not via DOMContentLoaded — this script runs after that markup already exists)
+const staticCard = document.querySelector('#toolsGrid .card[data-static-name]');
+if(staticCard){
+  staticCard.dataset.search = 'حاسبة المعادلة المحاسبية اصول التزامات حقوق ملكية توازن';
+}
+
+function filterGrid(gridId, searchValue, emptyLabel){
+  const grid = document.getElementById(gridId);
+  const query = searchValue.trim().toLowerCase();
+  const cards = grid.querySelectorAll('.card');
+  let visibleCount = 0;
+
+  cards.forEach(card => {
+    const matches = !query || (card.dataset.search || '').includes(query);
+    card.style.display = matches ? '' : 'none';
+    if(matches) visibleCount++;
+  });
+
+  let noResultsEl = grid.querySelector('.no-search-results');
+  if(visibleCount === 0 && cards.length > 0){
+    if(!noResultsEl){
+      noResultsEl = document.createElement('div');
+      noResultsEl.className = 'empty-note no-search-results';
+      grid.appendChild(noResultsEl);
+    }
+    noResultsEl.textContent = `مفيش ${emptyLabel} مطابقة لبحثك.`;
+  } else if(noResultsEl){
+    noResultsEl.remove();
+  }
+}
+
+document.getElementById('examsSearch').addEventListener('input', (e) => filterGrid('examsGrid', e.target.value, 'اختبارات'));
+document.getElementById('toolsSearch').addEventListener('input', (e) => filterGrid('toolsGrid', e.target.value, 'أدوات'));
+document.getElementById('templatesSearch').addEventListener('input', (e) => filterGrid('templatesGrid', e.target.value, 'قوالب'));
 </script>
 </body>
 </html>
