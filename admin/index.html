@@ -127,6 +127,7 @@
       <button class="dash-tab" id="tabCreate" type="button">إنشاء اختبار جديد</button>
       <button class="dash-tab" id="tabAnalytics" type="button">الزيارات</button>
       <button class="dash-tab" id="tabTemplates" type="button">قوالب مجانية</button>
+      <button class="dash-tab" id="tabTools" type="button">الأدوات</button>
     </div>
 
     <div id="resultsPanel">
@@ -333,6 +334,62 @@
         </div>
       </div>
     </div>
+
+    <div id="toolsPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>إزاي الأداة بتاخد نفس شكل الموقع دايمًا</h3>
+        <p style="font-size:12.5px; color:var(--text-soft); line-height:1.9; margin:0;">
+          ارفع أي ملف HTML، جاي من محادثة مع Claude أو من أي مصدر تاني. النظام بيدوّر الأول على علامات القالب
+          (<code style="color:var(--gold);">TOOL_BODY_START</code> وغيرها) للحقن الدقيق — ولو مالقهاش، بياخد تلقائيًا
+          كل اللي جوه <code style="color:var(--gold);">&lt;body&gt;</code> من الملف. في الحالتين، الهيدر والفوتر والخط والألوان
+          دايمًا جايين من أحدث نسخة من هيكل الموقع، مش من الملف اللي بترفعه — فحتى لو الشكل الداخلي للأداة اختلف شوية،
+          هوية الموقع العامة بتفضل موحّدة دايمًا.
+        </p>
+      </div>
+
+      <div class="builder-card">
+        <h3>1. إعدادات الاتصال بـ GitHub</h3>
+        <div class="field-row">
+          <label>GitHub Personal Access Token</label>
+          <input type="password" id="ghTokenTool" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          <div class="hint">نفس التوكن المستخدم في باقي التبويبات — بيتحفظ تلقائي.</div>
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>2. بيانات الأداة</h3>
+        <div class="field-row-2">
+          <div class="field-row">
+            <label>عنوان الأداة</label>
+            <input type="text" id="toolTitleInput" placeholder="مثال: حاسبة الإهلاك">
+          </div>
+          <div class="field-row">
+            <label>الاسم المختصر بالإنجليزي (Slug)</label>
+            <input type="text" id="toolSlugInput" placeholder="depreciation-calculator">
+          </div>
+        </div>
+        <div class="field-row">
+          <label>وصف قصير</label>
+          <input type="text" id="toolDescInput" placeholder="سطر أو سطرين يوضحوا وظيفة الأداة">
+        </div>
+        <div class="field-row">
+          <label>أيقونة (اختياري — من lucide.dev/icons)</label>
+          <input type="text" id="toolIconInput" placeholder="calculator">
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>3. ملف الأداة المبني على القالب</h3>
+        <div class="dropzone" id="toolDropzone" style="padding:26px 20px;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px;" id="toolFileLabel">اسحب ملف الأداة النهائي هنا، أو دوس للاختيار</div>
+          <div style="font-size:12px; color:var(--muted);">لازم يكون مبني من نسخة قالب الأداة اللي فيه علامات الاستخراج</div>
+          <input type="file" id="toolFileInput" accept=".html" style="display:none;">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="publishToolBtn" type="button">نشر الأداة</button>
+      <div class="gen-result" id="toolGenResult"></div>
+    </div>
   </div>
 </div>
 
@@ -373,6 +430,28 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('publishTplBtn').addEventListener('click', publishTemplate);
   document.getElementById('tplSearchBox').addEventListener('input', renderTplLeadsTable);
+
+  document.getElementById('tabTools').addEventListener('click', () => switchTab('tools'));
+  document.getElementById('ghTokenTool').value = localStorage.getItem('gh_token') || '';
+  document.getElementById('ghTokenTool').addEventListener('change', (e) => {
+    localStorage.setItem('gh_token', e.target.value.trim());
+  });
+  document.getElementById('toolTitleInput').addEventListener('input', autoSlugTool);
+  document.getElementById('toolDropzone').addEventListener('click', () => document.getElementById('toolFileInput').click());
+  document.getElementById('toolFileInput').addEventListener('change', (e) => {
+    if(e.target.files[0]) document.getElementById('toolFileLabel').textContent = '✓ ' + e.target.files[0].name;
+  });
+  document.getElementById('toolDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('toolDropzone').classList.add('drag'); });
+  document.getElementById('toolDropzone').addEventListener('dragleave', () => document.getElementById('toolDropzone').classList.remove('drag'));
+  document.getElementById('toolDropzone').addEventListener('drop', (e) => {
+    e.preventDefault();
+    document.getElementById('toolDropzone').classList.remove('drag');
+    if(e.dataTransfer.files[0]){
+      document.getElementById('toolFileInput').files = e.dataTransfer.files;
+      document.getElementById('toolFileLabel').textContent = '✓ ' + e.dataTransfer.files[0].name;
+    }
+  });
+  document.getElementById('publishToolBtn').addEventListener('click', publishTool);
   document.getElementById('addQuestionBtn').addEventListener('click', () => addQuestionBlock());
   document.getElementById('parseImportBtn').addEventListener('click', handleImportParse);
   document.getElementById('importDropzone').addEventListener('click', () => document.getElementById('importFileInput').click());
@@ -544,10 +623,12 @@ function switchTab(tab){
   document.getElementById('tabCreate').classList.toggle('active', tab === 'create');
   document.getElementById('tabAnalytics').classList.toggle('active', tab === 'analytics');
   document.getElementById('tabTemplates').classList.toggle('active', tab === 'templates');
+  document.getElementById('tabTools').classList.toggle('active', tab === 'tools');
   document.getElementById('resultsPanel').style.display = tab === 'results' ? 'block' : 'none';
   document.getElementById('createPanel').style.display = tab === 'create' ? 'block' : 'none';
   document.getElementById('analyticsPanel').style.display = tab === 'analytics' ? 'block' : 'none';
   document.getElementById('templatesPanel').style.display = tab === 'templates' ? 'block' : 'none';
+  document.getElementById('toolsPanel').style.display = tab === 'tools' ? 'block' : 'none';
   if(tab === 'analytics') loadAnalytics();
   if(tab === 'templates') loadTemplateStats();
 }
@@ -567,12 +648,25 @@ function autoSlug(){
 document.addEventListener('input', (e) => {
   if(e.target && e.target.id === 'newExamSlug') e.target.dataset.touched = '1';
   if(e.target && e.target.id === 'tplSlugInput') e.target.dataset.touched = '1';
+  if(e.target && e.target.id === 'toolSlugInput') e.target.dataset.touched = '1';
 });
 
 function autoSlugTpl(){
   const slugField = document.getElementById('tplSlugInput');
   if(slugField.dataset.touched) return;
   const title = document.getElementById('tplTitleInput').value;
+  slugField.value = title
+    .toLowerCase()
+    .replace(/[^\u0600-\u06FFa-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 60);
+}
+
+function autoSlugTool(){
+  const slugField = document.getElementById('toolSlugInput');
+  if(slugField.dataset.touched) return;
+  const title = document.getElementById('toolTitleInput').value;
   slugField.value = title
     .toLowerCase()
     .replace(/[^\u0600-\u06FFa-z0-9\s-]/g, '')
@@ -1104,6 +1198,137 @@ function renderTplLeadsTable(){
       <td>${new Date(l.downloaded_at).toLocaleString('ar-EG')}</td>
     </tr>
   `).join('');
+}
+
+// ==================== Tool publishing (extract-and-inject) ====================
+// Reads the three marked regions (CSS / body / JS) out of the uploaded tool file,
+// then injects them into a FRESH copy of the live /tools/_BASE.html shell.
+// This is what guarantees every tool always matches the current site design —
+// the head/nav/footer never come from the uploaded file, only from the live shell.
+
+function extractBetween(text, startMarker, endMarker){
+  const startIdx = text.indexOf(startMarker);
+  const endIdx = text.indexOf(endMarker);
+  if(startIdx === -1 || endIdx === -1 || endIdx < startIdx) return null;
+  return text.substring(startIdx + startMarker.length, endIdx).trim();
+}
+
+async function publishTool(){
+  const resultEl = document.getElementById('toolGenResult');
+  resultEl.className = 'gen-result';
+  resultEl.style.display = 'none';
+
+  const token = document.getElementById('ghTokenTool').value.trim();
+  const title = document.getElementById('toolTitleInput').value.trim();
+  const slug = document.getElementById('toolSlugInput').value.trim();
+  const desc = document.getElementById('toolDescInput').value.trim();
+  const icon = document.getElementById('toolIconInput').value.trim();
+  const file = document.getElementById('toolFileInput').files[0];
+
+  if(!token) return showToolError('من فضلك حط GitHub Token الأول.');
+  if(!title || !slug || !desc) return showToolError('من فضلك املأ العنوان والـ slug والوصف.');
+  if(!/^[a-z0-9-]+$/.test(slug)) return showToolError('الـ slug لازم يكون حروف إنجليزي صغيرة وأرقام وشرطات بس.');
+  if(!file) return showToolError('من فضلك ارفع ملف الأداة المبني على القالب.');
+
+  const btn = document.getElementById('publishToolBtn');
+  btn.disabled = true;
+  btn.textContent = 'جارِ النشر...';
+
+  try{
+    const uploadedText = await file.text();
+
+    let extractedCss = extractBetween(uploadedText, '/* TOOL_CSS_START */', '/* TOOL_CSS_END */');
+    let extractedBody = extractBetween(uploadedText, '<!-- TOOL_BODY_START -->', '<!-- TOOL_BODY_END -->');
+    let extractedJs = extractBetween(uploadedText, '// TOOL_JS_START', '// TOOL_JS_END');
+    let usedFallback = false;
+
+    if(extractedBody === null){
+      // fallback for files not built from our marked template: grab whatever's
+      // inside <body>...</body>, plus any <style>/<script> blocks anywhere in
+      // the file, so the tool's own logic still works — only the outer shell
+      // (nav/footer/fonts/colors) always comes from our live template, never this file.
+      usedFallback = true;
+      const bodyMatch = uploadedText.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+      if(!bodyMatch){
+        throw new Error('مقدرتش ألاقي محتوى داخل الملف ده خالص — تأكد إنه ملف HTML صحيح.');
+      }
+      let bodyContent = bodyMatch[1];
+
+      // pull out any <style> blocks from the whole file as extra CSS
+      const styleBlocks = [...uploadedText.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map(m => m[1]);
+      extractedCss = styleBlocks.join('\n');
+
+      // pull out any <script> blocks (inline, no src=) as extra JS, and strip them from the body markup
+      const scriptBlocks = [...bodyContent.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)].map(m => m[1]);
+      extractedJs = scriptBlocks.join('\n');
+      bodyContent = bodyContent.replace(/<script(?![^>]*\bsrc=)[^>]*>[\s\S]*?<\/script>/gi, '');
+      bodyContent = bodyContent.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+
+      extractedBody = bodyContent.trim();
+    }
+
+    // fetch the live shell fresh, every time — this is what keeps every tool in sync
+    const baseRes = await fetch('https://raw.githubusercontent.com/Moame6n/Moamen-portfolio/main/tools/_BASE.html?_=' + Date.now());
+    if(!baseRes.ok) throw new Error('تعذّر جلب هيكل الموقع الأساسي من GitHub');
+    let html = await baseRes.text();
+
+    html = html.replace(/<title>[^<]*<\/title>/, `<title>${title} | مؤمن أحمد</title>`);
+    html = html.replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/tools/${slug}.html">`);
+    html = html.replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${title} | مؤمن أحمد">`);
+    html = html.replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/tools/${slug}.html">`);
+    if(icon) html = html.replace(/<meta name="icon" content="[^"]*">/, `<meta name="icon" content="${icon}">`);
+    html = html.replace(/<h1 id="toolPageTitle">[^<]*<\/h1>/, `<h1 id="toolPageTitle">${title}</h1>`);
+    html = html.replace(/<p id="toolPageDesc">[^<]*<\/p>/, `<p id="toolPageDesc">${desc.replace(/</g,'&lt;')}</p>`);
+
+    if(extractedCss){
+      html = html.replace(/\/\* TOOL_CSS_START \*\/[\s\S]*?\/\* TOOL_CSS_END \*\//, `/* TOOL_CSS_START */\n${extractedCss}\n/* TOOL_CSS_END */`);
+    }
+    html = html.replace(/<!-- TOOL_BODY_START -->[\s\S]*?<!-- TOOL_BODY_END -->/, `<!-- TOOL_BODY_START -->\n${extractedBody}\n<!-- TOOL_BODY_END -->`);
+    if(extractedJs){
+      html = html.replace(/\/\/ TOOL_JS_START[\s\S]*?\/\/ TOOL_JS_END/, `// TOOL_JS_START\n${extractedJs}\n// TOOL_JS_END`);
+    }
+
+    const pagePath = `tools/${slug}.html`;
+    const pageApiUrl = `https://api.github.com/repos/Moame6n/Moamen-portfolio/contents/${pagePath}`;
+    let pageSha = null;
+    const existingPage = await fetch(pageApiUrl, { headers: { 'Authorization': `token ${token}` } });
+    if(existingPage.ok){ pageSha = (await existingPage.json()).sha; }
+
+    const pagePutRes = await fetch(pageApiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github+json' },
+      body: JSON.stringify({
+        message: pageSha ? `تحديث أداة: ${title}` : `إضافة أداة جديدة: ${title}`,
+        content: utf8ToBase64(html),
+        ...(pageSha ? { sha: pageSha } : {})
+      })
+    });
+    if(!pagePutRes.ok){
+      const err = await pagePutRes.json().catch(()=>({}));
+      throw new Error(err.message || `فشل النشر (${pagePutRes.status})`);
+    }
+
+    resultEl.className = 'gen-result success';
+    const fallbackNote = usedFallback
+      ? '<br><span style="color:var(--gold);">ملحوظة: الملف مكانش مبني على قالبنا، فاتاخد شكله الداخلي زي ما هو — الهيدر والفوتر والخط بس اللي اتوحدوا مع باقي الموقع.</span>'
+      : '';
+    resultEl.innerHTML = `تم نشر الأداة بنجاح ✓ — هتبان في صفحة الأدوات والاختبارات خلال دقيقة.${fallbackNote}<br>رابط مباشر: <a href="https://moamen-portfolio-pi.vercel.app/tools/${slug}.html" target="_blank">/tools/${slug}.html</a>`;
+    resultEl.style.display = 'block';
+  }catch(err){
+    showToolError(err.message || 'حصل خطأ غير متوقع أثناء النشر');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'نشر الأداة';
+  }
+}
+
+function showToolError(msg){
+  const resultEl = document.getElementById('toolGenResult');
+  resultEl.className = 'gen-result error';
+  resultEl.textContent = msg;
+  resultEl.style.display = 'block';
 }
 </script>
 </body>
