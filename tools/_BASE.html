@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اسم الأداة هنا | مؤمن أحمد</title>
+<meta name="description" content="وصف قصير وواضح للأداة، سطر أو سطرين، هيبان تحت العنوان في الكارت.">
+<meta name="icon" content="wrench">
+<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/tools/_BASE.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="اسم الأداة هنا | مؤمن أحمد">
+<meta property="og:description" content="وصف قصير وواضح للأداة.">
+<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/tools/_BASE.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0E13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script src="/assets/theme.js"></script>
+<script src="/assets/supabase-config.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  body{ padding:0; }
+  .page-hero{ padding:50px 0 10px; }
+  .page-hero .back{ display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12.5px; color:var(--emerald); text-decoration:none; margin-bottom:18px; }
+  .page-hero .back svg{ width:14px; height:14px; }
+  .page-hero h1{ font-size:30px; margin-bottom:10px; }
+  .page-hero p{ color:var(--text-soft); font-size:15px; max-width:640px; line-height:1.85; }
+  .wrap{ padding:20px 0 70px; }
+/* TOOL_CSS_START */
+/* TOOL_CSS_END */
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <div class="brand"><span class="dot"></span>مؤمن <span>أحمد</span></div>
+    <div style="display:flex; align-items:center; gap:12px;">
+    <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button class="navtoggle" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
+    <nav id="mainNav">
+      <a href="/#home">الرئيسية</a>
+      <a href="/#about">من أنا؟</a>
+      <a href="/#services">خدماتي</a>
+      <a href="/tools-exams.html">الأدوات والاختبارات</a>
+      <a href="/#portfolio">أعمالي</a>
+      <a href="/#blog">مدونتي</a>
+      <a href="/#contact">تواصل معي</a>
+    </nav>
+    </div>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <a href="/tools-exams.html" class="back"><i data-lucide="arrow-right"></i> رجوع للأدوات والاختبارات</a>
+    <div class="eyebrow">أداة</div>
+    <h1 id="toolPageTitle">اسم الأداة هنا</h1>
+    <p id="toolPageDesc">وصف أطول شوية للأداة يشرح بتعمل ايه بالظبط.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="container">
+<!-- TOOL_BODY_START -->
+    <div class="card">
+      <p>محتوى الأداة يتحط هنا.</p>
+    </div>
+<!-- TOOL_BODY_END -->
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div style="margin-bottom:10px;">
+      <a href="https://wa.me/201154960694" target="_blank">واتساب</a>
+      <a href="https://www.linkedin.com/in/moamen-ahmed-900921223" target="_blank">LinkedIn</a>
+      <a href="https://www.facebook.com/acc.mo.men.ahmed.mohamed" target="_blank">Facebook</a>
+    </div>
+    جميع الحقوق محفوظة © 2026 مؤمن أحمد
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+// TOOL_JS_START
+// TOOL_JS_END
+</script>
+</body>
+</html>
