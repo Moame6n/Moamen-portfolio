@@ -145,6 +145,16 @@
   .rq .rline.wrong{ background:rgba(240,97,109,0.08); color:var(--red); }
   .rq .rline.right{ background:rgba(61,220,151,0.08); color:var(--emerald); }
 
+  .explore-more{ max-width:640px; margin:0 auto 40px; padding:0 24px; }
+  .explore-more h3{ font-size:15px; color:var(--text-soft); margin-bottom:12px; text-align:center; }
+  .explore-links{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .explore-links a{
+    display:inline-flex; align-items:center; gap:6px; padding:10px 16px;
+    background:var(--surface); border:1px solid var(--border-soft); border-radius:9px;
+    color:var(--text-soft); text-decoration:none; font-size:13px; transition:.15s;
+  }
+  .explore-links a:hover{ border-color:var(--emerald); color:var(--emerald); }
+
   @media (max-width:520px){
     header.top{ padding:20px 20px 18px; } main{ padding:22px 20px 14px; }
     .navrow{ padding:14px 20px 24px; } .gate{ padding:26px 20px 24px; }
@@ -246,6 +256,17 @@
       <a href="/#tools" class="navbtn" style="background:transparent;color:var(--text-soft);border:1.5px solid var(--border-soft); text-decoration:none; display:inline-flex; align-items:center;">رجوع للبورتفوليو</a>
     </div>
     <div class="review" id="reviewBox"></div>
+  </div>
+
+  <div class="explore-more">
+    <h3>استكشف المزيد</h3>
+    <div class="explore-links">
+      <a href="/tools-exams.html#exams-section">كل الاختبارات</a>
+      <a href="/tools-exams.html#tools-section">الأدوات المجانية</a>
+      <a href="/tools-exams.html#templates-section">قوالب مجانية</a>
+      <a href="/#services">خدماتي</a>
+      <a href="https://wa.me/201154960694" target="_blank">تواصل على واتساب</a>
+    </div>
   </div>
 
 </div>
