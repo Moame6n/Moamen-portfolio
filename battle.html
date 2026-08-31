@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تحدي مباشر | مؤمن أحمد</title>
+<meta name="description" content="واجه محاسب تاني لايف — 10 أسئلة، أسرع إجابات صح تكسب.">
+<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/battle.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0E13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script src="/assets/theme.js"></script>
+<script src="/assets/supabase-config.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  body{ padding:0; }
+  .page-hero{ padding:50px 0 10px; }
+  .page-hero .back{ display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12.5px; color:var(--emerald); text-decoration:none; margin-bottom:18px; }
+  .page-hero h1{ font-size:28px; margin-bottom:10px; }
+  .page-hero p{ color:var(--text-soft); font-size:15px; max-width:560px; line-height:1.85; }
+  .wrap{ padding:20px 0 70px; }
+  .bcard{ max-width:520px; margin:0 auto; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius); padding:28px; }
+
+  /* entry */
+  .field-row{ margin-bottom:16px; }
+  .field-row label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:var(--text-soft); }
+  .field-row input, .field-row select{
+    width:100%; padding:11px 13px; border:1px solid var(--border-soft); border-radius:8px;
+    background:var(--bg); color:var(--text); font-family:'Tajawal',sans-serif; font-size:14.5px;
+  }
+
+  /* waiting */
+  .wait-screen{ text-align:center; padding:20px 0; }
+  .pulse-ring{
+    width:90px; height:90px; border-radius:50%; border:3px solid var(--gold); margin:0 auto 22px;
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .pulse-ring::before{
+    content:''; position:absolute; inset:-8px; border-radius:50%; border:2px solid var(--gold);
+    opacity:.5; animation:pulseRing 1.6s ease-out infinite;
+  }
+  @keyframes pulseRing{ 0%{ transform:scale(.85); opacity:.6; } 100%{ transform:scale(1.25); opacity:0; } }
+  .pulse-ring span{ font-size:30px; }
+  .wait-text{ font-size:15px; color:var(--text-soft); margin-bottom:8px; }
+  .wait-count{ font-family:var(--mono); font-size:13px; color:var(--muted); }
+
+  /* battle */
+  .vs-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .vs-side{ flex:1; text-align:center; }
+  .vs-side .name{ font-size:13px; font-weight:700; margin-bottom:6px; }
+  .vs-side.me .name{ color:var(--emerald); }
+  .vs-side.opp .name{ color:var(--red); }
+  .vs-mid{ font-family:var(--mono); font-size:12px; color:var(--muted); padding:0 10px; }
+  .progress-dots{ display:flex; gap:3px; justify-content:center; margin-bottom:6px; }
+  .pdot{ width:8px; height:8px; border-radius:50%; background:var(--border-soft); }
+  .pdot.on-me{ background:var(--emerald); }
+  .pdot.on-opp{ background:var(--red); }
+  .score-line{ font-family:var(--mono); font-size:12px; color:var(--text-soft); }
+
+  .timer-box{ text-align:center; margin:14px 0 20px; }
+  .timer-num{ font-family:var(--mono); font-size:30px; font-weight:700; color:var(--emerald); }
+  .timer-num.low{ color:var(--red); }
+
+  .qnum{ font-family:var(--mono); font-size:12.5px; color:var(--gold); margin-bottom:8px; }
+  .qtext{ font-size:16px; font-weight:700; margin-bottom:18px; line-height:1.7; }
+  .opt-btn{
+    display:block; width:100%; text-align:right; padding:13px 16px; margin-bottom:9px;
+    border:1.5px solid var(--border-soft); border-radius:10px; background:var(--bg); color:var(--text);
+    font-family:'Tajawal',sans-serif; font-size:14px; cursor:pointer;
+  }
+  .opt-btn:hover{ border-color:var(--emerald); }
+  .opt-btn.correct{ border-color:var(--emerald); background:rgba(61,220,151,0.12); }
+  .opt-btn.wrong{ border-color:var(--red); background:rgba(240,97,109,0.12); }
+
+  /* result */
+  .result-screen{ text-align:center; }
+  .result-badge{ font-size:22px; font-weight:900; margin-bottom:8px; }
+  .result-badge.win{ color:var(--emerald); }
+  .result-badge.lose{ color:var(--red); }
+  .compare-row{ display:flex; justify-content:space-around; margin:22px 0; }
+  .compare-col .num{ font-family:var(--mono); font-size:26px; font-weight:700; }
+  .compare-col .lbl{ font-size:12px; color:var(--text-soft); margin-top:4px; }
+  .bot-note{ font-size:11.5px; color:var(--gold); margin-top:14px; }
+
+  .btn-row{ display:flex; gap:10px; margin-top:20px; }
+  .btn-row .btn{ flex:1; justify-content:center; }
+
+  .explore-more{ max-width:640px; margin:30px auto 0; padding:0 24px; }
+  .explore-more h3{ font-size:15px; color:var(--text-soft); margin-bottom:12px; text-align:center; }
+  .explore-links{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .explore-links a{
+    display:inline-flex; align-items:center; gap:6px; padding:10px 16px;
+    background:var(--surface); border:1px solid var(--border-soft); border-radius:9px;
+    color:var(--text-soft); text-decoration:none; font-size:13px;
+  }
+  .explore-links a:hover{ border-color:var(--emerald); color:var(--emerald); }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <div class="brand"><span class="dot"></span>مؤمن <span>أحمد</span></div>
+    <div style="display:flex; align-items:center; gap:12px;">
+    <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.79"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button class="navtoggle" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
+    <nav id="mainNav">
+      <a href="/#home">الرئيسية</a>
+      <a href="/tools-exams.html">الأدوات والاختبارات</a>
+      <a href="/#contact">تواصل معي</a>
+    </nav>
+    </div>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <a href="/tools-exams.html" class="back">← رجوع للأدوات والاختبارات</a>
+    <div class="eyebrow">⚔️ تحدي مباشر</div>
+    <h1>واجه محاسب تاني لايف</h1>
+    <p>10 أسئلة، أسرع إجابات صح تكسب. لو محدش موجود دلوقتي، هتواجه خصم افتراضي قريب من مستواك.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="container">
+    <div class="bcard">
+
+      <!-- ENTRY -->
+      <div id="entryScreen">
+        <div class="field-row">
+          <label>اسمك</label>
+          <input type="text" id="battleName" placeholder="اكتب اسمك هنا">
+        </div>
+        <div class="field-row">
+          <label>التخصص</label>
+          <select id="battleCategory">
+            <option value="مختلط">مختلط (كل التخصصات)</option>
+            <option value="محاسبة مالية">محاسبة مالية</option>
+            <option value="محاسبة تكاليف">محاسبة تكاليف</option>
+            <option value="مراجعة">مراجعة</option>
+            <option value="محاسبة إدارية">محاسبة إدارية</option>
+            <option value="تحليل مالي">تحليل مالي</option>
+          </select>
+        </div>
+        <div id="entryErr" style="display:none; color:var(--red); font-size:12.5px; margin-bottom:12px;"></div>
+        <button class="btn btn-primary" id="startBattleBtn" style="width:100%; justify-content:center;">ابدأ التحدي</button>
+      </div>
+
+      <!-- WAITING -->
+      <div id="waitScreen" class="wait-screen" style="display:none;">
+        <div class="pulse-ring"><span>🔍</span></div>
+        <div class="wait-text" id="waitText">بندوّر على خصم...</div>
+        <div class="wait-count" id="waitCount"></div>
+      </div>
+
+      <!-- BATTLE -->
+      <div id="battleScreen" style="display:none;">
+        <div class="vs-row">
+          <div class="vs-side me">
+            <div class="name" id="meName">أنت</div>
+            <div class="progress-dots" id="meDots"></div>
+            <div class="score-line" id="meScore">0/10 صح</div>
+          </div>
+          <div class="vs-mid">VS</div>
+          <div class="vs-side opp">
+            <div class="name" id="oppName">الخصم</div>
+            <div class="progress-dots" id="oppDots"></div>
+            <div class="score-line" id="oppScore">0/10 صح</div>
+          </div>
+        </div>
+        <div class="timer-box"><span class="timer-num" id="timerNum">00:00</span></div>
+        <div class="qnum" id="qNum">السؤال 1 من 10</div>
+        <div class="qtext" id="qText">--</div>
+        <div id="optsWrap"></div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultScreen" class="result-screen" style="display:none;">
+        <div class="result-badge" id="resultBadge">--</div>
+        <div class="compare-row">
+          <div class="compare-col"><div class="num" id="resMyScore" style="color:var(--emerald);">0</div><div class="lbl">إجاباتك الصح</div></div>
+          <div class="compare-col"><div class="num" id="resOppScore" style="color:var(--red);">0</div><div class="lbl">إجابات الخصم</div></div>
+          <div class="compare-col"><div class="num" id="resTime" style="color:var(--gold);">0s</div><div class="lbl">وقتك</div></div>
+        </div>
+        <div class="bot-note" id="botNote" style="display:none;">كانت دي مواجهة ضد خصم افتراضي 🤖</div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="rematchBtn">تحدي تاني</button>
+          <a href="/tools-exams.html" class="btn btn-outline" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">رجوع للموقع</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="explore-more">
+  <h3>استكشف المزيد</h3>
+  <div class="explore-links">
+    <a href="/tools-exams.html#exams-section">اختبارات مجانية</a>
+    <a href="/tools-exams.html#tools-section">أدوات مجانية</a>
+    <a href="/feedback.html">شاركنا رأيك</a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div style="margin-bottom:10px;">
+      <a href="https://wa.me/201154960694" target="_blank">واتساب</a>
+      <a href="https://www.linkedin.com/in/moamen-ahmed-900921223" target="_blank">LinkedIn</a>
+      <a href="https://www.facebook.com/acc.mo.men.ahmed.mohamed" target="_blank">Facebook</a>
+    </div>
+    جميع الحقوق محفوظة © 2026 مؤمن أحمد
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let myName = '', myCategory = '';
+let questions = [];
+let myAnswers = [], oppProgress = 0, oppCorrect = 0, myCorrect = 0;
+let currentQ = 0;
+let matchChannel = null;
+let matchId = null;
+let opponentName = '';
+let isBot = false;
+let waitTimeout = null, waitInterval = null;
+let matchStartTime = null, myFinishTime = null;
+let myFinished = false, oppFinished = false, resultShown = false;
+let timerInterval = null, timeLeft = 60;
+
+function showScreen(id){
+  ['entryScreen','waitScreen','battleScreen','resultScreen'].forEach(s => {
+    document.getElementById(s).style.display = (s === id) ? (id === 'waitScreen' || id === 'resultScreen' ? 'block' : 'block') : 'none';
+  });
+}
+
+document.getElementById('startBattleBtn').addEventListener('click', startMatchmaking);
+
+async function startMatchmaking(){
+  const name = document.getElementById('battleName').value.trim();
+  const errEl = document.getElementById('entryErr');
+  if(!name){
+    errEl.textContent = 'من فضلك اكتب اسمك';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  myName = name;
+  myCategory = document.getElementById('battleCategory').value;
+  isBot = false;
+  resultShown = false;
+
+  showScreen('waitScreen');
+  document.getElementById('waitText').textContent = 'بندوّر على خصم...';
+
+  let secondsWaited = 0;
+  document.getElementById('waitCount').textContent = '';
+  waitInterval = setInterval(() => {
+    secondsWaited++;
+    document.getElementById('waitCount').textContent = `${secondsWaited} ثانية`;
+  }, 1000);
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/try_match_battle`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ p_player_name: myName, p_category: myCategory })
+    });
+    const data = await res.json();
+
+    if(data.matched){
+      // we found someone already waiting — we fetch+broadcast the questions
+      matchId = data.match_id;
+      opponentName = data.opponent_name;
+      await joinMatchChannel(true);
+    } else {
+      // we're now waiting — listen for our row to flip to 'matched'
+      listenForMatch();
+      waitTimeout = setTimeout(() => fallbackToBot(), 20000);
+    }
+  }catch(e){
+    fallbackToBot();
+  }
+}
+
+function listenForMatch(){
+  sb.channel('queue-watch-' + myName)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'matchmaking_queue', filter: `player_name=eq.${myName}` }, (payload) => {
+      if(payload.new.status === 'matched' && !matchId){
+        clearTimeout(waitTimeout);
+        matchId = payload.new.match_id;
+        opponentName = null; // will arrive via the questions_ready broadcast
+        joinMatchChannel(false);
+      }
+    })
+    .subscribe();
+}
+
+async function fallbackToBot(){
+  if(matchId) return; // already matched for real, ignore
+  clearInterval(waitInterval);
+  isBot = true;
+  document.getElementById('waitText').textContent = 'الوقت طال شوية ومحدش دخل معاك — دلوقتي في مواجهة خصم افتراضي قريب من مستواك 🤖';
+  document.getElementById('waitCount').textContent = '';
+  await fetch(`${SUPABASE_URL}/rest/v1/rpc/cancel_battle_wait`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_player_name: myName, p_category: myCategory })
+  }).catch(()=>{});
+
+  opponentName = 'خصم افتراضي';
+  const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_category: myCategory, p_count: 10 })
+  });
+  questions = await qRes.json();
+
+  setTimeout(() => { startBattle(); simulateBot(); }, 2000);
+}
+
+async function joinMatchChannel(isMatcher){
+  clearInterval(waitInterval);
+  clearTimeout(waitTimeout);
+
+  matchChannel = sb.channel('battle-' + matchId, { config: { presence: { key: myName } } });
+
+  matchChannel.on('broadcast', { event: 'questions_ready' }, (payload) => {
+    if(questions.length === 0){
+      questions = payload.payload.questions;
+      opponentName = payload.payload.matcherName;
+      startBattle();
+    }
+  });
+
+  matchChannel.on('broadcast', { event: 'progress' }, (payload) => {
+    if(payload.payload.name !== myName) updateOpponentProgress(payload.payload.index, payload.payload.correct);
+  });
+
+  matchChannel.on('broadcast', { event: 'finished' }, (payload) => {
+    if(payload.payload.name !== myName){
+      oppFinished = true;
+      oppCorrect = payload.payload.correct;
+      checkForResult(payload.payload.time);
+    }
+  });
+
+  matchChannel.on('presence', { event: 'leave' }, ({ leftPresences }) => {
+    if(!myFinished && !resultShown && leftPresences.some(p => p.key !== myName)){
+      declareForfeit();
+    }
+  });
+
+  matchChannel.subscribe(async (status) => {
+    if(status === 'SUBSCRIBED'){
+      await matchChannel.track({ name: myName });
+      if(isMatcher){
+        const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+          body: JSON.stringify({ p_category: myCategory, p_count: 10 })
+        });
+        questions = await qRes.json();
+        matchChannel.send({ type: 'broadcast', event: 'questions_ready', payload: { questions, matcherName: myName } });
+        startBattle();
+      }
+    }
+  });
+}
+
+function startBattle(){
+  showScreen('battleScreen');
+  document.getElementById('meName').textContent = myName;
+  document.getElementById('oppName').textContent = opponentName || 'الخصم';
+  buildDots('meDots'); buildDots('oppDots');
+  currentQ = 0; myCorrect = 0; oppCorrect = 0; myAnswers = [];
+  myFinished = false; oppFinished = false; resultShown = false;
+  matchStartTime = Date.now();
+  timeLeft = 60;
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    const mm = String(Math.floor(Math.max(timeLeft,0)/60)).padStart(2,'0');
+    const ss = String(Math.max(timeLeft,0)%60).padStart(2,'0');
+    const el = document.getElementById('timerNum');
+    el.textContent = `${mm}:${ss}`;
+    el.classList.toggle('low', timeLeft <= 10);
+    if(timeLeft <= 0){ clearInterval(timerInterval); finishBattle(); }
+  }, 1000);
+  renderQuestion();
+}
+
+function buildDots(id){
+  document.getElementById(id).innerHTML = Array.from({length:10}).map(() => '<div class="pdot"></div>').join('');
+}
+
+function renderQuestion(){
+  if(currentQ >= questions.length){ finishBattle(); return; }
+  const q = questions[currentQ];
+  document.getElementById('qNum').textContent = `السؤال ${currentQ+1} من ${questions.length}`;
+  document.getElementById('qText').textContent = q.question;
+  document.getElementById('optsWrap').innerHTML = q.options.map((opt, i) => `<button class="opt-btn" data-i="${i}">${opt}</button>`).join('');
+  document.querySelectorAll('.opt-btn').forEach(btn => btn.addEventListener('click', onAnswer));
+}
+
+function onAnswer(e){
+  const chosen = parseInt(e.target.dataset.i);
+  const q = questions[currentQ];
+  const isCorrect = chosen === q.correct_index;
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  e.target.classList.add(isCorrect ? 'correct' : 'wrong');
+  if(!isCorrect){
+    document.querySelector(`.opt-btn[data-i="${q.correct_index}"]`).classList.add('correct');
+  }
+  if(isCorrect) myCorrect++;
+  myAnswers.push(chosen);
+
+  updateSelfProgress(currentQ+1, myCorrect);
+  if(matchChannel) matchChannel.send({ type:'broadcast', event:'progress', payload:{ name: myName, index: currentQ+1, correct: myCorrect } });
+
+  setTimeout(() => { currentQ++; renderQuestion(); }, 700);
+}
+
+function updateSelfProgress(index, correct){
+  const dots = document.querySelectorAll('#meDots .pdot');
+  dots.forEach((d,i) => d.classList.toggle('on-me', i < index));
+  document.getElementById('meScore').textContent = `${correct}/${questions.length} صح`;
+  if(index >= questions.length){ myFinished = true; myFinishTime = ((Date.now()-matchStartTime)/1000).toFixed(1); finishBattle(); }
+}
+
+function updateOpponentProgress(index, correct){
+  const dots = document.querySelectorAll('#oppDots .pdot');
+  dots.forEach((d,i) => d.classList.toggle('on-opp', i < index));
+  document.getElementById('oppScore').textContent = `${correct}/${questions.length} صح`;
+  oppProgress = index; oppCorrect = correct;
+}
+
+function finishBattle(){
+  if(myFinished && matchChannel){
+    matchChannel.send({ type:'broadcast', event:'finished', payload:{ name: myName, correct: myCorrect, time: myFinishTime } });
+  }
+  if(isBot && !myFinished){
+    // time ran out before finishing vs bot — count as finished with current score
+    myFinished = true; myFinishTime = ((Date.now()-matchStartTime)/1000).toFixed(1);
+  }
+  checkForResult(myFinishTime);
+}
+
+function checkForResult(oppTime){
+  if(resultShown) return;
+  if(isBot){
+    if(myFinished || timeLeft <= 0) showResult(oppTime);
+    return;
+  }
+  if(myFinished && oppFinished) showResult(oppTime);
+}
+
+function declareForfeit(){
+  if(resultShown || myFinished) return;
+  clearInterval(timerInterval);
+  oppFinished = true;
+  showResult(myFinishTime || ((Date.now()-matchStartTime)/1000).toFixed(1), true);
+}
+
+async function showResult(oppTime, forfeit){
+  if(resultShown) return;
+  resultShown = true;
+  clearInterval(timerInterval);
+  showScreen('resultScreen');
+
+  const myTime = myFinishTime || ((Date.now()-matchStartTime)/1000).toFixed(1);
+  let iWon;
+  if(forfeit){ iWon = true; }
+  else if(myCorrect !== oppCorrect){ iWon = myCorrect > oppCorrect; }
+  else { iWon = parseFloat(myTime) <= parseFloat(oppTime || myTime); }
+
+  document.getElementById('resultBadge').textContent = iWon ? '🏆 فزت!' : 'للأسف خسرت هالمرة';
+  document.getElementById('resultBadge').className = 'result-badge ' + (iWon ? 'win' : 'lose');
+  document.getElementById('resMyScore').textContent = myCorrect;
+  document.getElementById('resOppScore').textContent = oppCorrect;
+  document.getElementById('resTime').textContent = myTime + 's';
+  document.getElementById('botNote').style.display = isBot ? 'block' : 'none';
+
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/battle_results`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer':'return=minimal' },
+      body: JSON.stringify({
+        match_id: matchId || crypto.randomUUID(),
+        player_name: myName, opponent_name: opponentName || 'خصم افتراضي',
+        player_correct: myCorrect, opponent_correct: oppCorrect,
+        player_time_seconds: parseFloat(myTime), is_win: iWon, vs_bot: isBot, category: myCategory
+      })
+    });
+  }catch(e){}
+
+  if(matchChannel){ matchChannel.unsubscribe(); matchChannel = null; }
+}
+
+function simulateBot(){
+  let botIndex = 0, botCorrect = 0;
+  function botStep(){
+    if(botIndex >= 10 || myFinished || resultShown) return;
+    const delay = 2000 + Math.random()*4000;
+    setTimeout(() => {
+      if(myFinished || resultShown) return;
+      const gotItRight = Math.random() < 0.78;
+      if(gotItRight) botCorrect++;
+      botIndex++;
+      updateOpponentProgress(botIndex, botCorrect);
+      if(botIndex >= 10){ oppFinished = true; checkForResult(((Date.now()-matchStartTime)/1000).toFixed(1)); }
+      else botStep();
+    }, delay);
+  }
+  botStep();
+}
+
+document.getElementById('rematchBtn').addEventListener('click', () => {
+  questions = []; matchId = null; opponentName = ''; isBot = false;
+  document.getElementById('entryErr').style.display = 'none';
+  showScreen('entryScreen');
+});
+</script>
+</body>
+</html>
