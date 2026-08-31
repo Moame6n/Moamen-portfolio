@@ -146,6 +146,7 @@
       <button class="dash-tab" id="tabTools" type="button">الأدوات</button>
       <button class="dash-tab" id="tabFeedback" type="button">آراء المستخدمين</button>
       <button class="dash-tab" id="tabBattleBank" type="button">بنك أسئلة التحدي</button>
+      <button class="dash-tab" id="tabBattleResults" type="button">نتائج المواجهات</button>
     </div>
 
     <div id="resultsPanel">
@@ -470,6 +471,17 @@
       <div class="gen-result" id="battlePublishResult"></div>
     </div>
 
+    <div id="battleResultsPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>لوحة صدارة المواجهات</h3>
+        <div id="battleLeaderboardList"></div>
+      </div>
+      <div class="builder-card">
+        <h3>سجل آخر المباريات</h3>
+        <div id="battleHistoryList"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -514,6 +526,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tabTools').addEventListener('click', () => switchTab('tools'));
   document.getElementById('tabFeedback').addEventListener('click', () => switchTab('feedback'));
   document.getElementById('tabBattleBank').addEventListener('click', () => switchTab('battlebank'));
+  document.getElementById('tabBattleResults').addEventListener('click', () => switchTab('battleresults'));
   document.getElementById('battleParseBtn').addEventListener('click', handleBattleImportParse);
   document.getElementById('publishBattleBtn').addEventListener('click', publishBattleQuestions);
   document.getElementById('battleImportDropzone').addEventListener('click', () => document.getElementById('battleImportFileInput').click());
@@ -719,6 +732,7 @@ function switchTab(tab){
   document.getElementById('tabTools').classList.toggle('active', tab === 'tools');
   document.getElementById('tabFeedback').classList.toggle('active', tab === 'feedback');
   document.getElementById('tabBattleBank').classList.toggle('active', tab === 'battlebank');
+  document.getElementById('tabBattleResults').classList.toggle('active', tab === 'battleresults');
   document.getElementById('resultsPanel').style.display = tab === 'results' ? 'block' : 'none';
   document.getElementById('createPanel').style.display = tab === 'create' ? 'block' : 'none';
   document.getElementById('analyticsPanel').style.display = tab === 'analytics' ? 'block' : 'none';
@@ -726,10 +740,12 @@ function switchTab(tab){
   document.getElementById('toolsPanel').style.display = tab === 'tools' ? 'block' : 'none';
   document.getElementById('feedbackPanel').style.display = tab === 'feedback' ? 'block' : 'none';
   document.getElementById('battleBankPanel').style.display = tab === 'battlebank' ? 'block' : 'none';
+  document.getElementById('battleResultsPanel').style.display = tab === 'battleresults' ? 'block' : 'none';
   if(tab === 'analytics') loadAnalytics();
   if(tab === 'templates') loadTemplateStats();
   if(tab === 'feedback') loadFeedback();
   if(tab === 'battlebank') loadBattleBankStats();
+  if(tab === 'battleresults') loadBattleResults();
 }
 
 function autoSlug(){
@@ -1599,6 +1615,46 @@ async function loadBattleBankStats(){
       </div>
     `;
   }).join('');
+}
+
+async function loadBattleResults(){
+  const lbEl = document.getElementById('battleLeaderboardList');
+  const histEl = document.getElementById('battleHistoryList');
+  lbEl.innerHTML = '<div class="empty-state">جارِ التحميل...</div>';
+  histEl.innerHTML = '';
+
+  const lbRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_battle_leaderboard`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_limit: 10 })
+  });
+  if(lbRes.ok){
+    const lb = await lbRes.json();
+    lbEl.innerHTML = lb.length ? lb.map((p, i) => `
+      <div style="display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border-soft);">
+        <span style="font-family:var(--mono); font-size:12px; color:var(--gold); width:24px;">${i+1}</span>
+        <span style="flex:1; font-size:13px;">${escapeHtml(p.player_name)}</span>
+        <span style="font-size:11.5px; color:var(--text-soft);">${p.wins} فوز / ${p.matches_played} مباراة</span>
+        <span style="font-family:var(--mono); font-size:12.5px; color:var(--emerald); font-weight:700;">${p.points} نقطة</span>
+      </div>
+    `).join('') : '<div class="empty-state">لسه مفيش مواجهات اتلعبت</div>';
+  }
+
+  const histRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_battle_history`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(histRes.ok){
+    const history = await histRes.json();
+    histEl.innerHTML = history.length ? history.map(m => `
+      <div style="padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:12.5px;">
+        <b>${escapeHtml(m.player_name)}</b> (${m.player_correct}/10) هزم <b>${escapeHtml(m.opponent_name)}</b> (${m.opponent_correct}/10)
+        ${m.vs_bot ? '<span style="color:var(--gold);"> — ضد خصم افتراضي</span>' : ''}
+        <span style="float:left; font-family:var(--mono); font-size:10.5px; color:var(--muted);">${new Date(m.created_at).toLocaleString('ar-EG')}</span>
+      </div>
+    `).join('') : '<div class="empty-state">لسه مفيش مباريات مسجلة</div>';
+  }
 }
 </script>
 </body>
