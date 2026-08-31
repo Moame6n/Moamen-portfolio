@@ -95,6 +95,22 @@
   .gen-result.success{ background:rgba(61,220,151,0.08); border-right:3px solid var(--emerald); color:var(--emerald); }
   .gen-result.error{ background:rgba(240,97,109,0.08); border-right:3px solid var(--red); color:var(--red); }
   .gen-result a{ color:inherit; font-weight:700; text-decoration:underline; }
+
+  .fb-item{
+    padding:14px 4px; border-bottom:1px solid var(--border-soft);
+  }
+  .fb-item:last-child{ border-bottom:none; }
+  .fb-item-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+  .fb-cat-tag{
+    font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:12px;
+    background:var(--surface-2); color:var(--text-soft);
+  }
+  .fb-cat-tag.اقتراح{ background:rgba(61,220,151,0.12); color:var(--emerald); }
+  .fb-cat-tag.مشكلة{ background:rgba(240,97,109,0.12); color:var(--red); }
+  .fb-cat-tag.تقييم{ background:rgba(224,177,92,0.12); color:var(--gold); }
+  .fb-item-name{ font-size:12.5px; font-weight:700; color:var(--text-soft); }
+  .fb-item-text{ font-size:13.5px; line-height:1.7; color:var(--text); }
+  .fb-item-time{ font-family:var(--mono); font-size:10.5px; color:var(--muted); margin-top:6px; }
 </style>
 </head>
 <body>
@@ -128,6 +144,8 @@
       <button class="dash-tab" id="tabAnalytics" type="button">الزيارات</button>
       <button class="dash-tab" id="tabTemplates" type="button">قوالب مجانية</button>
       <button class="dash-tab" id="tabTools" type="button">الأدوات</button>
+      <button class="dash-tab" id="tabFeedback" type="button">آراء المستخدمين</button>
+      <button class="dash-tab" id="tabBattleBank" type="button">بنك أسئلة التحدي</button>
     </div>
 
     <div id="resultsPanel">
@@ -391,6 +409,67 @@
       <div class="gen-result" id="toolGenResult"></div>
     </div>
 
+    <div id="feedbackPanel" style="display:none;">
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="fbStatTotal">0</div><div class="lbl">إجمالي الآراء</div></div>
+        <div class="stat-card"><div class="num" id="fbStatSuggest">0</div><div class="lbl">اقتراحات</div></div>
+        <div class="stat-card"><div class="num" id="fbStatIssue">0</div><div class="lbl">مشاكل</div></div>
+      </div>
+      <div class="builder-card">
+        <div id="feedbackList"></div>
+      </div>
+    </div>
+
+    <div id="battleBankPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>حالة البنك الحالية</h3>
+        <div id="battleBankStats"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>1. اختار التخصص</h3>
+        <select id="battleCategorySelect" style="width:100%; padding:11px 13px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text); font-family:'Tajawal',sans-serif; font-size:14.5px;">
+          <option value="محاسبة مالية">محاسبة مالية</option>
+          <option value="محاسبة تكاليف">محاسبة تكاليف</option>
+          <option value="مراجعة">مراجعة (Auditing)</option>
+          <option value="محاسبة إدارية">محاسبة إدارية</option>
+          <option value="تحليل مالي">تحليل مالي</option>
+        </select>
+        <div class="hint" style="margin-top:8px;">"مختلط" مش تخصص بيتخزّن — ده وضع اختيار بيسحب عشوائي من كل التخصصات وقت التحدي نفسه.</div>
+      </div>
+
+      <div class="builder-card">
+        <h3>2. استيراد الأسئلة من ملف (نفس تنسيق استيراد الاختبارات بالظبط)</h3>
+        <pre style="background:var(--bg); border:1px solid var(--border-soft); border-radius:8px; padding:12px 14px; font-size:12px; color:var(--text-soft); overflow-x:auto; margin:0 0 16px; line-height:1.9; font-family:var(--mono);">س1) نص السؤال هنا؟
+أ) الاختيار الأول
+ب) الاختيار الثاني
+ج) الاختيار الثالث
+د) الاختيار الرابع
+الإجابة: ب</pre>
+
+        <div class="dropzone" id="battleImportDropzone" style="padding:26px 20px; margin-bottom:14px;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px;">اسحب ملف Word (.docx) أو PDF أو نص (.txt) هنا، أو دوس للاختيار</div>
+          <div style="font-size:12px; color:var(--muted);">أو الصق النص مباشرة في الخانة تحت</div>
+          <input type="file" id="battleImportFileInput" accept=".docx,.pdf,.txt" style="display:none;">
+        </div>
+
+        <div class="field-row">
+          <textarea id="battleImportTextArea" placeholder="أو الصق نص الأسئلة هنا مباشرة..." style="min-height:120px; font-family:var(--mono); font-size:12.5px; width:100%; padding:11px 13px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text);"></textarea>
+        </div>
+
+        <button class="btn btn-outline" id="battleParseBtn" type="button">تحليل النص</button>
+        <div class="gen-result" id="battleImportResult"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>3. راجع الأسئلة قبل الإضافة</h3>
+        <div id="battleQuestionsPreview"></div>
+      </div>
+
+      <button class="btn btn-primary" id="publishBattleBtn" type="button" style="display:none;">إضافة الأسئلة دي لبنك التحدي</button>
+      <div class="gen-result" id="battlePublishResult"></div>
+    </div>
+
   </div>
 </div>
 
@@ -433,6 +512,19 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tplSearchBox').addEventListener('input', renderTplLeadsTable);
 
   document.getElementById('tabTools').addEventListener('click', () => switchTab('tools'));
+  document.getElementById('tabFeedback').addEventListener('click', () => switchTab('feedback'));
+  document.getElementById('tabBattleBank').addEventListener('click', () => switchTab('battlebank'));
+  document.getElementById('battleParseBtn').addEventListener('click', handleBattleImportParse);
+  document.getElementById('publishBattleBtn').addEventListener('click', publishBattleQuestions);
+  document.getElementById('battleImportDropzone').addEventListener('click', () => document.getElementById('battleImportFileInput').click());
+  document.getElementById('battleImportFileInput').addEventListener('change', (e) => handleBattleImportFile(e.target.files[0]));
+  document.getElementById('battleImportDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('battleImportDropzone').classList.add('drag'); });
+  document.getElementById('battleImportDropzone').addEventListener('dragleave', () => document.getElementById('battleImportDropzone').classList.remove('drag'));
+  document.getElementById('battleImportDropzone').addEventListener('drop', (e) => {
+    e.preventDefault();
+    document.getElementById('battleImportDropzone').classList.remove('drag');
+    if(e.dataTransfer.files[0]) handleBattleImportFile(e.dataTransfer.files[0]);
+  });
   document.getElementById('ghTokenTool').value = localStorage.getItem('gh_token') || '';
   document.getElementById('ghTokenTool').addEventListener('change', (e) => {
     localStorage.setItem('gh_token', e.target.value.trim());
@@ -625,13 +717,19 @@ function switchTab(tab){
   document.getElementById('tabAnalytics').classList.toggle('active', tab === 'analytics');
   document.getElementById('tabTemplates').classList.toggle('active', tab === 'templates');
   document.getElementById('tabTools').classList.toggle('active', tab === 'tools');
+  document.getElementById('tabFeedback').classList.toggle('active', tab === 'feedback');
+  document.getElementById('tabBattleBank').classList.toggle('active', tab === 'battlebank');
   document.getElementById('resultsPanel').style.display = tab === 'results' ? 'block' : 'none';
   document.getElementById('createPanel').style.display = tab === 'create' ? 'block' : 'none';
   document.getElementById('analyticsPanel').style.display = tab === 'analytics' ? 'block' : 'none';
   document.getElementById('templatesPanel').style.display = tab === 'templates' ? 'block' : 'none';
   document.getElementById('toolsPanel').style.display = tab === 'tools' ? 'block' : 'none';
+  document.getElementById('feedbackPanel').style.display = tab === 'feedback' ? 'block' : 'none';
+  document.getElementById('battleBankPanel').style.display = tab === 'battlebank' ? 'block' : 'none';
   if(tab === 'analytics') loadAnalytics();
   if(tab === 'templates') loadTemplateStats();
+  if(tab === 'feedback') loadFeedback();
+  if(tab === 'battlebank') loadBattleBankStats();
 }
 
 function autoSlug(){
@@ -1332,6 +1430,176 @@ function showToolError(msg){
   resultEl.style.display = 'block';
 }
 
+// ==================== User feedback ====================
+
+async function loadFeedback(){
+  const listEl = document.getElementById('feedbackList');
+  listEl.innerHTML = '<div class="empty-state">جارِ التحميل...</div>';
+
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_feedback_list`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(!res.ok) return;
+  const items = await res.json();
+
+  document.getElementById('fbStatTotal').textContent = items.length;
+  document.getElementById('fbStatSuggest').textContent = items.filter(i => i.category === 'اقتراح').length;
+  document.getElementById('fbStatIssue').textContent = items.filter(i => i.category === 'مشكلة').length;
+
+  listEl.innerHTML = items.length ? items.map(item => `
+    <div class="fb-item">
+      <div class="fb-item-head">
+        <span class="fb-cat-tag ${item.category || ''}">${escapeHtml(item.category || 'رأي')}</span>
+        <span class="fb-item-name">${escapeHtml(item.full_name || 'مجهول')}</span>
+      </div>
+      <div class="fb-item-text">${escapeHtml(item.feedback_text)}</div>
+      <div class="fb-item-time">${new Date(item.created_at).toLocaleString('ar-EG')}</div>
+    </div>
+  `).join('') : '<div class="empty-state">لسه محدش بعت رأي</div>';
+}
+
+// ==================== Battle question bank ====================
+
+let parsedBattleQuestions = [];
+
+async function handleBattleImportFile(file){
+  if(!file) return;
+  try{
+    let text = '';
+    if(file.name.endsWith('.docx')){
+      const arrayBuffer = await file.arrayBuffer();
+      const res = await mammoth.extractRawText({ arrayBuffer });
+      text = res.value;
+    } else if(file.name.endsWith('.pdf')){
+      text = await extractPdfText(file);
+    } else {
+      text = await file.text();
+    }
+    document.getElementById('battleImportTextArea').value = text;
+  }catch(err){
+    showBattleImportError('تعذّر قراءة الملف: ' + err.message);
+  }
+}
+
+function handleBattleImportParse(){
+  const text = document.getElementById('battleImportTextArea').value.trim();
+  const resultEl = document.getElementById('battleImportResult');
+  resultEl.style.display = 'none';
+
+  if(!text){
+    showBattleImportError('مفيش نص للتحليل — ارفع ملف أو الصق النص الأول.');
+    return;
+  }
+
+  const { parsed, failed } = parseExamText(text);
+  if(parsed.length === 0){
+    showBattleImportError('مقدرتش أقرا أي سؤال بالشكل الصحيح — تأكد إن النص مطابق للتنسيق الموضّح فوق.');
+    return;
+  }
+
+  const category = document.getElementById('battleCategorySelect').value;
+  parsedBattleQuestions = parsed.map(q => ({ category, question: q.q, options: q.o, correct_index: q.c }));
+
+  document.getElementById('battleQuestionsPreview').innerHTML = parsedBattleQuestions.map((q, i) => `
+    <div class="q-block" style="cursor:default;">
+      <div class="q-num">${i+1}. ${escapeHtml(q.question)}</div>
+      ${q.options.map((opt, oi) => `<div style="font-size:12.5px; padding:4px 0; color:${oi===q.correct_index ? 'var(--emerald)' : 'var(--text-soft)'};">${oi===q.correct_index ? '✓' : '•'} ${escapeHtml(opt)}</div>`).join('')}
+    </div>
+  `).join('');
+
+  document.getElementById('publishBattleBtn').style.display = 'inline-flex';
+
+  let msg = `تم تحليل ${parsed.length} سؤال بنجاح ✓ (تخصص: ${category})`;
+  if(failed.length) msg += `<br>تعذّر قراءة ${failed.length} سؤال (رقم ${failed.join('، ')}).`;
+  resultEl.className = failed.length ? 'gen-result' : 'gen-result success';
+  if(failed.length){
+    resultEl.style.background = 'rgba(224,177,92,0.08)';
+    resultEl.style.borderRight = '3px solid var(--gold)';
+    resultEl.style.color = 'var(--gold)';
+  }
+  resultEl.innerHTML = msg;
+  resultEl.style.display = 'block';
+}
+
+function showBattleImportError(msg){
+  const resultEl = document.getElementById('battleImportResult');
+  resultEl.className = 'gen-result error';
+  resultEl.textContent = msg;
+  resultEl.style.display = 'block';
+}
+
+async function publishBattleQuestions(){
+  const btn = document.getElementById('publishBattleBtn');
+  const resultEl = document.getElementById('battlePublishResult');
+  resultEl.style.display = 'none';
+
+  if(parsedBattleQuestions.length === 0) return;
+
+  btn.disabled = true;
+  btn.textContent = 'جارِ الإضافة...';
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/insert_battle_questions_bulk`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ p_passphrase: passphrase, p_questions: parsedBattleQuestions })
+    });
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.message || `فشلت الإضافة (${res.status})`);
+    }
+    const insertedCount = await res.json();
+
+    resultEl.className = 'gen-result success';
+    resultEl.textContent = `تمت إضافة ${insertedCount} سؤال لبنك التحدي بنجاح ✓`;
+    resultEl.style.display = 'block';
+
+    parsedBattleQuestions = [];
+    document.getElementById('battleQuestionsPreview').innerHTML = '';
+    document.getElementById('battleImportTextArea').value = '';
+    document.getElementById('publishBattleBtn').style.display = 'none';
+    loadBattleBankStats();
+  }catch(err){
+    resultEl.className = 'gen-result error';
+    resultEl.textContent = err.message || 'حصل خطأ غير متوقع';
+    resultEl.style.display = 'block';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'إضافة الأسئلة دي لبنك التحدي';
+  }
+}
+
+async function loadBattleBankStats(){
+  const statsEl = document.getElementById('battleBankStats');
+  statsEl.innerHTML = '<div class="empty-state">جارِ التحميل...</div>';
+
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_battle_bank_stats`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(!res.ok) return;
+  const stats = await res.json();
+
+  const allCategories = ['محاسبة مالية','محاسبة تكاليف','مراجعة','محاسبة إدارية','تحليل مالي'];
+  const countMap = {};
+  stats.forEach(s => { countMap[s.category] = s.total; });
+
+  statsEl.innerHTML = allCategories.map(cat => {
+    const count = countMap[cat] || 0;
+    const ready = count >= 10;
+    return `
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border-soft);">
+        <span style="font-size:13px;">${cat}</span>
+        <span style="font-family:var(--mono); font-size:12.5px; color:${ready ? 'var(--emerald)' : 'var(--gold)'};">
+          ${count} سؤال ${ready ? '✓ جاهز' : '(محتاج 10 على الأقل)'}
+        </span>
+      </div>
+    `;
+  }).join('');
+}
 </script>
 </body>
 </html>
