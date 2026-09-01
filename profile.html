@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حسابي | مؤمن أحمد</title>
+<meta name="description" content="بروفايلك الخاص — كل الاختبارات والأدوات والقوالب والمباريات اللي عملتها في مكان واحد.">
+<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/profile.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0E13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script src="/assets/theme.js"></script>
+<script src="/assets/supabase-config.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  body{ padding:0; }
+  .page-hero{ padding:50px 0 10px; }
+  .page-hero .back{ display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12.5px; color:var(--emerald); text-decoration:none; margin-bottom:18px; }
+  .page-hero h1{ font-size:28px; margin-bottom:10px; }
+  .wrap{ padding:20px 0 70px; }
+
+  .auth-card{ max-width:420px; margin:0 auto; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius); padding:28px; }
+  .auth-tabs{ display:flex; gap:8px; margin-bottom:20px; }
+  .auth-tab{ flex:1; padding:10px; text-align:center; border-radius:8px; background:var(--bg); border:1.5px solid var(--border-soft); color:var(--text-soft); font-weight:700; font-size:13.5px; cursor:pointer; }
+  .auth-tab.active{ background:var(--emerald); color:#08130E; border-color:var(--emerald); }
+  .field-row{ margin-bottom:14px; }
+  .field-row label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:var(--text-soft); }
+  .field-row input{ width:100%; padding:11px 13px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text); font-family:'Tajawal',sans-serif; font-size:14.5px; }
+  .auth-msg{ font-size:12.5px; margin-bottom:12px; display:none; padding:10px 12px; border-radius:8px; }
+  .auth-msg.error{ background:rgba(240,97,109,0.08); color:var(--red); border-right:3px solid var(--red); }
+  .auth-msg.success{ background:rgba(61,220,151,0.08); color:var(--emerald); border-right:3px solid var(--emerald); }
+
+  .profile-header{ max-width:640px; margin:0 auto 24px; display:flex; align-items:center; gap:18px; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius); padding:22px; }
+  .avatar-wrap{ position:relative; width:76px; height:76px; flex-shrink:0; }
+  .avatar-img{ width:76px; height:76px; border-radius:50%; object-fit:cover; border:2px solid var(--emerald); background:var(--surface-2); }
+  .avatar-upload-btn{ position:absolute; bottom:-2px; left:-2px; width:26px; height:26px; border-radius:50%; background:var(--emerald); display:flex; align-items:center; justify-content:center; cursor:pointer; border:2px solid var(--surface); }
+  .avatar-upload-btn svg{ width:13px; height:13px; color:#08130E; }
+  .profile-name-row{ flex:1; min-width:0; }
+  .profile-name{ font-size:18px; font-weight:900; margin-bottom:4px; }
+  .profile-email{ font-size:12px; color:var(--muted); font-family:var(--mono); }
+  .edit-name-btn{ background:none; border:none; color:var(--emerald); font-size:11.5px; cursor:pointer; margin-right:6px; }
+  .logout-btn{ background:transparent; border:1.5px solid var(--border-soft); color:var(--text-soft); padding:8px 16px; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:12.5px; cursor:pointer; }
+
+  .activity-section{ max-width:640px; margin:0 auto 16px; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius); padding:22px; }
+  .activity-section h3{ font-size:14.5px; display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+  .activity-row{ display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:13px; }
+  .activity-row:last-child{ border-bottom:none; }
+  .activity-time{ font-family:var(--mono); font-size:11px; color:var(--muted); }
+  .badge-pill{ font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:10px; }
+
+  .stats-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:640px; margin:0 auto 20px; }
+  .stat-card{ background:var(--surface); border:1px solid var(--border-soft); border-radius:10px; padding:14px; text-align:center; }
+  .stat-card .num{ font-family:var(--mono); font-size:20px; font-weight:700; color:var(--emerald); }
+  .stat-card .lbl{ font-size:10.5px; color:var(--muted); margin-top:3px; }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <div class="brand"><span class="dot"></span>مؤمن <span>أحمد</span></div>
+    <div style="display:flex; align-items:center; gap:12px;">
+    <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button class="navtoggle" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
+    <nav id="mainNav">
+      <a href="/#home">الرئيسية</a>
+      <a href="/tools-exams.html">الأدوات والاختبارات</a>
+      <a href="/battle.html">تحدي مباشر</a>
+      <a href="/#contact">تواصل معي</a>
+    </nav>
+    </div>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <a href="/tools-exams.html" class="back">← رجوع للأدوات والاختبارات</a>
+    <h1 id="pageTitle">حسابي</h1>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="container">
+
+    <!-- LOGGED OUT -->
+    <div id="authScreen" class="auth-card">
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-mode="login">تسجيل الدخول</div>
+        <div class="auth-tab" data-mode="signup">حساب جديد</div>
+      </div>
+
+      <div id="authMsg" class="auth-msg"></div>
+
+      <div class="field-row" id="nameFieldRow" style="display:none;">
+        <label>اسمك</label>
+        <input type="text" id="authName" placeholder="اكتب اسمك هنا">
+      </div>
+      <div class="field-row">
+        <label>الإيميل</label>
+        <input type="email" id="authEmail" placeholder="you@example.com">
+      </div>
+      <div class="field-row">
+        <label>الباسورد</label>
+        <input type="password" id="authPassword" placeholder="6 حروف على الأقل">
+      </div>
+      <button class="btn btn-primary" id="authSubmitBtn" style="width:100%; justify-content:center;">تسجيل الدخول</button>
+    </div>
+
+    <!-- LOGGED IN -->
+    <div id="profileScreen" style="display:none;">
+      <div class="profile-header">
+        <div class="avatar-wrap">
+          <img class="avatar-img" id="avatarImg" src="">
+          <label class="avatar-upload-btn" for="avatarInput"><i data-lucide="camera"></i></label>
+          <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+        </div>
+        <div class="profile-name-row">
+          <div class="profile-name" id="profileName">--</div>
+          <div class="profile-email" id="profileEmail">--</div>
+          <button class="edit-name-btn" id="editNameBtn">تعديل الاسم</button>
+        </div>
+        <button class="logout-btn" id="logoutBtn">خروج</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="statExams">0</div><div class="lbl">اختبارات</div></div>
+        <div class="stat-card"><div class="num" id="statBattles">0</div><div class="lbl">مباريات</div></div>
+        <div class="stat-card"><div class="num" id="statDownloads">0</div><div class="lbl">تحميلات</div></div>
+      </div>
+
+      <div class="activity-section">
+        <h3>📝 اختباراتي</h3>
+        <div id="examsActivity"><div class="lb-empty" style="text-align:center; color:var(--muted); font-size:12.5px;">لسه معملتش أي اختبار</div></div>
+      </div>
+
+      <div class="activity-section">
+        <h3>⚔️ مبارياتي</h3>
+        <div id="battlesActivity"><div style="text-align:center; color:var(--muted); font-size:12.5px;">لسه معملتش أي مباراة</div></div>
+      </div>
+
+      <div class="activity-section">
+        <h3>🧰 أدواتي</h3>
+        <div id="toolsActivity"><div style="text-align:center; color:var(--muted); font-size:12.5px;">لسه مستخدمتش أي أداة</div></div>
+      </div>
+
+      <div class="activity-section">
+        <h3>📥 تحميلاتي</h3>
+        <div id="downloadsActivity"><div style="text-align:center; color:var(--muted); font-size:12.5px;">لسه ماحمّلتش أي قالب</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div style="margin-bottom:10px;">
+      <a href="https://wa.me/201154960694" target="_blank">واتساب</a>
+      <a href="https://www.linkedin.com/in/moamen-ahmed-900921223" target="_blank">LinkedIn</a>
+      <a href="https://www.facebook.com/acc.mo.men.ahmed.mohamed" target="_blank">Facebook</a>
+    </div>
+    جميع الحقوق محفوظة © 2026 مؤمن أحمد
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let authMode = 'login';
+let currentUser = null;
+
+document.querySelectorAll('.auth-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    authMode = tab.dataset.mode;
+    document.getElementById('nameFieldRow').style.display = authMode === 'signup' ? 'block' : 'none';
+    document.getElementById('authSubmitBtn').textContent = authMode === 'signup' ? 'إنشاء الحساب' : 'تسجيل الدخول';
+    document.getElementById('authMsg').style.display = 'none';
+  });
+});
+
+function showAuthMsg(text, type){
+  const el = document.getElementById('authMsg');
+  el.textContent = text;
+  el.className = 'auth-msg ' + type;
+  el.style.display = 'block';
+}
+
+document.getElementById('authSubmitBtn').addEventListener('click', async () => {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const name = document.getElementById('authName').value.trim();
+
+  if(!email || !password){ showAuthMsg('من فضلك املأ الإيميل والباسورد', 'error'); return; }
+  if(authMode === 'signup' && !name){ showAuthMsg('من فضلك اكتب اسمك', 'error'); return; }
+
+  const btn = document.getElementById('authSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'لحظة...';
+
+  try{
+    if(authMode === 'signup'){
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if(error) throw error;
+
+      if(data.session){
+        await sb.from('profiles').insert({ id: data.user.id, full_name: name });
+        await loadProfile();
+      } else {
+        showAuthMsg('تم إنشاء الحساب ✓ — اتبعت رسالة تأكيد لإيميلك، أكّده وبعدها سجّل دخولك من هنا.', 'success');
+      }
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if(error) throw error;
+      await loadProfile();
+    }
+  }catch(err){
+    showAuthMsg(err.message || 'حصل خطأ، حاول تاني', 'error');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = authMode === 'signup' ? 'إنشاء الحساب' : 'تسجيل الدخول';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  currentUser = null;
+  document.getElementById('authScreen').style.display = 'block';
+  document.getElementById('profileScreen').style.display = 'none';
+  document.getElementById('pageTitle').textContent = 'حسابي';
+});
+
+async function loadProfile(){
+  const { data: { session } } = await sb.auth.getSession();
+  if(!session){ return; }
+  currentUser = session.user;
+
+  let { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  if(!profile){
+    // safety net: profile row missing (e.g. signup flow interrupted) — create a minimal one
+    const fallbackName = currentUser.email.split('@')[0];
+    await sb.from('profiles').insert({ id: currentUser.id, full_name: fallbackName });
+    profile = { full_name: fallbackName, avatar_url: null };
+  }
+
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('profileScreen').style.display = 'block';
+  document.getElementById('pageTitle').textContent = 'أهلاً، ' + profile.full_name;
+  document.getElementById('profileName').textContent = profile.full_name;
+  document.getElementById('profileEmail').textContent = currentUser.email;
+  document.getElementById('avatarImg').src = profile.avatar_url || 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="76" height="76"><rect width="76" height="76" fill="%23161F2E"/><text x="50%" y="55%" font-size="28" fill="%233DDC97" text-anchor="middle" font-family="sans-serif">${profile.full_name.charAt(0)}</text></svg>`);
+
+  loadActivity();
+}
+
+document.getElementById('editNameBtn').addEventListener('click', async () => {
+  const newName = prompt('اكتب اسمك الجديد:', document.getElementById('profileName').textContent);
+  if(!newName || !newName.trim()) return;
+  await sb.from('profiles').update({ full_name: newName.trim() }).eq('id', currentUser.id);
+  document.getElementById('profileName').textContent = newName.trim();
+  document.getElementById('pageTitle').textContent = 'أهلاً، ' + newName.trim();
+});
+
+document.getElementById('avatarInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file || !currentUser) return;
+  const ext = file.name.split('.').pop();
+  const path = `${currentUser.id}/avatar.${ext}`;
+
+  const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+  if(upErr){ alert('تعذّر رفع الصورة: ' + upErr.message); return; }
+
+  const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+  const publicUrl = urlData.publicUrl + '?t=' + Date.now();
+  await sb.from('profiles').update({ avatar_url: publicUrl }).eq('id', currentUser.id);
+  document.getElementById('avatarImg').src = publicUrl;
+});
+
+async function loadActivity(){
+  const { data, error } = await sb.rpc('get_my_activity');
+  if(error || !data) return;
+
+  document.getElementById('statExams').textContent = data.exams.length;
+  document.getElementById('statBattles').textContent = data.battles.length;
+  document.getElementById('statDownloads').textContent = data.downloads.length;
+
+  if(data.exams.length){
+    document.getElementById('examsActivity').innerHTML = data.exams.map(e => `
+      <div class="activity-row"><span>${escP(e.exam_title)} — ${e.percentage}% (${escP(e.grade_label)})</span><span class="activity-time">${new Date(e.finished_at).toLocaleDateString('ar-EG')}</span></div>
+    `).join('');
+  }
+  if(data.battles.length){
+    const wins = data.battles.filter(b => b.is_win).length;
+    document.getElementById('battlesActivity').innerHTML = data.battles.map(b => `
+      <div class="activity-row">
+        <span>${b.is_win ? '🏆 فوز' : '❌ خسارة'} ضد ${escP(b.opponent_name)}${b.vs_bot ? ' (افتراضي)' : ''}</span>
+        <span class="activity-time">${new Date(b.created_at).toLocaleDateString('ar-EG')}</span>
+      </div>
+    `).join('');
+  }
+  if(data.tools.length){
+    document.getElementById('toolsActivity').innerHTML = data.tools.map(t => `
+      <div class="activity-row"><span>${escP(t.tool_title)}</span><span class="activity-time">${new Date(t.used_at).toLocaleDateString('ar-EG')}</span></div>
+    `).join('');
+  }
+  if(data.downloads.length){
+    document.getElementById('downloadsActivity').innerHTML = data.downloads.map(d => `
+      <div class="activity-row"><span>${escP(d.template_title)}</span><span class="activity-time">${new Date(d.downloaded_at).toLocaleDateString('ar-EG')}</span></div>
+    `).join('');
+  }
+}
+
+function escP(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+loadProfile();
+</script>
+</body>
+</html>
