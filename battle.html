@@ -25,6 +25,22 @@
   .wrap{ padding:20px 0 70px; }
   .bcard{ max-width:520px; margin:0 auto; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius); padding:28px; }
 
+  .lb-wrap{ max-width:520px; margin:0 auto 20px; }
+  .lb-title{ display:flex; align-items:center; gap:8px; font-size:15px; font-weight:700; color:var(--text); margin-bottom:12px; }
+  .lb-list{ display:flex; flex-direction:column; gap:6px; max-height:280px; overflow-y:auto; padding-left:4px; }
+  .lb-row{ display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--surface); border:1px solid var(--border-soft); border-radius:9px; min-width:0; }
+  .lb-row.top1{ border-color:var(--gold); background:rgba(224,177,92,0.08); }
+  .lb-row.top2{ border-color:#B9C2CF; }
+  .lb-row.top3{ border-color:#C98A4B; }
+  .lb-rank{ width:24px; height:24px; border-radius:50%; background:var(--surface-2); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:var(--mono); font-size:11px; font-weight:700; color:var(--text-soft); }
+  .lb-row.top1 .lb-rank{ background:var(--gold); color:#241A05; }
+  .lb-row.top2 .lb-rank{ background:#B9C2CF; color:#1A2238; }
+  .lb-row.top3 .lb-rank{ background:#C98A4B; color:#241A05; }
+  .lb-name{ flex:1; min-width:0; font-size:13.5px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lb-badge{ font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:10px; flex-shrink:0; }
+  .lb-pts{ flex-shrink:0; font-family:var(--mono); font-size:13px; font-weight:700; color:var(--emerald); }
+  .lb-empty{ font-size:12.5px; color:var(--muted); text-align:center; padding:18px 10px; }
+
   /* entry */
   .field-row{ margin-bottom:16px; }
   .field-row label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:var(--text-soft); }
@@ -131,6 +147,13 @@
 
 <div class="wrap">
   <div class="container">
+    <div class="lb-wrap">
+      <div class="lb-title">🏆 لوحة صدارة المحاربين</div>
+      <div class="lb-list" id="battleLbList">
+        <div class="lb-empty">جارِ تحميل الترتيب...</div>
+      </div>
+    </div>
+
     <div class="bcard">
 
       <!-- ENTRY -->
@@ -223,6 +246,49 @@
 
 <script>
 lucide.createIcons();
+
+function badgeForWins(wins){
+  if(wins >= 6) return { label: '👑 أسطورة', bg: 'rgba(224,177,92,0.15)', color: 'var(--gold)' };
+  if(wins >= 3) return { label: '🔥 محترف', bg: 'rgba(240,97,109,0.12)', color: 'var(--red)' };
+  if(wins >= 1) return { label: '⚔️ محارب', bg: 'rgba(61,220,151,0.12)', color: 'var(--emerald)' };
+  return { label: '🌱 جديد', bg: 'var(--surface-2)', color: 'var(--text-soft)' };
+}
+
+async function loadBattleLeaderboard(){
+  const listEl = document.getElementById('battleLbList');
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_battle_leaderboard`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ p_limit: 10 })
+    });
+    const data = await res.json();
+    if(!data.length){
+      listEl.innerHTML = '<div class="lb-empty">كن أول محارب يدخل الساحة! 🏆</div>';
+      return;
+    }
+    const medalClass = i => i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+    listEl.innerHTML = data.map((p, i) => {
+      const badge = badgeForWins(p.wins);
+      return `
+        <div class="lb-row ${medalClass(i)}">
+          <div class="lb-rank">${i+1}</div>
+          <div class="lb-name">${escBattle(p.player_name)}</div>
+          <span class="lb-badge" style="background:${badge.bg}; color:${badge.color};">${badge.label}</span>
+          <div class="lb-pts">${p.points} نقطة</div>
+        </div>
+      `;
+    }).join('');
+  }catch(e){
+    listEl.innerHTML = '<div class="lb-empty">تعذّر تحميل لوحة الصدارة حاليًا.</div>';
+  }
+}
+
+function escBattle(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+loadBattleLeaderboard();
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let myName = '', myCategory = '';
@@ -236,7 +302,7 @@ let isBot = false;
 let waitTimeout = null, waitInterval = null;
 let matchStartTime = null, myFinishTime = null;
 let myFinished = false, oppFinished = false, resultShown = false;
-let timerInterval = null, timeLeft = 60;
+let timerInterval = null, timeLeft = 180;
 
 function showScreen(id){
   ['entryScreen','waitScreen','battleScreen','resultScreen'].forEach(s => {
@@ -386,7 +452,7 @@ function startBattle(){
   currentQ = 0; myCorrect = 0; oppCorrect = 0; myAnswers = [];
   myFinished = false; oppFinished = false; resultShown = false;
   matchStartTime = Date.now();
-  timeLeft = 60;
+  timeLeft = 180;
   timerInterval = setInterval(() => {
     timeLeft--;
     const mm = String(Math.floor(Math.max(timeLeft,0)/60)).padStart(2,'0');
@@ -504,6 +570,7 @@ async function showResult(oppTime, forfeit){
   }catch(e){}
 
   if(matchChannel){ matchChannel.unsubscribe(); matchChannel = null; }
+  loadBattleLeaderboard();
 }
 
 function simulateBot(){
