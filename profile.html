@@ -62,7 +62,19 @@
 
 <header class="site-nav">
   <div class="container">
+    <div class="brand-group">
     <div class="brand"><span class="dot"></span>مؤمن <span>أحمد</span></div>
+      <div class="account-widget">
+        <button class="account-avatar-btn" id="accountAvatarBtn" title="حسابي">
+          <img id="navAvatarImg" class="nav-avatar-img" src="" alt="">
+          <span id="navAvatarInitial" class="nav-avatar-initial"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+        </button>
+        <div class="account-dropdown" id="accountDropdown">
+          <div class="account-dropdown-name" id="accountDropdownName">--</div>
+          <a href="/profile.html">حسابي والإعدادات</a>
+          <button id="navLogoutBtn" type="button">تسجيل خروج</button>
+        </div>
+      </div>    </div>
     <div style="display:flex; align-items:center; gap:12px;">
     <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">
       <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
