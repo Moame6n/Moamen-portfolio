@@ -18,6 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
 <script src="/assets/theme.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   body{ display:flex; align-items:flex-start; justify-content:center; padding:32px 16px 80px; }
   .sheet{
@@ -591,6 +592,7 @@ async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
     const detailedAnswers = QUESTIONS.map((q,i)=>({
       question:q.q, selected: answers[i], correct: q.c, isCorrect: answers[i]===q.c
     }));
+    const uid = await getCurrentUserId();
     const res = await fetch(`${SUPABASE_URL}/rest/v1/exam_attempts`, {
       method:'POST',
       headers:{
@@ -611,7 +613,8 @@ async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
         grade_label: gradeLabel,
         answers: detailedAnswers,
         started_at: examStartedAt,
-        user_agent: navigator.userAgent
+        user_agent: navigator.userAgent,
+        user_id: uid
       })
     });
     noteEl.textContent = res.ok ? 'تم حفظ نتيجتك بنجاح ✓' : 'تعذّر حفظ النتيجة، لكن تقدر تراجع إجاباتك تحت.';
@@ -704,6 +707,20 @@ function loadLastAttemptAndReview(){
   showResults(true);
 }
 
+async function prefillNameFromProfile(){
+  try{
+    const client = getSbClient();
+    if(!client) return;
+    const { data: { session } } = await client.auth.getSession();
+    if(!session) return;
+    const { data: profile } = await client.from('profiles').select('full_name').eq('id', session.user.id).single();
+    if(profile && profile.full_name){
+      const nameField = document.getElementById('gateName');
+      if(nameField && !nameField.value) nameField.value = profile.full_name;
+    }
+  }catch(e){}
+}
+
 function checkPreviousAttempt(){
   const history = getAttemptHistory();
   if(history.length === 0) return false;
@@ -738,6 +755,7 @@ document.addEventListener('DOMContentLoaded', function(){
       document.getElementById('gate-screen').style.display = 'block';
     });
     checkPreviousAttempt();
+    prefillNameFromProfile();
   }catch(e){
     showFatalError('تعذّر تجهيز أزرار الصفحة (' + e.message + ')');
   }
