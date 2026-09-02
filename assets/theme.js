@@ -122,3 +122,47 @@ async function getCurrentUserId(){
   if(document.readyState === 'complete'){ logToolUsage(); }
   else { window.addEventListener('load', logToolUsage); }
 })();
+
+// Fills in the small circular account widget in the header (if present on
+// this page) — shows the logged-in user's avatar/initial + a dropdown with
+// profile/logout links, or just links straight to /profile.html when logged out.
+async function initAccountWidget(){
+  const btn = document.getElementById('accountAvatarBtn');
+  const dropdown = document.getElementById('accountDropdown');
+  if(!btn) return;
+
+  const client = getSbClient();
+  if(!client){ btn.onclick = () => window.location.href = '/profile.html'; return; }
+
+  const { data: { session } } = await client.auth.getSession();
+  if(!session){
+    btn.onclick = () => window.location.href = '/profile.html';
+    return;
+  }
+
+  const { data: profile } = await client.from('profiles').select('full_name, avatar_url').eq('id', session.user.id).single();
+  const name = (profile && profile.full_name) ? profile.full_name : session.user.email;
+
+  const imgEl = document.getElementById('navAvatarImg');
+  const initialEl = document.getElementById('navAvatarInitial');
+  if(profile && profile.avatar_url){
+    imgEl.src = profile.avatar_url;
+    imgEl.style.display = 'block';
+    initialEl.style.display = 'none';
+  } else {
+    initialEl.innerHTML = `<span style="font-weight:700; font-size:13px; color:var(--emerald);">${name.charAt(0)}</span>`;
+  }
+
+  const nameEl = document.getElementById('accountDropdownName');
+  if(nameEl) nameEl.textContent = name;
+
+  btn.onclick = (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); };
+  document.addEventListener('click', () => dropdown.classList.remove('open'));
+
+  const logoutBtn = document.getElementById('navLogoutBtn');
+  if(logoutBtn){
+    logoutBtn.onclick = async () => { await client.auth.signOut(); window.location.reload(); };
+  }
+}
+if(document.readyState === 'complete'){ initAccountWidget(); }
+else { window.addEventListener('load', initAccountWidget); }
