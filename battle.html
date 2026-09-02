@@ -292,6 +292,18 @@ function escBattle(str){
 loadBattleLeaderboard();
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+(async function prefillBattleName(){
+  try{
+    const { data: { session } } = await sb.auth.getSession();
+    if(!session) return;
+    const { data: profile } = await sb.from('profiles').select('full_name').eq('id', session.user.id).single();
+    if(profile && profile.full_name){
+      const nameField = document.getElementById('battleName');
+      if(nameField && !nameField.value) nameField.value = profile.full_name;
+    }
+  }catch(e){}
+})();
+
 let myName = '', myCategory = '';
 let questions = [];
 let myAnswers = [], oppProgress = 0, oppCorrect = 0, myCorrect = 0;
@@ -558,6 +570,7 @@ async function showResult(oppTime, forfeit){
   document.getElementById('botNote').style.display = isBot ? 'block' : 'none';
 
   try{
+    const uid = await getCurrentUserId();
     await fetch(`${SUPABASE_URL}/rest/v1/battle_results`, {
       method: 'POST',
       headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer':'return=minimal' },
@@ -565,7 +578,8 @@ async function showResult(oppTime, forfeit){
         match_id: matchId || crypto.randomUUID(),
         player_name: myName, opponent_name: opponentName || 'خصم افتراضي',
         player_correct: myCorrect, opponent_correct: oppCorrect,
-        player_time_seconds: parseFloat(myTime), is_win: iWon, vs_bot: isBot, category: myCategory
+        player_time_seconds: parseFloat(myTime), is_win: iWon, vs_bot: isBot, category: myCategory,
+        user_id: uid
       })
     });
   }catch(e){}
