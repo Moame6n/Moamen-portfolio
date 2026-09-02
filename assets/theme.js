@@ -74,3 +74,51 @@ function getSessionId(){
   if(document.readyState === 'complete'){ track(); }
   else { window.addEventListener('load', track); }
 })();
+
+// Shared login-state helper — any page that also loads the supabase-js CDN
+// script can call this to find out if the current visitor is logged in, and
+// attach their user_id to whatever they're about to save (exam attempt,
+// download, tool use, battle result). Returns null for anonymous visitors —
+// everything keeps working exactly as before for them.
+let _sbClient = null;
+function getSbClient(){
+  if(!_sbClient && typeof supabase !== 'undefined' && typeof SUPABASE_URL !== 'undefined'){
+    _sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return _sbClient;
+}
+async function getCurrentUserId(){
+  try{
+    const client = getSbClient();
+    if(!client) return null;
+    const { data: { session } } = await client.auth.getSession();
+    return session ? session.user.id : null;
+  }catch(e){ return null; }
+}
+
+// Auto-log tool usage for any real tool page (not the reserved _BASE.html
+// scaffold) — every current and future tool gets this for free, no per-tool
+// code needed.
+(function(){
+  const path = window.location.pathname;
+  if(!path.startsWith('/tools/') || path.endsWith('_BASE.html')) return;
+
+  function logToolUsage(){
+    getCurrentUserId().then(uid => {
+      const slug = path.split('/').pop().replace('.html', '');
+      const title = document.title.split('|')[0].trim();
+      fetch(`${SUPABASE_URL}/rest/v1/tool_usage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ user_id: uid, tool_slug: slug, tool_title: title })
+      }).catch(() => {});
+    });
+  }
+  if(document.readyState === 'complete'){ logToolUsage(); }
+  else { window.addEventListener('load', logToolUsage); }
+})();
