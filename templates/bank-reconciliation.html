@@ -18,6 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
 <script src="/assets/theme.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/supabase-config.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
@@ -159,6 +160,20 @@ const TEMPLATE_TITLE = 'قالب تسوية بنكية';
 const FILE_PATH = '/templates/files/bank-reconciliation.xlsx';
 // ================================================================================
 
+async function prefillDlName(){
+  try{
+    const client = getSbClient();
+    if(!client) return;
+    const { data: { session } } = await client.auth.getSession();
+    if(!session) return;
+    const { data: profile } = await client.from('profiles').select('full_name').eq('id', session.user.id).single();
+    if(profile && profile.full_name){
+      const nameField = document.getElementById('dlName');
+      if(nameField && !nameField.value) nameField.value = profile.full_name;
+    }
+  }catch(e){}
+}
+
 async function submitDownload(){
   const name = document.getElementById('dlName').value.trim();
   const phone = document.getElementById('dlPhone').value.trim();
@@ -175,6 +190,7 @@ async function submitDownload(){
   btn.textContent = 'جارِ التجهيز...';
 
   try{
+    const uid = await getCurrentUserId();
     await fetch(`${SUPABASE_URL}/rest/v1/template_downloads`, {
       method: 'POST',
       headers: {
@@ -188,7 +204,8 @@ async function submitDownload(){
         template_title: TEMPLATE_TITLE,
         full_name: name,
         phone: phone || null,
-        user_agent: navigator.userAgent
+        user_agent: navigator.userAgent,
+        user_id: uid
       })
     });
   }catch(e){}
@@ -207,6 +224,7 @@ async function submitDownload(){
 
 document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('dlBtn').addEventListener('click', submitDownload);
+  prefillDlName();
 });
 </script>
 </body>
