@@ -17,6 +17,7 @@
   --mono: 'JetBrains Mono', ui-monospace, monospace;
   --sans: 'Tajawal', sans-serif;
   --radius:14px;
+  --nav-bg-rgb: 10,14,19;
 }
 
 /* Light "day" theme — same ledger-terminal identity, flipped for daylight reading */
@@ -33,6 +34,7 @@
   --emerald:#1D9A6C;
   --emerald-dim:#B9EAD5;
   --gold:#A8752C;
+  --nav-bg-rgb: 243,240,230;
   --gold-dim:#F1DFB8;
   --red:#C23B49;
 }
@@ -77,7 +79,7 @@ h1,h2,h3{ font-family:var(--sans); color:var(--text); margin:0; font-weight:800;
 /* Nav */
 header.site-nav{
   position:sticky; top:0; z-index:50;
-  background:rgba(10,14,19,0.85);
+  background:rgba(var(--nav-bg-rgb), 0.9);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--border-soft);
 }
