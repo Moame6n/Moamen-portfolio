@@ -83,7 +83,9 @@ function getSessionId(){
 let _sbClient = null;
 function getSbClient(){
   if(!_sbClient && typeof supabase !== 'undefined' && typeof SUPABASE_URL !== 'undefined'){
-    _sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    _sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'sb-moamen-auth' }
+    });
   }
   return _sbClient;
 }
