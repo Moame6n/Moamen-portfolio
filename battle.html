@@ -301,7 +301,7 @@ function escBattle(str){
 }
 
 loadBattleLeaderboard();
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = getSbClient();
 
 (async function prefillBattleName(){
   try{
