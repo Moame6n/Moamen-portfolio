@@ -59,6 +59,20 @@
 .theme-toggle .icon-sun{ display:none; }
 :root[data-theme="light"] .theme-toggle .icon-moon{ display:none; }
 :root[data-theme="light"] .theme-toggle .icon-sun{ display:block; }
+
+.notify-bell-btn{
+  width:34px; height:34px; border-radius:9px;
+  background:var(--surface-2); border:1px solid var(--border-soft); color:var(--text-soft);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; position:relative;
+}
+.notify-bell-btn:hover{ border-color:var(--gold); color:var(--gold); }
+.notify-bell-btn svg{ width:16px; height:16px; }
+.notify-bell-btn.subscribed{ border-color:var(--emerald); color:var(--emerald); }
+.notify-bell-btn.subscribed::after{
+  content:''; position:absolute; top:5px; left:5px; width:7px; height:7px; border-radius:50%;
+  background:var(--emerald); border:1.5px solid var(--surface);
+}
+
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{
