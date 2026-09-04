@@ -1,0 +1,9 @@
+{
+  "name": "moamen-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "web-push": "^3.6.7",
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}
