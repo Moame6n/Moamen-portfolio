@@ -187,6 +187,15 @@
             بيتحفظ على جهازك بس ومش بيتبعت لأي مكان غير GitHub مباشرة.
           </div>
         </div>
+        <div class="field-row">
+          <label>مفتاح إرسال الإشعارات (مرة واحدة بس)</label>
+          <input type="password" id="notifySecret" placeholder="القيمة اللي حطيتها في NOTIFY_SECRET على Vercel">
+          <div class="hint">بيتحفظ على جهازك بس، ومطلوب عشان تقدر ترسل إشعار عند أي نشر جديد.</div>
+        </div>
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-top:6px;">
+          <input type="checkbox" id="notifyOnPublishExam" checked style="width:16px; height:16px;">
+          ابعت إشعار للمشتركين عند نشر الاختبار ده
+        </label>
       </div>
 
       <div class="builder-card">
@@ -324,6 +333,10 @@
         </div>
       </div>
 
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-bottom:12px;">
+        <input type="checkbox" id="notifyOnPublishTpl" checked style="width:16px; height:16px;">
+        ابعت إشعار للمشتركين عند نشر القالب ده
+      </label>
       <button class="btn btn-primary" id="publishTplBtn" type="button">نشر القالب</button>
       <div class="gen-result" id="tplGenResult"></div>
 
@@ -406,6 +419,10 @@
         </div>
       </div>
 
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-bottom:12px;">
+        <input type="checkbox" id="notifyOnPublishTool" checked style="width:16px; height:16px;">
+        ابعت إشعار للمشتركين عند نشر الأداة دي
+      </label>
       <button class="btn btn-primary" id="publishToolBtn" type="button">نشر الأداة</button>
       <div class="gen-result" id="toolGenResult"></div>
     </div>
@@ -571,6 +588,10 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
   document.getElementById('ghToken').addEventListener('change', (e) => {
     localStorage.setItem('gh_token', e.target.value.trim());
+  });
+  document.getElementById('notifySecret').value = localStorage.getItem('notify_secret') || '';
+  document.getElementById('notifySecret').addEventListener('change', (e) => {
+    localStorage.setItem('notify_secret', e.target.value.trim());
   });
   addQuestionBlock();
 
@@ -847,6 +868,18 @@ function utf8ToBase64(str){
   return btoa(unescape(encodeURIComponent(str)));
 }
 
+async function sendPushNotification(title, body, url){
+  const secret = localStorage.getItem('notify_secret');
+  if(!secret) return;
+  try{
+    await fetch('/api/send-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-notify-secret': secret },
+      body: JSON.stringify({ title, body, url })
+    });
+  }catch(e){}
+}
+
 async function generateAndPublishExam(){
   const resultEl = document.getElementById('genResult');
   resultEl.className = 'gen-result';
@@ -921,6 +954,9 @@ async function generateAndPublishExam(){
     resultEl.className = 'gen-result success';
     resultEl.innerHTML = `تم النشر بنجاح ✓ — الاختبار هيبان في صفحة الأدوات والاختبارات خلال دقيقة (وقت نشر Vercel).<br>رابط الاختبار المباشر: <a href="https://moamen-portfolio-pi.vercel.app/exams/${slug}.html" target="_blank">/exams/${slug}.html</a>`;
     resultEl.style.display = 'block';
+    if(document.getElementById('notifyOnPublishExam').checked){
+      sendPushNotification('اختبار جديد 📝', title, `/exams/${slug}.html`);
+    }
   }catch(err){
     showGenError(err.message || 'حصل خطأ غير متوقع أثناء النشر');
   }finally{
@@ -1234,6 +1270,9 @@ async function publishTemplate(){
     resultEl.className = 'gen-result success';
     resultEl.innerHTML = `تم نشر القالب بنجاح ✓ — هيبان في صفحة الأدوات والاختبارات خلال دقيقة.<br>رابط مباشر: <a href="https://moamen-portfolio-pi.vercel.app/templates/${slug}.html" target="_blank">/templates/${slug}.html</a>`;
     resultEl.style.display = 'block';
+    if(document.getElementById('notifyOnPublishTpl').checked){
+      sendPushNotification('قالب مجاني جديد 📄', title, `/templates/${slug}.html`);
+    }
   }catch(err){
     showTplError(err.message || 'حصل خطأ غير متوقع أثناء النشر');
   }finally{
@@ -1428,6 +1467,9 @@ async function publishTool(){
       : '';
     resultEl.innerHTML = `تم نشر الأداة بنجاح ✓ — هتبان في صفحة الأدوات والاختبارات خلال دقيقة.${fallbackNote}<br>رابط مباشر: <a href="https://moamen-portfolio-pi.vercel.app/tools/${slug}.html" target="_blank">/tools/${slug}.html</a>`;
     resultEl.style.display = 'block';
+    if(document.getElementById('notifyOnPublishTool').checked){
+      sendPushNotification('أداة جديدة 🧰', title, `/tools/${slug}.html`);
+    }
   }catch(err){
     showToolError(err.message || 'حصل خطأ غير متوقع أثناء النشر');
   }finally{
