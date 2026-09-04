@@ -168,3 +168,97 @@ async function initAccountWidget(){
 }
 if(document.readyState === 'complete'){ initAccountWidget(); }
 else { window.addEventListener('load', initAccountWidget); }
+
+// ==================== Push notifications ====================
+
+const VAPID_PUBLIC_KEY = 'BHR4AjTK5YFuR9MdG2hV9KVwgGxAfJgzPDQZnCCVBM-H4jGqq14whodFnVTZc4Ah7k6Y9QUM5BNyTCXcBj9rzGg';
+
+function urlBase64ToUint8Array(base64String){
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(base64);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+function isIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+function isStandalone(){
+  return window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+}
+
+async function initNotifyBell(){
+  const btn = document.getElementById('notifyBellBtn');
+  if(!btn || !('serviceWorker' in navigator) || !('PushManager' in window)) { if(btn) btn.style.display = 'none'; return; }
+
+  try{
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    const existingSub = await reg.pushManager.getSubscription();
+    updateBellState(!!existingSub);
+
+    btn.addEventListener('click', async () => {
+      if(isIOS() && !isStandalone()){
+        showIOSInstructions();
+        return;
+      }
+
+      const currentSub = await reg.pushManager.getSubscription();
+      if(currentSub){
+        await currentSub.unsubscribe();
+        fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions?endpoint=eq.${encodeURIComponent(currentSub.endpoint)}`, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+        }).catch(()=>{});
+        updateBellState(false);
+        return;
+      }
+
+      const permission = await Notification.requestPermission();
+      if(permission !== 'granted') return;
+
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+      const subJson = sub.toJSON();
+
+      await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ endpoint: subJson.endpoint, p256dh: subJson.keys.p256dh, auth: subJson.keys.auth })
+      }).catch(()=>{});
+
+      updateBellState(true);
+    });
+  }catch(e){}
+}
+
+function updateBellState(subscribed){
+  const btn = document.getElementById('notifyBellBtn');
+  if(!btn) return;
+  btn.classList.toggle('subscribed', subscribed);
+  btn.title = subscribed ? 'الإشعارات مفعّلة — دوس للإيقاف' : 'فعّل الإشعارات عشان توصلك أي جديد';
+}
+
+function showIOSInstructions(){
+  const existing = document.getElementById('iosNotifyModal');
+  if(existing){ existing.style.display = 'flex'; return; }
+  const modal = document.createElement('div');
+  modal.id = 'iosNotifyModal';
+  modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;';
+  modal.innerHTML = `
+    <div style="background:var(--surface); border:1px solid var(--border-soft); border-radius:14px; padding:24px; max-width:340px; text-align:center;">
+      <div style="font-size:15px; font-weight:700; margin-bottom:12px; color:var(--text);">فعّل الإشعارات على آيفون</div>
+      <div style="font-size:13px; color:var(--text-soft); line-height:1.9; margin-bottom:18px;">
+        1. دوس زرار المشاركة <span style="font-family:var(--mono);">⬆️</span> تحت في متصفح Safari<br>
+        2. اختار "إضافة إلى الشاشة الرئيسية"<br>
+        3. افتح الموقع من الأيقونة الجديدة، وفعّل الإشعارات من هناك
+      </div>
+      <button onclick="document.getElementById('iosNotifyModal').style.display='none'" style="background:var(--emerald); color:#08130E; border:none; padding:9px 22px; border-radius:8px; font-family:var(--sans); font-weight:700; font-size:13px; cursor:pointer;">فهمت</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+if(document.readyState === 'complete'){ initNotifyBell(); }
+else { window.addEventListener('load', initNotifyBell); }
