@@ -19,7 +19,13 @@
 <link rel="stylesheet" href="/assets/style.css">
 <script src="/assets/theme.js"></script>
 <style>
-  body{ display:flex; align-items:flex-start; justify-content:center; padding:32px 16px 80px; }
+  .exam-page{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    padding:32px 16px 80px;
+  }
+
   .sheet{
     width:100%; max-width:720px; background:var(--surface);
     border:1px solid var(--border-soft);
@@ -97,6 +103,7 @@
   }
   .lb-empty{ font-size:12.5px; color:var(--muted); text-align:center; padding:18px 10px; }
   .lb-loading{ font-size:12.5px; color:var(--muted); text-align:center; padding:18px 10px; }
+
   /* on wider screens, allow the whole leaderboard to breathe a bit more — still same simple list */
   @media (min-width:520px){
     .lb-wrap{ padding:26px 32px 6px; }
@@ -160,15 +167,23 @@
     .navrow{ padding:14px 20px 24px; } .gate{ padding:26px 20px 24px; }
     .qtext{ font-size:16.5px; } .review{ padding:20px 18px 26px; }
   }
-  @media (prefers-reduced-motion: reduce){ .stamp{ animation:none; opacity:1; transform:scale(1) rotate(-14deg); } }
+
+  @media (prefers-reduced-motion: reduce){
+    .stamp{ animation:none; opacity:1; transform:scale(1) rotate(-14deg); }
+  }
+
   #errBanner{
     display:none; background:#8B3A3A; color:#fff; font-size:13px;
     padding:12px 16px; text-align:center; direction:ltr; word-break:break-word;
   }
 </style>
 </head>
+
 <body>
+
 <div id="errBanner"></div>
+
+<div class="exam-page">
 <div class="sheet">
 
   <header class="top" style="position:relative;">
@@ -239,23 +254,28 @@
       <div class="grade-title" id="gradeTitle"></div>
       <div class="grade-desc" id="gradeDesc"></div>
     </div>
+
     <div class="score-row">
       <div class="score-item"><div class="num" id="correctNum">0</div><div class="txt">إجابات صحيحة</div></div>
       <div class="score-item"><div class="num" id="wrongNum">0</div><div class="txt">إجابات خاطئة</div></div>
       <div class="score-item"><div class="num" id="pctNum">0%</div><div class="txt">النسبة الكلية</div></div>
     </div>
+
     <div class="savenote" id="saveNote">جارِ حفظ نتيجتك...</div>
+
     <div class="btnrow" id="shareCertRow" style="display:none;">
       <button class="navbtn" id="shareWaBtn" type="button" style="background:#25D366; color:#0A1F0F;">مشاركة على واتساب</button>
       <button class="navbtn" id="shareFbBtn" type="button" style="background:#1877F2; color:#fff;">مشاركة على فيسبوك</button>
       <button class="navbtn" id="shareCertImgBtn" type="button" style="background:var(--gold); color:#241A05; display:none;">مشاركة الشهادة (صورة)</button>
       <button class="navbtn" id="certBtn" type="button" style="background:var(--emerald); color:#08130E; display:none;">تحميل شهادة PDF</button>
     </div>
+
     <div class="btnrow">
       <button class="navbtn" id="reviewBtn" type="button" style="background:transparent;color:var(--emerald);border:1.5px solid var(--emerald);">مراجعة الإجابات</button>
       <button class="navbtn" id="restartBtn" type="button" style="background:var(--gold);color:#12190F;">إعادة الاختبار</button>
       <a href="/#tools" class="navbtn" style="background:transparent;color:var(--text-soft);border:1.5px solid var(--border-soft); text-decoration:none; display:inline-flex; align-items:center;">رجوع للبورتفوليو</a>
     </div>
+
     <div class="review" id="reviewBox"></div>
   </div>
 
@@ -266,11 +286,12 @@
       <a href="/tools-exams.html#tools-section">الأدوات المجانية</a>
       <a href="/tools-exams.html#templates-section">قوالب مجانية</a>
       <a href="/feedback.html">شاركنا رأيك</a>
-    <a href="/#services">خدماتي</a>
+      <a href="/#services">خدماتي</a>
       <a href="https://wa.me/201154960694" target="_blank">تواصل على واتساب</a>
     </div>
   </div>
 
+</div>
 </div>
 
 <!-- Hidden certificate template — rendered off-screen, captured to image, then embedded in the PDF -->
@@ -278,6 +299,7 @@
   <div style="height:100%; border:2px solid #E0B15C; border-radius:18px; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:50px; overflow:hidden;">
     <!-- decorative inner hairline border -->
     <div style="position:absolute; inset:12px; border:1px solid rgba(224,177,92,0.35); border-radius:12px; pointer-events:none;"></div>
+
     <!-- corner accents -->
     <div style="position:absolute; top:26px; right:26px; width:26px; height:26px; border-top:2px solid #3DDC97; border-right:2px solid #3DDC97; border-radius:0 6px 0 0;"></div>
     <div style="position:absolute; top:26px; left:26px; width:26px; height:26px; border-top:2px solid #3DDC97; border-left:2px solid #3DDC97; border-radius:6px 0 0 0;"></div>
@@ -323,6 +345,7 @@ function showFatalError(msg){
   banner.textContent = 'حصل خطأ: ' + msg + ' — لو استمرت المشكلة ابعت الرسالة دي للمطوّر.';
   banner.style.display = 'block';
 }
+
 window.addEventListener('error', function(e){
   showFatalError(e.message || 'خطأ غير معروف في تحميل الصفحة');
 });
@@ -335,12 +358,15 @@ let taker = { name:'', phone:'' };
 function submitGate(){
   const name = document.getElementById('gateName').value.trim();
   const phone = document.getElementById('gatePhone').value.trim();
+
   if(!name){
     document.getElementById('gateErr').style.display = 'block';
     return;
   }
+
   taker.name = name;
   taker.phone = phone;
+
   document.getElementById('gate-screen').style.display = 'none';
   document.getElementById('intro-screen').style.display = 'block';
 }
@@ -356,6 +382,7 @@ function startExam(){
 function buildTally(){
   const wrap = document.getElementById('tallyMarks');
   wrap.innerHTML = '';
+
   for(let i=0;i<QUESTIONS.length;i++){
     const m = document.createElement('div');
     m.className = 'mark';
@@ -363,40 +390,65 @@ function buildTally(){
     wrap.appendChild(m);
   }
 }
+
 function updateTally(){
   const marks = document.querySelectorAll('.mark');
-  marks.forEach((m,i)=>{ if(i < current) m.classList.add('done'); else m.classList.remove('done'); });
+
+  marks.forEach((m,i)=>{
+    if(i < current) m.classList.add('done');
+    else m.classList.remove('done');
+  });
+
   const ar = n => n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
   document.getElementById('tallyCount').textContent = `${ar(current)} / ${ar(QUESTIONS.length)}`;
 }
+
 function renderQuestion(){
   const item = QUESTIONS[current];
   const ar = n => n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
   document.getElementById('qnum').textContent = `السؤال ${ar(current+1)}`;
   document.getElementById('qtext').textContent = item.q;
+
   const optWrap = document.getElementById('options');
   optWrap.innerHTML = '';
+
   item.o.forEach((optText, idx) => {
     const label = document.createElement('label');
+
     label.className = 'opt' + (answers[current]===idx ? ' selected' : '');
+
     label.innerHTML = `<input type="radio" name="opt" ${answers[current]===idx?'checked':''}> <span>${optText}</span>`;
+
     label.onclick = () => selectOption(idx);
     optWrap.appendChild(label);
   });
+
   document.getElementById('nextBtn').disabled = answers[current]===null;
   document.getElementById('nextBtn').textContent = current === QUESTIONS.length-1 ? 'إنهاء الاختبار' : 'التالي';
   document.getElementById('hint').textContent = answers[current]===null ? 'اختر إجابة للمتابعة' : '';
+
   updateTally();
 }
+
 function selectOption(idx){
   answers[current] = idx;
-  document.querySelectorAll('.opt').forEach((el,i)=> el.classList.toggle('selected', i===idx));
+
+  document.querySelectorAll('.opt').forEach((el,i)=>{
+    el.classList.toggle('selected', i===idx);
+  });
+
   document.getElementById('nextBtn').disabled = false;
   document.getElementById('hint').textContent = '';
 }
+
 function nextQuestion(){
-  if(current < QUESTIONS.length-1){ current++; renderQuestion(); }
-  else{ showResults(); }
+  if(current < QUESTIONS.length-1){
+    current++;
+    renderQuestion();
+  }else{
+    showResults();
+  }
 }
 
 async function showResults(isReview){
@@ -406,7 +458,11 @@ async function showResults(isReview){
   document.getElementById('results-screen').style.display = 'block';
 
   let correctCount = 0;
-  answers.forEach((a,i)=>{ if(a === QUESTIONS[i].c) correctCount++; });
+
+  answers.forEach((a,i)=>{
+    if(a === QUESTIONS[i].c) correctCount++;
+  });
+
   const total = QUESTIONS.length;
   const wrongCount = total - correctCount;
   const pct = Math.round((correctCount/total)*100);
@@ -417,6 +473,7 @@ async function showResults(isReview){
   document.getElementById('stampPct').textContent = pct + '%';
 
   let title, desc, stampColor;
+
   if(pct >= 85){
     title = 'جاهز لمستوى مدير حسابات';
     desc = 'أداء قوي وشامل يغطي الأساسيات والتحليل المالي والتكاليف والقرارات الإدارية.';
@@ -430,6 +487,7 @@ async function showResults(isReview){
     desc = 'هناك فجوات واضحة في أساسيات أو تطبيقات محاسبية مهمة.';
     stampColor = 'var(--red)';
   }
+
   document.getElementById('gradeTitle').textContent = title;
   document.getElementById('gradeDesc').textContent = desc;
   document.getElementById('stampEl').style.borderColor = stampColor;
@@ -444,26 +502,31 @@ async function showResults(isReview){
     await saveAttempt(correctCount, wrongCount, total, pct, title);
     saveAttemptToHistory();
   }
+
   document.getElementById('restartBtn').style.display = getAttemptHistory().length >= 2 ? 'none' : 'inline-flex';
 }
 
 function setupShareAndCert(pct, gradeTitle){
   const row = document.getElementById('shareCertRow');
   const examUrl = window.location.href.split('?')[0];
+
   const waText = `خدت اختبار ${EXAM_TITLE} وحصلت على ${pct}% (${gradeTitle})! جرب اختبارك من هنا: ${examUrl}`;
 
   document.getElementById('shareWaBtn').onclick = () => {
     window.open(`https://wa.me/?text=${encodeURIComponent(waText)}`, '_blank');
   };
+
   document.getElementById('shareFbBtn').onclick = () => {
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(examUrl)}`, '_blank', 'width=580,height=520');
   };
 
   const certBtn = document.getElementById('certBtn');
   const shareCertBtn = document.getElementById('shareCertImgBtn');
+
   if(pct >= 65){
     certBtn.style.display = 'inline-flex';
     certBtn.onclick = () => generateCertificate(pct, gradeTitle);
+
     shareCertBtn.style.display = 'inline-flex';
     shareCertBtn.onclick = () => shareCertificateImage(pct, gradeTitle, waText);
   } else {
@@ -481,12 +544,17 @@ async function renderCertificateCanvas(pct, gradeTitle){
   document.getElementById('certDate').textContent = new Date().toLocaleDateString('ar-EG');
 
   const template = document.getElementById('certTemplate');
-  return await html2canvas(template, { scale: 2, backgroundColor: '#0A0E13' });
+
+  return await html2canvas(template, {
+    scale: 2,
+    backgroundColor: '#0A0E13'
+  });
 }
 
 async function generateCertificate(pct, gradeTitle){
   const certBtn = document.getElementById('certBtn');
   const originalLabel = certBtn.textContent;
+
   certBtn.disabled = true;
   certBtn.textContent = 'جارِ التجهيز...';
 
@@ -495,13 +563,22 @@ async function generateCertificate(pct, gradeTitle){
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+    const doc = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
+    });
+
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
+
     doc.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
     doc.save(`certificate-${EXAM_SLUG}.pdf`);
+
   }catch(err){
     alert('حصل خطأ أثناء توليد الشهادة، حاول تاني.');
+
   }finally{
     certBtn.disabled = false;
     certBtn.textContent = originalLabel;
@@ -511,26 +588,38 @@ async function generateCertificate(pct, gradeTitle){
 async function shareCertificateImage(pct, gradeTitle, shareText){
   const btn = document.getElementById('shareCertImgBtn');
   const originalLabel = btn.textContent;
+
   btn.disabled = true;
   btn.textContent = 'جارِ التجهيز...';
 
   try{
     const canvas = await renderCertificateCanvas(pct, gradeTitle);
+
     canvas.toBlob(async (blob) => {
       if(!blob){
         btn.disabled = false;
         btn.textContent = originalLabel;
         return;
       }
-      const file = new File([blob], `certificate-${EXAM_SLUG}.jpg`, { type: 'image/jpeg' });
+
+      const file = new File(
+        [blob],
+        `certificate-${EXAM_SLUG}.jpg`,
+        { type: 'image/jpeg' }
+      );
 
       // Web Share API with an attached file — this is what makes WhatsApp/etc.
       // show the actual certificate image, not just a text link. Falls back
       // to downloading the image + opening a text-only WhatsApp share on
       // browsers/devices that don't support sharing files (mainly desktop).
+
       if(navigator.canShare && navigator.canShare({ files: [file] })){
         try{
-          await navigator.share({ files: [file], title: 'شهادة اجتياز', text: shareText });
+          await navigator.share({
+            files: [file],
+            title: 'شهادة اجتياز',
+            text: shareText
+          });
         }catch(shareErr){
           // person cancelled the share sheet — not an error
         }
@@ -538,16 +627,25 @@ async function shareCertificateImage(pct, gradeTitle, shareText){
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = `certificate-${EXAM_SLUG}.jpg`;
+
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+
+        window.open(
+          `https://wa.me/?text=${encodeURIComponent(shareText)}`,
+          '_blank'
+        );
       }
+
       btn.disabled = false;
       btn.textContent = originalLabel;
+
     }, 'image/jpeg', 0.95);
+
   }catch(err){
     alert('حصل خطأ أثناء تجهيز صورة الشهادة، حاول تاني.');
+
     btn.disabled = false;
     btn.textContent = originalLabel;
   }
@@ -555,18 +653,25 @@ async function shareCertificateImage(pct, gradeTitle, shareText){
 
 async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
   const noteEl = document.getElementById('saveNote');
+
   try{
     const detailedAnswers = QUESTIONS.map((q,i)=>({
-      question:q.q, selected: answers[i], correct: q.c, isCorrect: answers[i]===q.c
+      question:q.q,
+      selected: answers[i],
+      correct: q.c,
+      isCorrect: answers[i]===q.c
     }));
+
     const res = await fetch(`${SUPABASE_URL}/rest/v1/exam_attempts`, {
       method:'POST',
+
       headers:{
         'Content-Type':'application/json',
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'Prefer':'return=minimal'
       },
+
       body: JSON.stringify({
         exam_slug: EXAM_SLUG,
         exam_title: EXAM_TITLE,
@@ -582,22 +687,35 @@ async function saveAttempt(correctCount, wrongCount, total, pct, gradeLabel){
         user_agent: navigator.userAgent
       })
     });
-    noteEl.textContent = res.ok ? 'تم حفظ نتيجتك بنجاح ✓' : 'تعذّر حفظ النتيجة، لكن تقدر تراجع إجاباتك تحت.';
+
+    noteEl.textContent = res.ok
+      ? 'تم حفظ نتيجتك بنجاح ✓'
+      : 'تعذّر حفظ النتيجة، لكن تقدر تراجع إجاباتك تحت.';
+
     if(res.ok) loadLeaderboard();
-  } catch(err){
+
+  }catch(err){
     noteEl.textContent = 'تعذّر حفظ النتيجة (مشكلة في الاتصال)، لكن تقدر تراجع إجاباتك تحت.';
   }
 }
 
 async function loadLeaderboard(){
   const listEl = document.getElementById('leaderboardList');
+
   try{
     const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_leaderboard`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
-      body: JSON.stringify({ p_exam_slug: EXAM_SLUG })
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({
+        p_exam_slug: EXAM_SLUG
+      })
     });
+
     if(!res.ok) throw new Error('failed');
+
     const data = await res.json();
 
     if(!data.length){
@@ -605,7 +723,11 @@ async function loadLeaderboard(){
       return;
     }
 
-    const medalClass = i => i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+    const medalClass = i =>
+      i === 0 ? 'top1' :
+      i === 1 ? 'top2' :
+      i === 2 ? 'top3' : '';
+
     listEl.innerHTML = data.map((row, i) => `
       <div class="lb-row ${medalClass(i)}">
         <div class="lb-rank">${i+1}</div>
@@ -613,13 +735,23 @@ async function loadLeaderboard(){
         <div class="lb-pct">${row.percentage}%</div>
       </div>
     `).join('');
+
   }catch(err){
     listEl.innerHTML = '<div class="lb-empty">تعذّر تحميل لوحة الصدارة حاليًا.</div>';
   }
 }
 
 function escapeHtmlLb(str){
-  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  return String(str).replace(
+    /[&<>"']/g,
+    m => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[m])
+  );
 }
 
 loadLeaderboard();
@@ -627,21 +759,29 @@ loadLeaderboard();
 function buildReview(){
   const box = document.getElementById('reviewBox');
   box.innerHTML = '';
+
   const ar = n => n.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
   QUESTIONS.forEach((item, i) => {
     const userAns = answers[i];
     const isCorrect = userAns === item.c;
+
     const div = document.createElement('div');
     div.className = 'rq';
+
     div.innerHTML = `
       <div class="rqtext">${ar(i+1)}. ${item.q}</div>
       ${!isCorrect ? `<div class="rline wrong">إجابتك: ${item.o[userAns]}</div>` : ''}
       <div class="rline right">الإجابة الصحيحة: ${item.o[item.c]}</div>
     `;
+
     box.appendChild(div);
   });
 }
-function toggleReview(){ document.getElementById('reviewBox').classList.toggle('show'); }
+
+function toggleReview(){
+  document.getElementById('reviewBox').classList.toggle('show');
+}
 
 // ==================== Device-based attempt history ====================
 // Stored per-exam in this browser only (localStorage) — lets a returning
@@ -652,64 +792,104 @@ function toggleReview(){ document.getElementById('reviewBox').classList.toggle('
 const HISTORY_KEY = 'exam_history_' + EXAM_SLUG;
 
 function getAttemptHistory(){
-  try{ return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
-  catch(e){ return []; }
+  try{
+    return JSON.parse(
+      localStorage.getItem(HISTORY_KEY) || '[]'
+    );
+  }catch(e){
+    return [];
+  }
 }
 
 function saveAttemptToHistory(){
   const history = getAttemptHistory();
-  history.push({ name: taker.name, answers: answers.slice(), finishedAt: new Date().toISOString() });
+
+  history.push({
+    name: taker.name,
+    answers: answers.slice(),
+    finishedAt: new Date().toISOString()
+  });
+
   while(history.length > 2) history.shift();
-  try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }catch(e){}
+
+  try{
+    localStorage.setItem(
+      HISTORY_KEY,
+      JSON.stringify(history)
+    );
+  }catch(e){}
 }
 
 function loadLastAttemptAndReview(){
   const history = getAttemptHistory();
+
   if(!history.length) return;
+
   const last = history[history.length - 1];
+
   taker.name = last.name;
   answers = last.answers.slice();
+
   showResults(true);
 }
 
 function checkPreviousAttempt(){
   const history = getAttemptHistory();
+
   if(history.length === 0) return false;
 
   const msgEl = document.getElementById('attemptedMsg');
   const retakeBtn = document.getElementById('retakeAnywayBtn');
 
   if(history.length === 1){
-    msgEl.textContent = `أنت حليت الاختبار ده قبل كده من الجهاز ده باسم "${history[0].name}". تقدر تراجع نتيجتك، أو تجرب محاولة أخيرة.`;
+    msgEl.textContent =
+      `أنت حليت الاختبار ده قبل كده من الجهاز ده باسم "${history[0].name}". تقدر تراجع نتيجتك، أو تجرب محاولة أخيرة.`;
+
     retakeBtn.style.display = 'inline-flex';
-  } else {
-    msgEl.textContent = `استخدمت المحاولتين المتاحتين لهذا الاختبار من الجهاز ده. تقدر تراجع آخر نتيجة سجّلتها.`;
+
+  }else{
+    msgEl.textContent =
+      `استخدمت المحاولتين المتاحتين لهذا الاختبار من الجهاز ده. تقدر تراجع آخر نتيجة سجّلتها.`;
+
     retakeBtn.style.display = 'none';
   }
 
   document.getElementById('gate-screen').style.display = 'none';
   document.getElementById('already-attempted-screen').style.display = 'block';
+
   return true;
 }
-
 
 document.addEventListener('DOMContentLoaded', function(){
   try{
     document.getElementById('gateNextBtn').addEventListener('click', submitGate);
+
     document.getElementById('startExamBtn').addEventListener('click', startExam);
+
     document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+
     document.getElementById('reviewBtn').addEventListener('click', toggleReview);
-    document.getElementById('restartBtn').addEventListener('click', function(){ location.reload(); });
+
+    document.getElementById('restartBtn').addEventListener('click', function(){
+      location.reload();
+    });
+
     document.getElementById('reviewPastBtn').addEventListener('click', loadLastAttemptAndReview);
+
     document.getElementById('retakeAnywayBtn').addEventListener('click', function(){
       document.getElementById('already-attempted-screen').style.display = 'none';
       document.getElementById('gate-screen').style.display = 'block';
     });
+
     checkPreviousAttempt();
+
   }catch(e){
-    showFatalError('تعذّر تجهيز أزرار الصفحة (' + e.message + ')');
+    showFatalError(
+      'تعذّر تجهيز أزرار الصفحة (' + e.message + ')'
+    );
   }
 });
 </script>
+
 </body>
 </html>
