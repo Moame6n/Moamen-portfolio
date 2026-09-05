@@ -1,78 +1,55 @@
 const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async (req, res) => {
-  if(req.method !== 'GET'){
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
-  }
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  const passphrase = req.headers['x-admin-passphrase'];
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) return res.status(500).json({ error: 'Server statistics storage is not configured' });
+  if (typeof passphrase !== 'string' || !passphrase || passphrase.length > 256) return res.status(401).json({ error: 'Unauthorized' });
 
-  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-
+  const supabase = createClient(url, serviceKey);
   try {
-    // إحصائيات عامة
-    const { data: allSubs, error: allSubsError } = await supabase
-      .from('push_subscriptions')
-      .select('created_at, status');
+    const { data: authRows, error: authError } = await supabase.rpc('list_exam_slugs', { p_passphrase: passphrase });
+    if (authError || !Array.isArray(authRows)) return res.status(401).json({ error: 'Unauthorized' });
 
-    if(allSubsError) throw allSubsError;
-
+    const { data: allSubs, error: allError } = await supabase
+      .from('push_subscriptions').select('created_at, status').limit(10000);
+    if (allError) throw allError;
+    const subs = allSubs || [];
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgo = new Date(today); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const active = s => s.status === 'active';
+    const createdOnOrAfter = (s, date) => new Date(s.created_at) >= date;
+    const total = subs.filter(active).length;
+    const todayCount = subs.filter(s => active(s) && createdOnOrAfter(s, today)).length;
+    const last7days = subs.filter(s => active(s) && createdOnOrAfter(s, sevenDaysAgo)).length;
+    const unsubscribed = subs.filter(s => s.status === 'unsubscribed').length;
 
-    const totalActive = (allSubs || []).filter(s => s.status === 'active').length;
-    const todayCount = (allSubs || []).filter(s => {
-      const created = new Date(s.created_at);
-      return created >= today && s.status === 'active';
-    }).length;
-    const last7Days = (allSubs || []).filter(s => {
-      const created = new Date(s.created_at);
-      return created >= sevenDaysAgo && s.status === 'active';
-    }).length;
-    const unsubscribed = (allSubs || []).filter(s => s.status === 'unsubscribed').length;
+    const { data: recent, error: recentError } = await supabase
+      .from('push_subscriptions').select('id, user_name, user_email, created_at, status')
+      .eq('status', 'active').order('created_at', { ascending: false }).limit(20);
+    if (recentError) throw recentError;
 
-    // آخر المشتركين الجدد
-    const { data: recentSubs, error: recentError } = await supabase
-      .from('push_subscriptions')
-      .select('id, user_name, user_email, created_at, status')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false })
-      .limit(20);
-
-    if(recentError) throw recentError;
-
-    // البيانات اليومية (آخر 14 يوم) 
-    const dailyData = {};
-    for(let i = 0; i < 14; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      dailyData[dateStr] = 0;
+    const daily = {};
+    for (let i = 13; i >= 0; i--) {
+      const date = new Date(today); date.setDate(date.getDate() - i);
+      daily[date.toISOString().slice(0, 10)] = 0;
     }
-
-    (allSubs || []).forEach(sub => {
-      const created = new Date(sub.created_at);
-      const dateStr = created.toISOString().split('T')[0];
-      if(dateStr in dailyData && sub.status === 'active') {
-        dailyData[dateStr]++;
-      }
+    subs.forEach(s => {
+      if (!active(s)) return;
+      const key = new Date(s.created_at).toISOString().slice(0, 10);
+      if (Object.prototype.hasOwnProperty.call(daily, key)) daily[key]++;
     });
-
-    const dailyStats = Object.entries(dailyData)
-      .reverse()
-      .map(([date, count]) => ({ date, count }));
 
     res.status(200).json({
-      total: totalActive,
-      today: todayCount,
-      last7days: last7Days,
-      unsubscribed: unsubscribed,
-      recent: recentSubs || [],
-      dailyStats: dailyStats
+      total, today: todayCount, last7days, unsubscribed,
+      recent: recent || [],
+      dailyStats: Object.entries(daily).map(([date, count]) => ({ date, count }))
     });
-  } catch(err) {
-    console.error('Error fetching subscription stats:', err);
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    console.error('Error fetching subscription stats:', error);
+    res.status(500).json({ error: 'Unable to load subscription statistics' });
   }
 };

@@ -1,60 +1,50 @@
 const { createClient } = require('@supabase/supabase-js');
 
+function bad(res, status, error) {
+  res.status(status).json({ error });
+}
+
 module.exports = async (req, res) => {
-  if(req.method !== 'POST'){
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
-  }
-
+  if (req.method !== 'POST') return bad(res, 405, 'Method not allowed');
   const { action, subscription, userName, userEmail } = req.body || {};
-  
-  if(!action || !subscription) {
-    res.status(400).json({ error: 'action and subscription are required' });
-    return;
-  }
+  const endpoint = subscription && subscription.endpoint;
+  const p256dh = subscription && subscription.keys && subscription.keys.p256dh;
+  const auth = subscription && subscription.keys && subscription.keys.auth;
 
-  if(!['subscribe', 'unsubscribe'].includes(action)) {
-    res.status(400).json({ error: 'Invalid action' });
-    return;
-  }
+  if (!['subscribe', 'unsubscribe'].includes(action)) return bad(res, 400, 'Invalid action');
+  if (typeof endpoint !== 'string' || endpoint.length < 20 || endpoint.length > 2048) return bad(res, 400, 'Invalid subscription endpoint');
+  if (action === 'subscribe' && (!p256dh || !auth)) return bad(res, 400, 'Subscription keys are required');
 
-  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return bad(res, 500, 'Server subscription storage is not configured');
+  const supabase = createClient(url, key);
+  const now = new Date().toISOString();
 
   try {
-    if(action === 'subscribe') {
-      // إدراج أو تحديث الاشتراك
-      const { error: upsertError } = await supabase
-        .from('push_subscriptions')
-        .upsert({
-          endpoint: subscription.endpoint,
-          p256dh: subscription.keys?.p256dh,
-          auth: subscription.keys?.auth,
-          user_name: userName || 'مستخدم مجهول',
-          user_email: userEmail || null,
-          status: 'active',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'endpoint'
-        });
-
-      if(upsertError) throw upsertError;
-      res.status(200).json({ success: true, message: 'تم الاشتراك بنجاح' });
+    if (action === 'subscribe') {
+      const { error } = await supabase.from('push_subscriptions').upsert({
+        endpoint,
+        p256dh,
+        auth,
+        user_name: typeof userName === 'string' ? userName.slice(0, 160) : 'مستخدم مجهول',
+        user_email: typeof userEmail === 'string' ? userEmail.slice(0, 320) : null,
+        status: 'active',
+        updated_at: now
+      }, { onConflict: 'endpoint' });
+      if (error) throw error;
     } else {
-      // تحديث الحالة إلى unsubscribed
-      const { error: updateError } = await supabase
-        .from('push_subscriptions')
-        .update({ 
-          status: 'unsubscribed',
-          updated_at: new Date().toISOString()
-        })
-        .eq('endpoint', subscription.endpoint);
-
-      if(updateError) throw updateError;
-      res.status(200).json({ success: true, message: 'تم إلغاء الاشتراك' });
+      const { error } = await supabase.from('push_subscriptions')
+        .update({ status: 'unsubscribed', updated_at: now })
+        .eq('endpoint', endpoint);
+      if (error) throw error;
     }
-  } catch(err) {
-    console.error('Error logging subscription:', err);
-    res.status(500).json({ error: err.message });
+
+    const { error: eventError } = await supabase.from('subscription_events').insert({ endpoint, action });
+    if (eventError) console.warn('subscription_events is not available yet:', eventError.message);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Error logging subscription:', error);
+    bad(res, 500, 'Unable to save subscription');
   }
 };

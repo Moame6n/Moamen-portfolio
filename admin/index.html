@@ -32,7 +32,7 @@
   .login-box h2{ font-size:22px; margin-bottom:8px; text-align:center; }
   .login-box p{ font-size:13px; color:var(--muted); text-align:center; margin-bottom:24px; }
   .login-box label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
-  .login-box input{ width:100%; padding:11px 12px; border:1px solid var(--border-soft); background:var(--surface); color:var(--text); font-family:'Tajawal',sans-serif; font-size:14px; margin-bottom:12px; }
+  .login-box input{ width:100%; padding:11px 12px; border:1px solid var(--border-soft); background:var(--surface); color:var(--text); font-family:'Tajawal',sans-serif; font-size:14px; margin-bottom:16px; }
   .login-box button{ width:100%; padding:13px; font-size:14.5px; }
   .login-err{ color:var(--red); font-size:12.5px; text-align:center; margin-top:10px; display:none; }
 
@@ -57,11 +57,11 @@
   .grade-pill.low{ background:rgba(240,97,109,0.1); color:var(--red); }
   .empty-state{ text-align:center; padding:60px 20px; color:var(--muted); }
 
-  .dash-tabs{ display:flex; gap:8px; margin-bottom:24px; border-bottom:1px solid var(--border-soft); overflow-x:auto; }
+  .dash-tabs{ display:flex; gap:8px; margin-bottom:24px; border-bottom:1px solid var(--border-soft); }
   .dash-tab{
     background:none; border:none; padding:12px 6px; margin-left:22px;
     font-family:'Tajawal',sans-serif; font-size:14.5px; font-weight:700; color:var(--muted);
-    cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap;
+    cursor:pointer; border-bottom:2px solid transparent;
   }
   .dash-tab.active{ color:var(--emerald); border-color:var(--emerald); }
 
@@ -112,20 +112,10 @@
   .fb-item-text{ font-size:13.5px; line-height:1.7; color:var(--text); }
   .fb-item-time{ font-family:var(--mono); font-size:10.5px; color:var(--muted); margin-top:6px; }
 
-  .daily-chart{ display:flex; align-items:flex-end; gap:4px; height:120px; padding-top:10px; }
-  .daily-bar{ flex:1; background:var(--emerald); border-radius:4px; position:relative; min-width:20px; }
-  .daily-bar:hover{ opacity:0.8; }
-  .bar-label{ font-size:9px; color:var(--text-soft); margin-top:4px; text-align:center; }
-
-  .sub-item{
-    padding:12px; border-bottom:1px solid var(--border-soft); display:flex; justify-content:space-between; align-items:center;
-  }
-  .sub-item:last-child{ border-bottom:none; }
-  .sub-item-info{ flex:1; }
-  .sub-item-name{ font-size:13.5px; font-weight:600; color:var(--text); }
-  .sub-item-email{ font-size:11.5px; color:var(--text-soft); margin-top:3px; font-family:var(--mono); }
-  .sub-item-date{ font-size:11px; color:var(--muted); margin-top:2px; }
-  .sub-item-badge{ display:inline-block; padding:3px 10px; border-radius:12px; font-size:10.5px; font-weight:700; background:rgba(61,220,151,0.12); color:var(--emerald); }
+  .sub-item{padding:12px;border-bottom:1px solid var(--border-soft);display:flex;justify-content:space-between;align-items:center}
+  .sub-item:last-child{border-bottom:none}.sub-item-info{flex:1}.sub-item-name{font-size:13.5px;font-weight:600;color:var(--text)}
+  .sub-item-email{font-size:11.5px;color:var(--text-soft);margin-top:3px;font-family:var(--mono)}.sub-item-date{font-size:11px;color:var(--muted);margin-top:2px}
+  .sub-item-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10.5px;font-weight:700;background:rgba(61,220,151,.12);color:var(--emerald)}
 </style>
 </head>
 <body>
@@ -145,8 +135,8 @@
       <h1>لوحة نتائج الاختبارات</h1>
       <div style="display:flex; align-items:center; gap:14px;">
         <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">
-          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
         <button id="logoutBtn" type="button">تسجيل الخروج</button>
       </div>
@@ -165,7 +155,6 @@
       <button class="dash-tab" id="tabSubscribers" type="button">📬 إحصائيات المشتركين</button>
     </div>
 
-    <!-- نفس الأقسام السابقة... -->
     <div id="resultsPanel">
     <div class="stats-row">
       <div class="stat-card"><div class="num" id="statCount">0</div><div class="lbl">عدد المتقدمين</div></div>
@@ -192,7 +181,320 @@
     </div>
     </div>
 
-    <!-- تبويب إحصائيات المشتركين الجديد -->
+    <div id="createPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>1. إعدادات الاتصال بـ GitHub (مرة واحدة بس)</h3>
+        <div class="field-row">
+          <label>GitHub Personal Access Token</label>
+          <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          <div class="hint">
+            امتلكه من GitHub → Settings → Developer settings → Fine-grained tokens → أنشئ توكن جديد،
+            حدد الصلاحية على ريبو Moamen-portfolio بس، وامنحه صلاحية Contents: Read and write.
+            بيتحفظ على جهازك بس ومش بيتبعت لأي مكان غير GitHub مباشرة.
+          </div>
+        </div>
+        <div class="field-row">
+          <label>مفتاح إرسال الإشعارات (مرة واحدة بس)</label>
+          <input type="password" id="notifySecret" placeholder="القيمة اللي حطيتها في NOTIFY_SECRET على Vercel">
+          <div class="hint">بيتحفظ على جهازك بس، ومطلوب عشان تقدر ترسل إشعار عند أي نشر جديد.</div>
+        </div>
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-top:6px;">
+          <input type="checkbox" id="notifyOnPublishExam" checked style="width:16px; height:16px;">
+          ابعت إشعار للمشتركين عند نشر الاختبار ده
+        </label>
+      </div>
+
+      <div class="builder-card">
+        <h3>2. بيانات الاختبار</h3>
+        <div class="field-row-2">
+          <div class="field-row">
+            <label>عنوان الاختبار (بالعربي)</label>
+            <input type="text" id="newExamTitle" placeholder="مثال: اختبار الضرائب المصرية">
+          </div>
+          <div class="field-row">
+            <label>الاسم المختصر بالإنجليزي (Slug)</label>
+            <input type="text" id="newExamSlug" placeholder="egyptian-tax">
+            <div class="hint">ده اللي هيبقى اسم الملف — حروف إنجليزي صغيرة وشرطات بس</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label>وصف قصير</label>
+          <input type="text" id="newExamDesc" placeholder="سطر أو سطرين يوضحوا محتوى الاختبار — هيبان في الكارت">
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>3. استيراد الأسئلة من ملف (اختياري)</h3>
+        <p style="font-size:12.5px; color:var(--muted); margin:0 0 14px; line-height:1.8;">
+          اكتب أسئلتك في Word أو أي محرر نصوص بنفس الشكل ده بالظبط، وارفعه هنا هيتحول تلقائي لأسئلة جاهزة تحت:
+        </p>
+        <pre style="background:var(--bg); border:1px solid var(--border-soft); border-radius:8px; padding:12px 14px; font-size:12px; color:var(--text-soft); overflow-x:auto; margin:0 0 16px; line-height:1.9; font-family:var(--mono);">س1) نص السؤال هنا؟
+أ) الاختيار الأول
+ب) الاختيار الثاني
+ج) الاختيار الثالث
+د) الاختيار الرابع
+الإجابة: ب
+
+س2) السؤال التاني؟
+أ) ...
+ب) ...
+ج) ...
+د) ...
+الإجابة: أ</pre>
+
+        <div class="dropzone" id="importDropzone" style="padding:26px 20px; margin-bottom:14px;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px;">اسحب ملف Word (.docx) أو PDF أو نص (.txt) هنا، أو دوس للاختيار</div>
+          <div style="font-size:12px; color:var(--muted);">أو الصق النص مباشرة في الخانة تحت</div>
+          <input type="file" id="importFileInput" accept=".docx,.pdf,.txt" style="display:none;">
+        </div>
+
+        <div class="field-row">
+          <textarea id="importTextArea" placeholder="أو الصق نص الأسئلة هنا مباشرة بنفس الشكل فوق..." style="min-height:120px; font-family:var(--mono); font-size:12.5px;"></textarea>
+        </div>
+
+        <button class="btn btn-outline" id="parseImportBtn" type="button">تحليل واستيراد الأسئلة</button>
+        <div class="gen-result" id="importResult"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>4. الأسئلة</h3>
+        <div id="questionsBuilder"></div>
+        <button class="add-q-btn" id="addQuestionBtn" type="button">+ أضف سؤال يدويًا</button>
+      </div>
+
+      <button class="btn btn-primary" id="generateExamBtn" type="button">نشر الاختبار</button>
+      <div class="gen-result" id="genResult"></div>
+    </div>
+
+    <div id="analyticsPanel" style="display:none;">
+      <a href="https://search.google.com/search-console?resource_id=https://moamen-portfolio-pi.vercel.app/" target="_blank" class="builder-card" style="display:flex; align-items:center; justify-content:space-between; text-decoration:none; margin-bottom:18px; transition:border-color .15s;" onmouseover="this.style.borderColor='var(--emerald)'" onmouseout="this.style.borderColor='var(--border-soft)'">
+        <div>
+          <h3 style="margin-bottom:4px;">ترتيب الموقع في بحث جوجل</h3>
+          <p style="font-size:12.5px; color:var(--text-soft); margin:0;">شوف الظهور، الكليكات، ومتوسط الترتيب في Google Search Console</p>
+        </div>
+        <span style="color:var(--emerald); font-size:20px;">←</span>
+      </a>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="statSessions">0</div><div class="lbl">الزيارات (Sessions)</div></div>
+        <div class="stat-card"><div class="num" id="statUsers">0</div><div class="lbl">الزوار الفريدون (Users)</div></div>
+        <div class="stat-card"><div class="num" id="statPageviews">0</div><div class="lbl">مشاهدات الصفحة (Pageviews)</div></div>
+        <div class="stat-card"><div class="num" id="statPerSession">0</div><div class="lbl">صفحات لكل زيارة</div></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="statSessionsToday">0</div><div class="lbl">زيارات اليوم</div></div>
+        <div class="stat-card"><div class="num" id="statSessions7d">0</div><div class="lbl">زيارات آخر ٧ أيام</div></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>الزيارات آخر ١٤ يوم</h3>
+        <div id="dailyChart" style="display:flex; align-items:flex-end; gap:4px; height:120px; padding-top:10px;"></div>
+        <div style="font-size:11px; color:var(--muted); margin-top:8px;">كل عمود = عدد الزيارات (Sessions) في اليوم ده</div>
+      </div>
+
+      <div class="builder-card">
+        <h3>الصفحات الأكثر زيارة</h3>
+        <div id="topPagesList"></div>
+      </div>
+    </div>
+
+    <div id="templatesPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>1. إعدادات الاتصال بـ GitHub</h3>
+        <div class="field-row">
+          <label>GitHub Personal Access Token</label>
+          <input type="password" id="ghTokenTpl" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          <div class="hint">نفس التوكن المستخدم في تبويب الاختبارات — بيتحفظ تلقائي على جهازك.</div>
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>2. بيانات القالب</h3>
+        <div class="field-row-2">
+          <div class="field-row">
+            <label>عنوان القالب</label>
+            <input type="text" id="tplTitleInput" placeholder="مثال: قالب ميزانية شهرية">
+          </div>
+          <div class="field-row">
+            <label>الاسم المختصر بالإنجليزي (Slug)</label>
+            <input type="text" id="tplSlugInput" placeholder="monthly-budget">
+          </div>
+        </div>
+        <div class="field-row">
+          <label>وصف قصير</label>
+          <input type="text" id="tplDescInput" placeholder="سطر أو سطرين يوضحوا محتوى القالب — هيبان في الكارت وصفحة التحميل">
+        </div>
+        <div class="field-row">
+          <label>أيقونة (اختياري — من lucide.dev/icons)</label>
+          <input type="text" id="tplIconInput" placeholder="file-spreadsheet">
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>3. ملف القالب</h3>
+        <div class="dropzone" id="tplDropzone" style="padding:26px 20px;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px;" id="tplFileLabel">اسحب ملف القالب هنا (Excel, PDF, Word...) أو دوس للاختيار</div>
+          <div style="font-size:12px; color:var(--muted);">الملف ده هو اللي المستخدم هيحمّله فعليًا</div>
+          <input type="file" id="tplFileInput" style="display:none;">
+        </div>
+      </div>
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-bottom:12px;">
+        <input type="checkbox" id="notifyOnPublishTpl" checked style="width:16px; height:16px;">
+        ابعت إشعار للمشتركين عند نشر القالب ده
+      </label>
+      <button class="btn btn-primary" id="publishTplBtn" type="button">نشر القالب</button>
+      <div class="gen-result" id="tplGenResult"></div>
+
+      <div class="builder-card" style="margin-top:30px;">
+        <h3>إحصائيات التحميلات</h3>
+        <div class="stats-row">
+          <div class="stat-card"><div class="num" id="tplStatTotal">0</div><div class="lbl">إجمالي التحميلات</div></div>
+          <div class="stat-card"><div class="num" id="tplStatToday">0</div><div class="lbl">اليوم</div></div>
+          <div class="stat-card"><div class="num" id="tplStatWeek">0</div><div class="lbl">آخر ٧ أيام</div></div>
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>التحميلات لكل قالب</h3>
+        <div id="tplBreakdownList"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>سجل المهتمين</h3>
+        <input type="text" id="tplSearchBox" placeholder="بحث بالاسم..." style="width:100%; padding:10px 12px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text); font-family:'Tajawal',sans-serif; font-size:13.5px; margin-bottom:14px;">
+        <div id="tplLeadsTableWrap">
+          <table>
+            <thead><tr><th>الاسم</th><th>الهاتف</th><th>القالب</th><th>التاريخ</th></tr></thead>
+            <tbody id="tplLeadsBody"></tbody>
+          </table>
+          <div class="empty-state" id="tplLeadsEmpty" style="display:none;">لسه محدش حمّل أي قالب</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="toolsPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>إزاي الأداة بتاخد نفس شكل الموقع دايمًا</h3>
+        <p style="font-size:12.5px; color:var(--text-soft); line-height:1.9; margin:0;">
+          ارفع أي ملف HTML، جاي من محادثة مع Claude أو من أي مصدر تاني. النظام بيدوّر الأول على علامات القالب
+          (<code style="color:var(--gold);">TOOL_BODY_START</code> وغيرها) للحقن الدقيق — ولو مالقهاش، بياخد تلقائيًا
+          كل اللي جوه <code style="color:var(--gold);">&lt;body&gt;</code> من الملف. في الحالتين، الهيدر والفوتر والخط والألوان
+          دايمًا جايين من أحدث نسخة من هيكل الموقع، مش من الملف اللي بترفعه — فحتى لو الشكل الداخلي للأداة اختلف شوية،
+          هوية الموقع العامة بتفضل موحّدة دايمًا.
+        </p>
+      </div>
+
+      <div class="builder-card">
+        <h3>1. إعدادات الاتصال بـ GitHub</h3>
+        <div class="field-row">
+          <label>GitHub Personal Access Token</label>
+          <input type="password" id="ghTokenTool" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          <div class="hint">نفس التوكن المستخدم في باقي التبويبات — بيتحفظ تلقائي.</div>
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>2. بيانات الأداة</h3>
+        <div class="field-row-2">
+          <div class="field-row">
+            <label>عنوان الأداة</label>
+            <input type="text" id="toolTitleInput" placeholder="مثال: حاسبة الإهلاك">
+          </div>
+          <div class="field-row">
+            <label>الاسم المختصر بالإنجليزي (Slug)</label>
+            <input type="text" id="toolSlugInput" placeholder="depreciation-calculator">
+          </div>
+        </div>
+        <div class="field-row">
+          <label>وصف قصير</label>
+          <input type="text" id="toolDescInput" placeholder="سطر أو سطرين يوضحوا وظيفة الأداة">
+        </div>
+        <div class="field-row">
+          <label>أيقونة (اختياري — من lucide.dev/icons)</label>
+          <input type="text" id="toolIconInput" placeholder="calculator">
+        </div>
+      </div>
+
+      <div class="builder-card">
+        <h3>3. ملف الأداة المبني على القالب</h3>
+        <div class="dropzone" id="toolDropzone" style="padding:26px 20px;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px;" id="toolFileLabel">اسحب ملف الأداة النهائي هنا، أو دوس للاختيار</div>
+          <div style="font-size:12px; color:var(--muted);">لازم يكون مبني من نسخة قالب الأداة اللي فيه علامات الاستخراج</div>
+          <input type="file" id="toolFileInput" accept=".html" style="display:none;">
+        </div>
+      </div>
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-bottom:12px;">
+        <input type="checkbox" id="notifyOnPublishTool" checked style="width:16px; height:16px;">
+        ابعت إشعار للمشتركين عند نشر الأداة دي
+      </label>
+      <button class="btn btn-primary" id="publishToolBtn" type="button">نشر الأداة</button>
+      <div class="gen-result" id="toolGenResult"></div>
+    </div>
+
+    <div id="feedbackPanel" style="display:none;">
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="fbStatTotal">0</div><div class="lbl">إجمالي الآراء</div></div>
+        <div class="stat-card"><div class="num" id="fbStatSuggest">0</div><div class="lbl">اقتراحات</div></div>
+        <div class="stat-card"><div class="num" id="fbStatIssue">0</div><div class="lbl">مشاكل</div></div>
+      </div>
+      <div class="builder-card">
+        <div id="feedbackList"></div>
+      </div>
+    </div>
+
+    <div id="battleBankPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>حالة البنك الحالية</h3>
+        <div id="battleBankStats"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>1. اختار التخصص</h3>
+        <select id="battleCategorySelect" style="width:100%; padding:11px 13px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text); font-family:'Tajawal',sans-serif; font-size:14.5px;">
+          <option value="محاسبة مالية">محاسبة مالية</option>
+          <option value="محاسبة تكاليف">محاسبة تكاليف</option>
+          <option value="مراجعة">مراجعة (Auditing)</option>
+          <option value="محاسبة إدارية">محاسبة إدارية</option>
+          <option value="تحليل مالي">تحليل مالي</option>
+        </select>
+        <div class="hint" style="margin-top:8px;">"مختلط" مش تخصص بيتخزّن — ده وضع اختيار بيسحب عشوائي من كل التخصصات وقت التحدي نفسه.</div>
+      </div>
+
+      <div class="builder-card">
+        <h3>2. استيراد الأسئلة من ملف (نفس تنسيق استيراد الاختبارات بالظبط)</h3>
+        <pre style="background:var(--bg); border:1px solid var(--border-soft); border-radius:8px; padding:12px 14px; font-size:12px; color:var(--text-soft); overflow-x:auto; margin:0 0 16px; line-height:1.9; font-family:var(--mono);">س1) نص السؤال هنا؟
+أ) الاختيار الأول
+ب) الاختيار الثاني
+ج) الاختيار الثالث
+د) الاختيار الرابع
+الإجابة: ب</pre>
+
+        <div class="dropzone" id="battleImportDropzone" style="padding:26px 20px; margin-bottom:14px;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px;">اسحب ملف Word (.docx) أو PDF أو نص (.txt) هنا، أو دوس للاختيار</div>
+          <div style="font-size:12px; color:var(--muted);">أو الصق النص مباشرة في الخانة تحت</div>
+          <input type="file" id="battleImportFileInput" accept=".docx,.pdf,.txt" style="display:none;">
+        </div>
+
+        <div class="field-row">
+          <textarea id="battleImportTextArea" placeholder="أو الصق نص الأسئلة هنا مباشرة..." style="min-height:120px; font-family:var(--mono); font-size:12.5px; width:100%; padding:11px 13px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text);"></textarea>
+        </div>
+
+        <button class="btn btn-outline" id="battleParseBtn" type="button">تحليل النص</button>
+        <div class="gen-result" id="battleImportResult"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>3. راجع الأسئلة قبل الإضافة</h3>
+        <div id="battleQuestionsPreview"></div>
+      </div>
+
+      <button class="btn btn-primary" id="publishBattleBtn" type="button" style="display:none;">إضافة الأسئلة دي لبنك التحدي</button>
+      <div class="gen-result" id="battlePublishResult"></div>
+    </div>
+
+
     <div id="subscribersPanel" style="display:none;">
       <div class="stats-row">
         <div class="stat-card"><div class="num" id="subStatTotal">0</div><div class="lbl">المشتركون النشطون</div></div>
@@ -200,27 +502,24 @@
         <div class="stat-card"><div class="num" id="subStatWeek">0</div><div class="lbl">آخر 7 أيام</div></div>
         <div class="stat-card"><div class="num" id="subStatUnsubscribed">0</div><div class="lbl">ألغوا الاشتراك</div></div>
       </div>
-
       <div class="builder-card">
         <h3>نمو الاشتراكات (آخر 14 يوم)</h3>
-        <div id="subscribersDailyChart" class="daily-chart"></div>
-        <div style="font-size:11px; color:var(--muted); margin-top:8px;">كل عمود = عدد المشتركين الجدد في اليوم ده</div>
+        <div id="subscribersDailyChart" class="daily-chart" aria-label="رسم نمو الاشتراكات"></div>
+        <div style="font-size:11px; color:var(--muted); margin-top:8px;">كل عمود = عدد الاشتراكات في اليوم</div>
       </div>
-
       <div class="builder-card">
         <h3>آخر المشتركين الجدد</h3>
         <div id="recentSubscribersList"></div>
       </div>
     </div>
 
-    <!-- باقي التبويبات السابقة بدون تعديل... -->
-    <div id="createPanel" style="display:none;"></div>
-    <div id="analyticsPanel" style="display:none;"></div>
-    <div id="templatesPanel" style="display:none;"></div>
-    <div id="toolsPanel" style="display:none;"></div>
-    <div id="feedbackPanel" style="display:none;"></div>
-    <div id="battleBankPanel" style="display:none;"></div>
-    <div id="battleResultsPanel" style="display:none;"></div>
+    <div id="battleResultsPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>سجل كل المباريات (فوز وخسارة)</h3>
+        <p style="font-size:12px; color:var(--muted); margin:0 0 14px;">لوحة الصدارة العامة بقت ظاهرة على الموقع نفسه في صفحة التحدي المباشر.</p>
+        <div id="battleHistoryList"></div>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -229,7 +528,6 @@
 <script>
 let allExams = [];
 let currentAttempts = [];
-let passphrase = null;
 
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loginBtn').addEventListener('click', doLogin);
@@ -238,16 +536,90 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('searchBox').addEventListener('input', renderTable);
   document.getElementById('loginPass').addEventListener('keydown', (e) => { if(e.key === 'Enter') doLogin(); });
 
-  // إضافة مستمعين للتبويبات
   document.getElementById('tabResults').addEventListener('click', () => switchTab('results'));
   document.getElementById('tabCreate').addEventListener('click', () => switchTab('create'));
   document.getElementById('tabAnalytics').addEventListener('click', () => switchTab('analytics'));
   document.getElementById('tabTemplates').addEventListener('click', () => switchTab('templates'));
+  document.getElementById('ghTokenTpl').value = localStorage.getItem('gh_token') || '';
+  document.getElementById('ghTokenTpl').addEventListener('change', (e) => {
+    localStorage.setItem('gh_token', e.target.value.trim());
+  });
+  document.getElementById('tplTitleInput').addEventListener('input', autoSlugTpl);
+  document.getElementById('tplDropzone').addEventListener('click', () => document.getElementById('tplFileInput').click());
+  document.getElementById('tplFileInput').addEventListener('change', (e) => {
+    if(e.target.files[0]) document.getElementById('tplFileLabel').textContent = '✓ ' + e.target.files[0].name;
+  });
+  document.getElementById('tplDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('tplDropzone').classList.add('drag'); });
+  document.getElementById('tplDropzone').addEventListener('dragleave', () => document.getElementById('tplDropzone').classList.remove('drag'));
+  document.getElementById('tplDropzone').addEventListener('drop', (e) => {
+    e.preventDefault();
+    document.getElementById('tplDropzone').classList.remove('drag');
+    if(e.dataTransfer.files[0]){
+      document.getElementById('tplFileInput').files = e.dataTransfer.files;
+      document.getElementById('tplFileLabel').textContent = '✓ ' + e.dataTransfer.files[0].name;
+    }
+  });
+  document.getElementById('publishTplBtn').addEventListener('click', publishTemplate);
+  document.getElementById('tplSearchBox').addEventListener('input', renderTplLeadsTable);
+
   document.getElementById('tabTools').addEventListener('click', () => switchTab('tools'));
   document.getElementById('tabFeedback').addEventListener('click', () => switchTab('feedback'));
   document.getElementById('tabBattleBank').addEventListener('click', () => switchTab('battlebank'));
   document.getElementById('tabBattleResults').addEventListener('click', () => switchTab('battleresults'));
   document.getElementById('tabSubscribers').addEventListener('click', () => switchTab('subscribers'));
+  document.getElementById('battleParseBtn').addEventListener('click', handleBattleImportParse);
+  document.getElementById('publishBattleBtn').addEventListener('click', publishBattleQuestions);
+  document.getElementById('battleImportDropzone').addEventListener('click', () => document.getElementById('battleImportFileInput').click());
+  document.getElementById('battleImportFileInput').addEventListener('change', (e) => handleBattleImportFile(e.target.files[0]));
+  document.getElementById('battleImportDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('battleImportDropzone').classList.add('drag'); });
+  document.getElementById('battleImportDropzone').addEventListener('dragleave', () => document.getElementById('battleImportDropzone').classList.remove('drag'));
+  document.getElementById('battleImportDropzone').addEventListener('drop', (e) => {
+    e.preventDefault();
+    document.getElementById('battleImportDropzone').classList.remove('drag');
+    if(e.dataTransfer.files[0]) handleBattleImportFile(e.dataTransfer.files[0]);
+  });
+  document.getElementById('ghTokenTool').value = localStorage.getItem('gh_token') || '';
+  document.getElementById('ghTokenTool').addEventListener('change', (e) => {
+    localStorage.setItem('gh_token', e.target.value.trim());
+  });
+  document.getElementById('toolTitleInput').addEventListener('input', autoSlugTool);
+  document.getElementById('toolDropzone').addEventListener('click', () => document.getElementById('toolFileInput').click());
+  document.getElementById('toolFileInput').addEventListener('change', (e) => {
+    if(e.target.files[0]) document.getElementById('toolFileLabel').textContent = '✓ ' + e.target.files[0].name;
+  });
+  document.getElementById('toolDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('toolDropzone').classList.add('drag'); });
+  document.getElementById('toolDropzone').addEventListener('dragleave', () => document.getElementById('toolDropzone').classList.remove('drag'));
+  document.getElementById('toolDropzone').addEventListener('drop', (e) => {
+    e.preventDefault();
+    document.getElementById('toolDropzone').classList.remove('drag');
+    if(e.dataTransfer.files[0]){
+      document.getElementById('toolFileInput').files = e.dataTransfer.files;
+      document.getElementById('toolFileLabel').textContent = '✓ ' + e.dataTransfer.files[0].name;
+    }
+  });
+  document.getElementById('publishToolBtn').addEventListener('click', publishTool);
+  document.getElementById('addQuestionBtn').addEventListener('click', () => addQuestionBlock());
+  document.getElementById('parseImportBtn').addEventListener('click', handleImportParse);
+  document.getElementById('importDropzone').addEventListener('click', () => document.getElementById('importFileInput').click());
+  document.getElementById('importFileInput').addEventListener('change', (e) => handleImportFile(e.target.files[0]));
+  document.getElementById('importDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('importDropzone').classList.add('drag'); });
+  document.getElementById('importDropzone').addEventListener('dragleave', () => document.getElementById('importDropzone').classList.remove('drag'));
+  document.getElementById('importDropzone').addEventListener('drop', (e) => {
+    e.preventDefault();
+    document.getElementById('importDropzone').classList.remove('drag');
+    if(e.dataTransfer.files[0]) handleImportFile(e.dataTransfer.files[0]);
+  });
+  document.getElementById('generateExamBtn').addEventListener('click', generateAndPublishExam);
+  document.getElementById('newExamTitle').addEventListener('input', autoSlug);
+  document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
+  document.getElementById('ghToken').addEventListener('change', (e) => {
+    localStorage.setItem('gh_token', e.target.value.trim());
+  });
+  document.getElementById('notifySecret').value = localStorage.getItem('notify_secret') || '';
+  document.getElementById('notifySecret').addEventListener('change', (e) => {
+    localStorage.setItem('notify_secret', e.target.value.trim());
+  });
+  addQuestionBlock();
 
   const saved = sessionStorage.getItem('admin_passphrase');
   if(saved){
@@ -260,6 +632,8 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+let passphrase = null;
 
 async function doLogin(){
   const pass = document.getElementById('loginPass').value;
@@ -278,9 +652,10 @@ async function doLogin(){
     errEl.textContent = 'كلمة المرور غير صحيحة';
     errEl.style.display = 'block';
     passphrase = null;
+    document.getElementById('loginView').style.display = 'block';
+    document.getElementById('dashView').style.display = 'none';
   }
 }
-
 function doLogout(){
   sessionStorage.removeItem('admin_passphrase');
   passphrase = null;
@@ -288,6 +663,9 @@ function doLogout(){
   document.getElementById('loginView').style.display = 'block';
 }
 
+// Always (re)fetches the exams list on every call — this runs both on a fresh
+// login AND when restoring a saved session on page refresh, so stats never
+// silently stay empty because the list was only ever loaded once before.
 async function showDashboard(){
   const ok = await loadExamsList();
   if(!ok) return false;
@@ -295,6 +673,19 @@ async function showDashboard(){
   document.getElementById('dashView').style.display = 'block';
   if(allExams.length) await loadAttempts();
   return true;
+}
+
+async function callRpc(examSlug){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_exam_results`, {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'apikey': SUPABASE_ANON_KEY
+    },
+    body: JSON.stringify({ p_exam_slug: examSlug, p_passphrase: passphrase })
+  });
+  if(!res.ok) return null;
+  return res.json();
 }
 
 async function loadExamsList(){
@@ -313,17 +704,13 @@ async function loadExamsList(){
 async function loadAttempts(){
   const slug = document.getElementById('examSelect').value;
   if(!slug) return;
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_exam_results`, {
-    method:'POST',
-    headers:{'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY},
-    body: JSON.stringify({ p_exam_slug: slug, p_passphrase: passphrase })
-  });
-  if(!res.ok){
+  const data = await callRpc(slug);
+  if(data === null){
     currentAttempts = [];
     renderTable();
     return;
   }
-  currentAttempts = await res.json();
+  currentAttempts = data;
   renderStats();
   renderTable();
 }
@@ -343,6 +730,12 @@ function renderStats(){
   document.getElementById('statAvg').textContent = avg + '%';
   document.getElementById('statTop').textContent = top + '%';
   document.getElementById('statPass').textContent = Math.round((passCount/n)*100) + '%';
+}
+
+function gradeClass(pct){
+  if(pct >= 85) return 'high';
+  if(pct >= 65) return 'mid';
+  return 'low';
 }
 
 function renderTable(){
@@ -369,53 +762,973 @@ function renderTable(){
   `).join('');
 }
 
-function gradeClass(pct){
-  if(pct >= 85) return 'high';
-  if(pct >= 65) return 'mid';
-  return 'low';
-}
-
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
+// ==================== Exam Builder ====================
+
 function switchTab(tab){
-  ['results','create','analytics','templates','tools','feedback','battlebank','battleresults','subscribers'].forEach(t => {
-    document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('active', tab === t);
-    const panelId = t === 'battlebank' ? 'battleBankPanel' : t === 'battleresults' ? 'battleResultsPanel' : t === 'subscribers' ? 'subscribersPanel' : `${t}Panel`;
-    document.getElementById(panelId).style.display = tab === t ? 'block' : 'none';
-  });
+  document.getElementById('tabResults').classList.toggle('active', tab === 'results');
+  document.getElementById('tabCreate').classList.toggle('active', tab === 'create');
+  document.getElementById('tabAnalytics').classList.toggle('active', tab === 'analytics');
+  document.getElementById('tabTemplates').classList.toggle('active', tab === 'templates');
+  document.getElementById('tabTools').classList.toggle('active', tab === 'tools');
+  document.getElementById('tabFeedback').classList.toggle('active', tab === 'feedback');
+  document.getElementById('tabBattleBank').classList.toggle('active', tab === 'battlebank');
+  document.getElementById('tabBattleResults').classList.toggle('active', tab === 'battleresults');
+  document.getElementById('tabSubscribers').classList.toggle('active', tab === 'subscribers');
+  document.getElementById('resultsPanel').style.display = tab === 'results' ? 'block' : 'none';
+  document.getElementById('createPanel').style.display = tab === 'create' ? 'block' : 'none';
+  document.getElementById('analyticsPanel').style.display = tab === 'analytics' ? 'block' : 'none';
+  document.getElementById('templatesPanel').style.display = tab === 'templates' ? 'block' : 'none';
+  document.getElementById('toolsPanel').style.display = tab === 'tools' ? 'block' : 'none';
+  document.getElementById('feedbackPanel').style.display = tab === 'feedback' ? 'block' : 'none';
+  document.getElementById('battleBankPanel').style.display = tab === 'battlebank' ? 'block' : 'none';
+  document.getElementById('battleResultsPanel').style.display = tab === 'battleresults' ? 'block' : 'none';
+  document.getElementById('subscribersPanel').style.display = tab === 'subscribers' ? 'block' : 'none';
   if(tab === 'subscribers') loadSubscriberStats();
+  if(tab === 'analytics') loadAnalytics();
+  if(tab === 'templates') loadTemplateStats();
+  if(tab === 'feedback') loadFeedback();
+  if(tab === 'battlebank') loadBattleBankStats();
+  if(tab === 'battleresults') loadBattleResults();
+}
+
+function autoSlug(){
+  // only auto-fill the slug if the user hasn't typed a custom one yet
+  const slugField = document.getElementById('newExamSlug');
+  if(slugField.dataset.touched) return;
+  const title = document.getElementById('newExamTitle').value;
+  slugField.value = title
+    .toLowerCase()
+    .replace(/[^\u0600-\u06FFa-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 60);
+}
+document.addEventListener('input', (e) => {
+  if(e.target && e.target.id === 'newExamSlug') e.target.dataset.touched = '1';
+  if(e.target && e.target.id === 'tplSlugInput') e.target.dataset.touched = '1';
+  if(e.target && e.target.id === 'toolSlugInput') e.target.dataset.touched = '1';
+});
+
+function autoSlugTpl(){
+  const slugField = document.getElementById('tplSlugInput');
+  if(slugField.dataset.touched) return;
+  const title = document.getElementById('tplTitleInput').value;
+  slugField.value = title
+    .toLowerCase()
+    .replace(/[^\u0600-\u06FFa-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 60);
+}
+
+function autoSlugTool(){
+  const slugField = document.getElementById('toolSlugInput');
+  if(slugField.dataset.touched) return;
+  const title = document.getElementById('toolTitleInput').value;
+  slugField.value = title
+    .toLowerCase()
+    .replace(/[^\u0600-\u06FFa-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 60);
+}
+
+let qCounter = 0;
+
+function addQuestionBlock(prefill){
+  qCounter++;
+  const id = qCounter;
+  const wrap = document.getElementById('questionsBuilder');
+  const div = document.createElement('div');
+  div.className = 'q-block';
+  div.dataset.qid = id;
+  const qVal = prefill ? escapeHtml(prefill.q) : '';
+  const correctIdx = prefill ? prefill.c : 0;
+  div.innerHTML = `
+    <button class="q-remove" type="button" onclick="removeQuestionBlock(${id})">حذف السؤال ✕</button>
+    <div class="q-num">السؤال ${wrap.children.length + 1}</div>
+    <div class="field-row">
+      <label>نص السؤال</label>
+      <textarea class="q-text" placeholder="اكتب السؤال هنا...">${qVal}</textarea>
+    </div>
+    ${[0,1,2,3].map(i => `
+      <div class="opt-row">
+        <input type="radio" name="correct-${id}" value="${i}" ${i===correctIdx?'checked':''}>
+        <input type="text" class="q-opt" placeholder="الاختيار ${i+1}" value="${prefill ? escapeHtml(prefill.o[i]) : ''}">
+      </div>
+    `).join('')}
+  `;
+  wrap.appendChild(div);
+  renumberQuestions();
+}
+
+function removeQuestionBlock(id){
+  const el = document.querySelector(`.q-block[data-qid="${id}"]`);
+  if(el) el.remove();
+  renumberQuestions();
+}
+
+function renumberQuestions(){
+  document.querySelectorAll('.q-block').forEach((block, i) => {
+    block.querySelector('.q-num').textContent = `السؤال ${i+1}`;
+  });
+}
+
+function collectQuestions(){
+  const blocks = document.querySelectorAll('.q-block');
+  const questions = [];
+  for(const block of blocks){
+    const qText = block.querySelector('.q-text').value.trim();
+    const opts = Array.from(block.querySelectorAll('.q-opt')).map(o => o.value.trim());
+    const correctInput = block.querySelector('input[type="radio"]:checked');
+    if(!qText || opts.some(o => !o) || !correctInput){
+      return null; // incomplete question found
+    }
+    questions.push({ q: qText, o: opts, c: parseInt(correctInput.value, 10) });
+  }
+  return questions;
+}
+
+function utf8ToBase64(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+async function sendPushNotification(title, body, url){
+  const secret = localStorage.getItem('notify_secret');
+  if(!secret) return;
+  try{
+    await fetch('/api/send-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-notify-secret': secret },
+      body: JSON.stringify({ title, body, url })
+    });
+  }catch(e){}
+}
+
+async function generateAndPublishExam(){
+  const resultEl = document.getElementById('genResult');
+  resultEl.className = 'gen-result';
+  resultEl.style.display = 'none';
+
+  const token = document.getElementById('ghToken').value.trim();
+  const title = document.getElementById('newExamTitle').value.trim();
+  const slug = document.getElementById('newExamSlug').value.trim();
+  const desc = document.getElementById('newExamDesc').value.trim();
+  const questions = collectQuestions();
+
+  if(!token){ return showGenError('من فضلك حط GitHub Token الأول.'); }
+  if(!title || !slug || !desc){ return showGenError('من فضلك املأ عنوان الاختبار والـ slug والوصف.'); }
+  if(!/^[a-z0-9-]+$/.test(slug)){ return showGenError('الـ slug لازم يكون حروف إنجليزي صغيرة وأرقام وشرطات بس.'); }
+  if(!questions){ return showGenError('في سؤال ناقصه نص أو اختيار أو إجابة صحيحة — كمّل كل الأسئلة الأول.'); }
+  if(questions.length === 0){ return showGenError('لازم تضيف سؤال واحد على الأقل.'); }
+
+  document.getElementById('generateExamBtn').disabled = true;
+  document.getElementById('generateExamBtn').textContent = 'جارِ النشر...';
+
+  try{
+    // 1) fetch the live accounting-general.html as the up-to-date base template
+    const baseRes = await fetch('https://raw.githubusercontent.com/Moame6n/Moamen-portfolio/main/exams/accounting-general.html?_=' + Date.now());
+    if(!baseRes.ok) throw new Error('تعذّر جلب القالب الأساسي من GitHub');
+    let html = await baseRes.text();
+
+    // 2) swap the parameterized parts
+    html = html.replace(/<title>[^<]*<\/title>/, `<title>${title} | مؤمن أحمد</title>`);
+    html = html.replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/exams/${slug}.html">`);
+    html = html.replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${title} | مؤمن أحمد">`);
+    html = html.replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/exams/${slug}.html">`);
+    html = html.replace(/const EXAM_SLUG = '[^']*';/, `const EXAM_SLUG = '${slug}';`);
+    html = html.replace(/const EXAM_TITLE = '[^']*';/, `const EXAM_TITLE = '${title.replace(/'/g,"\\'")}';`);
+    html = html.replace(/<p>يستهدف مستوى المحاسب العام ومدير الحسابات[^<]*<\/p>/, `<p>${desc.replace(/</g,'&lt;')}</p>`);
+
+    const questionsJs = 'const QUESTIONS = ' + JSON.stringify(questions) + ';';
+    html = html.replace(/const QUESTIONS = \[[\s\S]*?\];/, questionsJs);
+
+    // 3) publish to GitHub via the Contents API
+    const path = `exams/${slug}.html`;
+    const apiUrl = `https://api.github.com/repos/Moame6n/Moamen-portfolio/contents/${path}`;
+
+    // check if a file with this slug already exists (need its sha to overwrite)
+    let sha = null;
+    const existing = await fetch(apiUrl, { headers: { 'Authorization': `token ${token}` } });
+    if(existing.ok){
+      const existingData = await existing.json();
+      sha = existingData.sha;
+    }
+
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github+json'
+      },
+      body: JSON.stringify({
+        message: sha ? `تحديث اختبار: ${title}` : `إضافة اختبار جديد: ${title}`,
+        content: utf8ToBase64(html),
+        ...(sha ? { sha } : {})
+      })
+    });
+
+    if(!putRes.ok){
+      const err = await putRes.json().catch(()=>({}));
+      throw new Error(err.message || `فشل النشر (${putRes.status})`);
+    }
+
+    resultEl.className = 'gen-result success';
+    resultEl.innerHTML = `تم النشر بنجاح ✓ — الاختبار هيبان في صفحة الأدوات والاختبارات خلال دقيقة (وقت نشر Vercel).<br>رابط الاختبار المباشر: <a href="https://moamen-portfolio-pi.vercel.app/exams/${slug}.html" target="_blank">/exams/${slug}.html</a>`;
+    resultEl.style.display = 'block';
+    if(document.getElementById('notifyOnPublishExam').checked){
+      sendPushNotification('اختبار جديد 📝', title, `/exams/${slug}.html`);
+    }
+  }catch(err){
+    showGenError(err.message || 'حصل خطأ غير متوقع أثناء النشر');
+  }finally{
+    document.getElementById('generateExamBtn').disabled = false;
+    document.getElementById('generateExamBtn').textContent = 'نشر الاختبار';
+  }
+}
+
+function showGenError(msg){
+  const resultEl = document.getElementById('genResult');
+  resultEl.className = 'gen-result error';
+  resultEl.textContent = msg;
+  resultEl.style.display = 'block';
+}
+
+// ==================== Analytics ====================
+
+const PAGE_LABELS = {
+  '/': 'الرئيسية',
+  '/tools-exams.html': 'الأدوات والاختبارات',
+  '/exams/accounting-general.html': 'اختبار المحاسبة العام',
+  '/tools/excel-merge.html': 'أداة دمج الإكسيل'
+};
+
+async function loadAnalytics(){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_page_view_stats`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(!res.ok) return;
+  const stats = await res.json();
+
+  document.getElementById('statSessions').textContent = stats.sessions.total;
+  document.getElementById('statUsers').textContent = stats.users.total;
+  document.getElementById('statPageviews').textContent = stats.pageviews.total;
+  document.getElementById('statPerSession').textContent = stats.sessions.total
+    ? (stats.pageviews.total / stats.sessions.total).toFixed(1)
+    : '0';
+  document.getElementById('statSessionsToday').textContent = stats.sessions.today;
+  document.getElementById('statSessions7d').textContent = stats.sessions.last7;
+
+  const maxDaily = Math.max(1, ...stats.daily.map(d => d.sessions));
+  document.getElementById('dailyChart').innerHTML = stats.daily.map(d => {
+    const h = Math.round((d.sessions / maxDaily) * 100);
+    const dayLabel = new Date(d.day).toLocaleDateString('ar-EG', { day:'numeric', month:'numeric' });
+    return `
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+        <div style="font-size:10px; color:var(--muted);">${d.sessions || ''}</div>
+        <div style="width:100%; height:${Math.max(h,3)}px; background:var(--emerald); border-radius:3px 3px 0 0; opacity:${d.sessions ? 1 : 0.25};"></div>
+        <div style="font-size:9px; color:var(--muted); font-family:var(--mono);">${dayLabel}</div>
+      </div>
+    `;
+  }).join('');
+
+  const maxPath = Math.max(1, ...stats.by_path.map(p => p.views));
+  document.getElementById('topPagesList').innerHTML = stats.by_path.length ? stats.by_path.map(p => `
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+      <div style="width:130px; font-size:12.5px; flex-shrink:0;">${PAGE_LABELS[p.path] || p.path}</div>
+      <div style="flex:1; background:var(--bg); border-radius:5px; overflow:hidden; height:18px;">
+        <div style="width:${Math.round((p.views/maxPath)*100)}%; height:100%; background:var(--gold);"></div>
+      </div>
+      <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); width:60px; text-align:left;">${p.views} مشاهدة</div>
+    </div>
+  `).join('') : '<div class="empty-state">لسه مفيش زيارات مسجلة</div>';
+}
+
+// ==================== Import from file/text ====================
+
+async function handleImportFile(file){
+  if(!file) return;
+  const importResult = document.getElementById('importResult');
+  importResult.className = 'gen-result';
+  importResult.style.display = 'none';
+
+  try{
+    let text = '';
+    if(file.name.endsWith('.docx')){
+      const arrayBuffer = await file.arrayBuffer();
+      const res = await mammoth.extractRawText({ arrayBuffer });
+      text = res.value;
+    } else if(file.name.endsWith('.pdf')){
+      text = await extractPdfText(file);
+    } else {
+      text = await file.text();
+    }
+    document.getElementById('importTextArea').value = text;
+  }catch(err){
+    importResult.className = 'gen-result error';
+    importResult.textContent = 'تعذّر قراءة الملف: ' + err.message;
+    importResult.style.display = 'block';
+  }
+}
+
+async function extractPdfText(file){
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  for(let i = 1; i <= pdf.numPages; i++){
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    fullText += content.items.map(it => it.str).join(' ') + '\n';
+  }
+  return fullText;
+}
+
+// Parses text formatted as:
+//   س1) question text?
+//   أ) option
+//   ب) option
+//   ج) option
+//   د) option
+//   الإجابة: ب
+// Forgiving about numbering style (س1 / 1. / 1-) and option markers (أبجد / ABCD / 1234).
+function parseExamText(text){
+  const normalized = text.replace(/\r\n/g, '\n').trim();
+  const questionStart = /^\s*(?:س\s*\d+|\d+)\s*[\).:\-]/;
+  const lines = normalized.split('\n');
+
+  const blocks = [];
+  let current = [];
+  for(const line of lines){
+    if(questionStart.test(line) && current.length){
+      blocks.push(current.join('\n'));
+      current = [line];
+    } else {
+      current.push(line);
+    }
+  }
+  if(current.length) blocks.push(current.join('\n'));
+
+  const optionMarker = /^\s*([أابجدABCDabcd1234])\s*[\).:\-]\s*(.+)$/;
+  const answerMarker = /الإجاب[ةه]\s*(?:الصحيح[ةه])?\s*[:\-]?\s*([أابجدABCDabcd1234])/;
+  const letterToIndex = { 'أ':0,'ا':0,'A':0,'a':0,'1':0, 'ب':1,'B':1,'b':1,'2':1, 'ج':2,'C':2,'c':2,'3':2, 'د':3,'D':3,'d':3,'4':3 };
+
+  const parsed = [];
+  const failed = [];
+
+  blocks.forEach((block, idx) => {
+    const blockLines = block.split('\n').map(l => l.trim()).filter(l => l !== '');
+    if(blockLines.length === 0) return;
+
+    let qText = blockLines[0].replace(questionStart, '').trim();
+    const options = [];
+    let correctIndex = null;
+
+    for(let i = 1; i < blockLines.length; i++){
+      const line = blockLines[i];
+      const optMatch = line.match(optionMarker);
+      const ansMatch = line.match(answerMarker);
+      if(ansMatch){
+        correctIndex = letterToIndex[ansMatch[1]];
+      } else if(optMatch && options.length < 4){
+        options.push(optMatch[2].trim());
+      } else if(options.length === 0 && !ansMatch){
+        // question text spanning multiple lines before first option
+        qText += ' ' + line;
+      }
+    }
+
+    if(qText && options.length === 4 && correctIndex !== null){
+      parsed.push({ q: qText, o: options, c: correctIndex });
+    } else {
+      failed.push(idx + 1);
+    }
+  });
+
+  return { parsed, failed };
+}
+
+function handleImportParse(){
+  const text = document.getElementById('importTextArea').value.trim();
+  const importResult = document.getElementById('importResult');
+
+  if(!text){
+    importResult.className = 'gen-result error';
+    importResult.textContent = 'مفيش نص للتحليل — ارفع ملف أو الصق النص الأول.';
+    importResult.style.display = 'block';
+    return;
+  }
+
+  const { parsed, failed } = parseExamText(text);
+
+  if(parsed.length === 0){
+    importResult.className = 'gen-result error';
+    importResult.textContent = 'مقدرتش أقرا أي سؤال بالشكل الصحيح — تأكد إن النص مطابق للتنسيق الموضّح فوق.';
+    importResult.style.display = 'block';
+    return;
+  }
+
+  // clear existing question blocks and populate with the parsed ones
+  document.getElementById('questionsBuilder').innerHTML = '';
+  parsed.forEach(item => addQuestionBlock(item));
+
+  let msg = `تم استيراد ${parsed.length} سؤال بنجاح ✓`;
+  if(failed.length){
+    msg += `<br>تعذّر قراءة ${failed.length} سؤال (رقم ${failed.join('، ')} في النص) — راجعهم يدويًا أو أضفهم بزرار "أضف سؤال يدويًا".`;
+  }
+  importResult.className = failed.length ? 'gen-result' : 'gen-result success';
+  if(failed.length){
+    importResult.style.background = 'rgba(224,177,92,0.08)';
+    importResult.style.borderRight = '3px solid var(--gold)';
+    importResult.style.color = 'var(--gold)';
+  }
+  importResult.innerHTML = msg;
+  importResult.style.display = 'block';
+}
+
+// ==================== Free template publishing ====================
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // strip the "data:<mime>;base64," prefix — GitHub's API wants raw base64
+      const result = reader.result;
+      resolve(result.substring(result.indexOf(',') + 1));
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function publishTemplate(){
+  const resultEl = document.getElementById('tplGenResult');
+  resultEl.className = 'gen-result';
+  resultEl.style.display = 'none';
+
+  const token = document.getElementById('ghTokenTpl').value.trim();
+  const title = document.getElementById('tplTitleInput').value.trim();
+  const slug = document.getElementById('tplSlugInput').value.trim();
+  const desc = document.getElementById('tplDescInput').value.trim();
+  const icon = document.getElementById('tplIconInput').value.trim();
+  const file = document.getElementById('tplFileInput').files[0];
+
+  if(!token) return showTplError('من فضلك حط GitHub Token الأول.');
+  if(!title || !slug || !desc) return showTplError('من فضلك املأ العنوان والـ slug والوصف.');
+  if(!/^[a-z0-9-]+$/.test(slug)) return showTplError('الـ slug لازم يكون حروف إنجليزي صغيرة وأرقام وشرطات بس.');
+  if(!file) return showTplError('من فضلك ارفع ملف القالب.');
+
+  const btn = document.getElementById('publishTplBtn');
+  btn.disabled = true;
+  btn.textContent = 'جارِ النشر...';
+
+  try{
+    const ext = file.name.includes('.') ? file.name.split('.').pop() : 'xlsx';
+    const filePath = `templates/files/${slug}.${ext}`;
+    const pagePath = `templates/${slug}.html`;
+    const base64Content = await fileToBase64(file);
+
+    // 1) upload the actual downloadable file
+    const fileApiUrl = `https://api.github.com/repos/Moame6n/Moamen-portfolio/contents/${filePath}`;
+    let fileSha = null;
+    const existingFile = await fetch(fileApiUrl, { headers: { 'Authorization': `token ${token}` } });
+    if(existingFile.ok){ fileSha = (await existingFile.json()).sha; }
+
+    const filePutRes = await fetch(fileApiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github+json' },
+      body: JSON.stringify({
+        message: fileSha ? `تحديث ملف قالب: ${title}` : `إضافة ملف قالب: ${title}`,
+        content: base64Content,
+        ...(fileSha ? { sha: fileSha } : {})
+      })
+    });
+    if(!filePutRes.ok){
+      const err = await filePutRes.json().catch(()=>({}));
+      throw new Error(err.message || `فشل رفع الملف (${filePutRes.status})`);
+    }
+
+    // 2) fetch the live landing-page template and clone it for this template
+    const baseRes = await fetch('https://raw.githubusercontent.com/Moame6n/Moamen-portfolio/main/templates/bank-reconciliation.html?_=' + Date.now());
+    if(!baseRes.ok) throw new Error('تعذّر جلب قالب صفحة الهبوط الأساسي من GitHub');
+    let html = await baseRes.text();
+
+    const fullFilePath = `/${filePath}`;
+    html = html.replace(/<title>[^<]*<\/title>/, `<title>${title} | مؤمن أحمد</title>`);
+    html = html.replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/templates/${slug}.html">`);
+    html = html.replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${title} | مؤمن أحمد">`);
+    html = html.replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/templates/${slug}.html">`);
+    if(icon) html = html.replace(/<meta name="icon" content="[^"]*">/, `<meta name="icon" content="${icon}">`);
+    html = html.replace(/<h1 id="tplTitle">[^<]*<\/h1>/, `<h1 id="tplTitle">${title}</h1>`);
+    html = html.replace(/<p id="tplDesc">[^<]*<\/p>/, `<p id="tplDesc">${desc.replace(/</g,'&lt;')}</p>`);
+    html = html.replace(/const TEMPLATE_SLUG = '[^']*';/, `const TEMPLATE_SLUG = '${slug}';`);
+    html = html.replace(/const TEMPLATE_TITLE = '[^']*';/, `const TEMPLATE_TITLE = '${title.replace(/'/g,"\\'")}';`);
+    html = html.replace(/const FILE_PATH = '[^']*';/, `const FILE_PATH = '${fullFilePath}';`);
+
+    // 3) publish the landing page
+    const pageApiUrl = `https://api.github.com/repos/Moame6n/Moamen-portfolio/contents/${pagePath}`;
+    let pageSha = null;
+    const existingPage = await fetch(pageApiUrl, { headers: { 'Authorization': `token ${token}` } });
+    if(existingPage.ok){ pageSha = (await existingPage.json()).sha; }
+
+    const pagePutRes = await fetch(pageApiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github+json' },
+      body: JSON.stringify({
+        message: pageSha ? `تحديث صفحة قالب: ${title}` : `إضافة صفحة قالب جديدة: ${title}`,
+        content: utf8ToBase64(html),
+        ...(pageSha ? { sha: pageSha } : {})
+      })
+    });
+    if(!pagePutRes.ok){
+      const err = await pagePutRes.json().catch(()=>({}));
+      throw new Error(err.message || `فشل نشر الصفحة (${pagePutRes.status})`);
+    }
+
+    resultEl.className = 'gen-result success';
+    resultEl.innerHTML = `تم نشر القالب بنجاح ✓ — هيبان في صفحة الأدوات والاختبارات خلال دقيقة.<br>رابط مباشر: <a href="https://moamen-portfolio-pi.vercel.app/templates/${slug}.html" target="_blank">/templates/${slug}.html</a>`;
+    resultEl.style.display = 'block';
+    if(document.getElementById('notifyOnPublishTpl').checked){
+      sendPushNotification('قالب مجاني جديد 📄', title, `/templates/${slug}.html`);
+    }
+  }catch(err){
+    showTplError(err.message || 'حصل خطأ غير متوقع أثناء النشر');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'نشر القالب';
+  }
+}
+
+function showTplError(msg){
+  const resultEl = document.getElementById('tplGenResult');
+  resultEl.className = 'gen-result error';
+  resultEl.textContent = msg;
+  resultEl.style.display = 'block';
+}
+
+// ==================== Template download stats ====================
+
+let allTplLeads = [];
+
+async function loadTemplateStats(){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_template_leads`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(!res.ok) return;
+  allTplLeads = await res.json();
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const sevenDaysAgo = new Date(now.getTime() - 7*24*60*60*1000);
+
+  const total = allTplLeads.length;
+  const today = allTplLeads.filter(l => new Date(l.downloaded_at) >= startOfToday).length;
+  const week = allTplLeads.filter(l => new Date(l.downloaded_at) >= sevenDaysAgo).length;
+
+  document.getElementById('tplStatTotal').textContent = total;
+  document.getElementById('tplStatToday').textContent = today;
+  document.getElementById('tplStatWeek').textContent = week;
+
+  // breakdown per template
+  const byTemplate = {};
+  allTplLeads.forEach(l => {
+    byTemplate[l.template_title] = (byTemplate[l.template_title] || 0) + 1;
+  });
+  const breakdown = Object.entries(byTemplate).sort((a,b) => b[1]-a[1]);
+  const maxCount = Math.max(1, ...breakdown.map(b => b[1]));
+
+  document.getElementById('tplBreakdownList').innerHTML = breakdown.length ? breakdown.map(([name, count]) => `
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+      <div style="width:150px; font-size:12.5px; flex-shrink:0;">${escapeHtml(name)}</div>
+      <div style="flex:1; background:var(--bg); border-radius:5px; overflow:hidden; height:18px;">
+        <div style="width:${Math.round((count/maxCount)*100)}%; height:100%; background:var(--gold);"></div>
+      </div>
+      <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); width:70px; text-align:left;">${count} تحميل</div>
+    </div>
+  `).join('') : '<div class="empty-state">لسه مفيش تحميلات</div>';
+
+  renderTplLeadsTable();
+}
+
+function renderTplLeadsTable(){
+  const search = document.getElementById('tplSearchBox').value.trim().toLowerCase();
+  const filtered = search
+    ? allTplLeads.filter(l => (l.full_name || '').toLowerCase().includes(search))
+    : allTplLeads;
+
+  document.getElementById('tplLeadsEmpty').style.display = filtered.length ? 'none' : 'block';
+  document.getElementById('tplLeadsBody').innerHTML = filtered.map(l => `
+    <tr>
+      <td>${escapeHtml(l.full_name || '')}</td>
+      <td>${escapeHtml(l.phone || '—')}</td>
+      <td>${escapeHtml(l.template_title || '')}</td>
+      <td>${new Date(l.downloaded_at).toLocaleString('ar-EG')}</td>
+    </tr>
+  `).join('');
+}
+
+// ==================== Tool publishing (extract-and-inject) ====================
+// Reads the three marked regions (CSS / body / JS) out of the uploaded tool file,
+// then injects them into a FRESH copy of the live /tools/_BASE.html shell.
+// This is what guarantees every tool always matches the current site design —
+// the head/nav/footer never come from the uploaded file, only from the live shell.
+
+function extractBetween(text, startMarker, endMarker){
+  const startIdx = text.indexOf(startMarker);
+  const endIdx = text.indexOf(endMarker);
+  if(startIdx === -1 || endIdx === -1 || endIdx < startIdx) return null;
+  return text.substring(startIdx + startMarker.length, endIdx).trim();
+}
+
+async function publishTool(){
+  const resultEl = document.getElementById('toolGenResult');
+  resultEl.className = 'gen-result';
+  resultEl.style.display = 'none';
+
+  const token = document.getElementById('ghTokenTool').value.trim();
+  const title = document.getElementById('toolTitleInput').value.trim();
+  const slug = document.getElementById('toolSlugInput').value.trim();
+  const desc = document.getElementById('toolDescInput').value.trim();
+  const icon = document.getElementById('toolIconInput').value.trim();
+  const file = document.getElementById('toolFileInput').files[0];
+
+  if(!token) return showToolError('من فضلك حط GitHub Token الأول.');
+  if(!title || !slug || !desc) return showToolError('من فضلك املأ العنوان والـ slug والوصف.');
+  if(!/^[a-z0-9-]+$/.test(slug)) return showToolError('الـ slug لازم يكون حروف إنجليزي صغيرة وأرقام وشرطات بس.');
+  if(!file) return showToolError('من فضلك ارفع ملف الأداة المبني على القالب.');
+
+  const btn = document.getElementById('publishToolBtn');
+  btn.disabled = true;
+  btn.textContent = 'جارِ النشر...';
+
+  try{
+    const uploadedText = await file.text();
+
+    let extractedCss = extractBetween(uploadedText, '/* TOOL_CSS_START */', '/* TOOL_CSS_END */');
+    let extractedBody = extractBetween(uploadedText, '<!-- TOOL_BODY_START -->', '<!-- TOOL_BODY_END -->');
+    let extractedJs = extractBetween(uploadedText, '// TOOL_JS_START', '// TOOL_JS_END');
+    let usedFallback = false;
+
+    if(extractedBody === null){
+      // fallback for files not built from our marked template: grab whatever's
+      // inside <body>...</body>, plus any <style>/<script> blocks anywhere in
+      // the file, so the tool's own logic still works — only the outer shell
+      // (nav/footer/fonts/colors) always comes from our live template, never this file.
+      usedFallback = true;
+      const bodyMatch = uploadedText.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+      if(!bodyMatch){
+        throw new Error('مقدرتش ألاقي محتوى داخل الملف ده خالص — تأكد إنه ملف HTML صحيح.');
+      }
+      let bodyContent = bodyMatch[1];
+
+      // pull out any <style> blocks from the whole file as extra CSS
+      const styleBlocks = [...uploadedText.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map(m => m[1]);
+      extractedCss = styleBlocks.join('\n');
+
+      // pull out any <script> blocks (inline, no src=) as extra JS, and strip them from the body markup
+      const scriptBlocks = [...bodyContent.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)].map(m => m[1]);
+      extractedJs = scriptBlocks.join('\n');
+      bodyContent = bodyContent.replace(/<script(?![^>]*\bsrc=)[^>]*>[\s\S]*?<\/script>/gi, '');
+      bodyContent = bodyContent.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+
+      extractedBody = bodyContent.trim();
+    }
+
+    // fetch the live shell fresh, every time — this is what keeps every tool in sync
+    const baseRes = await fetch('https://raw.githubusercontent.com/Moame6n/Moamen-portfolio/main/tools/_BASE.html?_=' + Date.now());
+    if(!baseRes.ok) throw new Error('تعذّر جلب هيكل الموقع الأساسي من GitHub');
+    let html = await baseRes.text();
+
+    html = html.replace(/<title>[^<]*<\/title>/, `<title>${title} | مؤمن أحمد</title>`);
+    html = html.replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/tools/${slug}.html">`);
+    html = html.replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${title} | مؤمن أحمد">`);
+    html = html.replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${desc.replace(/"/g,'&quot;')}">`);
+    html = html.replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/tools/${slug}.html">`);
+    if(icon) html = html.replace(/<meta name="icon" content="[^"]*">/, `<meta name="icon" content="${icon}">`);
+    html = html.replace(/<h1 id="toolPageTitle">[^<]*<\/h1>/, `<h1 id="toolPageTitle">${title}</h1>`);
+    html = html.replace(/<p id="toolPageDesc">[^<]*<\/p>/, `<p id="toolPageDesc">${desc.replace(/</g,'&lt;')}</p>`);
+
+    if(extractedCss){
+      html = html.replace(/\/\* TOOL_CSS_START \*\/[\s\S]*?\/\* TOOL_CSS_END \*\//, `/* TOOL_CSS_START */\n${extractedCss}\n/* TOOL_CSS_END */`);
+    }
+    html = html.replace(/<!-- TOOL_BODY_START -->[\s\S]*?<!-- TOOL_BODY_END -->/, `<!-- TOOL_BODY_START -->\n${extractedBody}\n<!-- TOOL_BODY_END -->`);
+    if(extractedJs){
+      html = html.replace(/\/\/ TOOL_JS_START[\s\S]*?\/\/ TOOL_JS_END/, `// TOOL_JS_START\n${extractedJs}\n// TOOL_JS_END`);
+    }
+
+    const pagePath = `tools/${slug}.html`;
+    const pageApiUrl = `https://api.github.com/repos/Moame6n/Moamen-portfolio/contents/${pagePath}`;
+    let pageSha = null;
+    const existingPage = await fetch(pageApiUrl, { headers: { 'Authorization': `token ${token}` } });
+    if(existingPage.ok){ pageSha = (await existingPage.json()).sha; }
+
+    const pagePutRes = await fetch(pageApiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github+json' },
+      body: JSON.stringify({
+        message: pageSha ? `تحديث أداة: ${title}` : `إضافة أداة جديدة: ${title}`,
+        content: utf8ToBase64(html),
+        ...(pageSha ? { sha: pageSha } : {})
+      })
+    });
+    if(!pagePutRes.ok){
+      const err = await pagePutRes.json().catch(()=>({}));
+      throw new Error(err.message || `فشل النشر (${pagePutRes.status})`);
+    }
+
+    resultEl.className = 'gen-result success';
+    const fallbackNote = usedFallback
+      ? '<br><span style="color:var(--gold);">ملحوظة: الملف مكانش مبني على قالبنا، فاتاخد شكله الداخلي زي ما هو — الهيدر والفوتر والخط بس اللي اتوحدوا مع باقي الموقع.</span>'
+      : '';
+    resultEl.innerHTML = `تم نشر الأداة بنجاح ✓ — هتبان في صفحة الأدوات والاختبارات خلال دقيقة.${fallbackNote}<br>رابط مباشر: <a href="https://moamen-portfolio-pi.vercel.app/tools/${slug}.html" target="_blank">/tools/${slug}.html</a>`;
+    resultEl.style.display = 'block';
+    if(document.getElementById('notifyOnPublishTool').checked){
+      sendPushNotification('أداة جديدة 🧰', title, `/tools/${slug}.html`);
+    }
+  }catch(err){
+    showToolError(err.message || 'حصل خطأ غير متوقع أثناء النشر');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'نشر الأداة';
+  }
+}
+
+function showToolError(msg){
+  const resultEl = document.getElementById('toolGenResult');
+  resultEl.className = 'gen-result error';
+  resultEl.textContent = msg;
+  resultEl.style.display = 'block';
+}
+
+// ==================== User feedback ====================
+
+async function loadFeedback(){
+  const listEl = document.getElementById('feedbackList');
+  listEl.innerHTML = '<div class="empty-state">جارِ التحميل...</div>';
+
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_feedback_list`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(!res.ok) return;
+  const items = await res.json();
+
+  document.getElementById('fbStatTotal').textContent = items.length;
+  document.getElementById('fbStatSuggest').textContent = items.filter(i => i.category === 'اقتراح').length;
+  document.getElementById('fbStatIssue').textContent = items.filter(i => i.category === 'مشكلة').length;
+
+  listEl.innerHTML = items.length ? items.map(item => `
+    <div class="fb-item">
+      <div class="fb-item-head">
+        <span class="fb-cat-tag ${item.category || ''}">${escapeHtml(item.category || 'رأي')}</span>
+        <span class="fb-item-name">${escapeHtml(item.full_name || 'مجهول')}</span>
+      </div>
+      <div class="fb-item-text">${escapeHtml(item.feedback_text)}</div>
+      <div class="fb-item-time">${new Date(item.created_at).toLocaleString('ar-EG')}</div>
+    </div>
+  `).join('') : '<div class="empty-state">لسه محدش بعت رأي</div>';
+}
+
+// ==================== Battle question bank ====================
+
+let parsedBattleQuestions = [];
+
+async function handleBattleImportFile(file){
+  if(!file) return;
+  try{
+    let text = '';
+    if(file.name.endsWith('.docx')){
+      const arrayBuffer = await file.arrayBuffer();
+      const res = await mammoth.extractRawText({ arrayBuffer });
+      text = res.value;
+    } else if(file.name.endsWith('.pdf')){
+      text = await extractPdfText(file);
+    } else {
+      text = await file.text();
+    }
+    document.getElementById('battleImportTextArea').value = text;
+  }catch(err){
+    showBattleImportError('تعذّر قراءة الملف: ' + err.message);
+  }
+}
+
+function handleBattleImportParse(){
+  const text = document.getElementById('battleImportTextArea').value.trim();
+  const resultEl = document.getElementById('battleImportResult');
+  resultEl.style.display = 'none';
+
+  if(!text){
+    showBattleImportError('مفيش نص للتحليل — ارفع ملف أو الصق النص الأول.');
+    return;
+  }
+
+  const { parsed, failed } = parseExamText(text);
+  if(parsed.length === 0){
+    showBattleImportError('مقدرتش أقرا أي سؤال بالشكل الصحيح — تأكد إن النص مطابق للتنسيق الموضّح فوق.');
+    return;
+  }
+
+  const category = document.getElementById('battleCategorySelect').value;
+  parsedBattleQuestions = parsed.map(q => ({ category, question: q.q, options: q.o, correct_index: q.c }));
+
+  document.getElementById('battleQuestionsPreview').innerHTML = parsedBattleQuestions.map((q, i) => `
+    <div class="q-block" style="cursor:default;">
+      <div class="q-num">${i+1}. ${escapeHtml(q.question)}</div>
+      ${q.options.map((opt, oi) => `<div style="font-size:12.5px; padding:4px 0; color:${oi===q.correct_index ? 'var(--emerald)' : 'var(--text-soft)'};">${oi===q.correct_index ? '✓' : '•'} ${escapeHtml(opt)}</div>`).join('')}
+    </div>
+  `).join('');
+
+  document.getElementById('publishBattleBtn').style.display = 'inline-flex';
+
+  let msg = `تم تحليل ${parsed.length} سؤال بنجاح ✓ (تخصص: ${category})`;
+  if(failed.length) msg += `<br>تعذّر قراءة ${failed.length} سؤال (رقم ${failed.join('، ')}).`;
+  resultEl.className = failed.length ? 'gen-result' : 'gen-result success';
+  if(failed.length){
+    resultEl.style.background = 'rgba(224,177,92,0.08)';
+    resultEl.style.borderRight = '3px solid var(--gold)';
+    resultEl.style.color = 'var(--gold)';
+  }
+  resultEl.innerHTML = msg;
+  resultEl.style.display = 'block';
+}
+
+function showBattleImportError(msg){
+  const resultEl = document.getElementById('battleImportResult');
+  resultEl.className = 'gen-result error';
+  resultEl.textContent = msg;
+  resultEl.style.display = 'block';
+}
+
+async function publishBattleQuestions(){
+  const btn = document.getElementById('publishBattleBtn');
+  const resultEl = document.getElementById('battlePublishResult');
+  resultEl.style.display = 'none';
+
+  if(parsedBattleQuestions.length === 0) return;
+
+  btn.disabled = true;
+  btn.textContent = 'جارِ الإضافة...';
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/insert_battle_questions_bulk`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ p_passphrase: passphrase, p_questions: parsedBattleQuestions })
+    });
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.message || `فشلت الإضافة (${res.status})`);
+    }
+    const insertedCount = await res.json();
+
+    resultEl.className = 'gen-result success';
+    resultEl.textContent = `تمت إضافة ${insertedCount} سؤال لبنك التحدي بنجاح ✓`;
+    resultEl.style.display = 'block';
+
+    parsedBattleQuestions = [];
+    document.getElementById('battleQuestionsPreview').innerHTML = '';
+    document.getElementById('battleImportTextArea').value = '';
+    document.getElementById('publishBattleBtn').style.display = 'none';
+    loadBattleBankStats();
+  }catch(err){
+    resultEl.className = 'gen-result error';
+    resultEl.textContent = err.message || 'حصل خطأ غير متوقع';
+    resultEl.style.display = 'block';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'إضافة الأسئلة دي لبنك التحدي';
+  }
+}
+
+async function loadBattleBankStats(){
+  const statsEl = document.getElementById('battleBankStats');
+  statsEl.innerHTML = '<div class="empty-state">جارِ التحميل...</div>';
+
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_battle_bank_stats`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(!res.ok) return;
+  const stats = await res.json();
+
+  const allCategories = ['محاسبة مالية','محاسبة تكاليف','مراجعة','محاسبة إدارية','تحليل مالي'];
+  const countMap = {};
+  stats.forEach(s => { countMap[s.category] = s.total; });
+
+  statsEl.innerHTML = allCategories.map(cat => {
+    const count = countMap[cat] || 0;
+    const ready = count >= 10;
+    return `
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border-soft);">
+        <span style="font-size:13px;">${cat}</span>
+        <span style="font-family:var(--mono); font-size:12.5px; color:${ready ? 'var(--emerald)' : 'var(--gold)'};">
+          ${count} سؤال ${ready ? '✓ جاهز' : '(محتاج 10 على الأقل)'}
+        </span>
+      </div>
+    `;
+  }).join('');
+}
+
+async function loadBattleResults(){
+  const histEl = document.getElementById('battleHistoryList');
+  histEl.innerHTML = '<div class="empty-state">جارِ التحميل...</div>';
+
+  const histRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_battle_history`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    body: JSON.stringify({ p_passphrase: passphrase })
+  });
+  if(histRes.ok){
+    const history = await histRes.json();
+    histEl.innerHTML = history.length ? history.map(m => `
+      <div style="padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:12.5px;">
+        <b>${escapeHtml(m.player_name)}</b> (${m.player_correct}/10) ${m.is_win ? 'هزم' : 'خسر أمام'} <b>${escapeHtml(m.opponent_name)}</b> (${m.opponent_correct}/10)
+        ${m.vs_bot ? '<span style="color:var(--gold);"> — ضد خصم افتراضي</span>' : ''}
+        <span style="float:left; font-family:var(--mono); font-size:10.5px; color:var(--muted);">${new Date(m.created_at).toLocaleString('ar-EG')}</span>
+      </div>
+    `).join('') : '<div class="empty-state">لسه مفيش مباريات مسجلة</div>';
+  }
 }
 
 async function loadSubscriberStats(){
-  try {
-    const res = await fetch('/api/subscription-stats');
-    if(!res.ok) throw new Error('Failed to fetch stats');
+  const list = document.getElementById('recentSubscribersList');
+  try{
+    const res = await fetch('/api/subscription-stats', { headers: { 'x-admin-passphrase': passphrase } });
+    if(!res.ok) throw new Error('تعذر تحميل الإحصائيات');
     const stats = await res.json();
-
     document.getElementById('subStatTotal').textContent = stats.total || 0;
     document.getElementById('subStatToday').textContent = stats.today || 0;
     document.getElementById('subStatWeek').textContent = stats.last7days || 0;
     document.getElementById('subStatUnsubscribed').textContent = stats.unsubscribed || 0;
-
-    // رسم الرسم البياني
     const chart = document.getElementById('subscribersDailyChart');
     chart.innerHTML = '';
-    const maxCount = Math.max(...(stats.dailyStats || []).map(d => d.count), 1);
-    stats.dailyStats.forEach(day => {
-      const height = (day.count / maxCount) * 100;
+    const days = stats.dailyStats || [];
+    const maxCount = Math.max(...days.map(d => Number(d.count) || 0), 1);
+    days.forEach(day => {
       const bar = document.createElement('div');
-      bar.style.cssText = `height:${height}%;`;
       bar.className = 'daily-bar';
-      bar.title = `${day.date}: ${day.count} مشترك`;
+      bar.style.height = `${((Number(day.count) || 0) / maxCount) * 100}%`;
+      bar.title = `${day.date}: ${day.count} اشتراك`;
       chart.appendChild(bar);
     });
-
-    // قائمة آخر المشتركين
-    const list = document.getElementById('recentSubscribersList');
-    if(!stats.recent || stats.recent.length === 0){
-      list.innerHTML = '<div class="empty-state">لسه لا حد اشترك</div>';
+    if(!stats.recent || !stats.recent.length){
+      list.innerHTML = '<div class="empty-state">لا توجد اشتراكات مسجلة بعد</div>';
       return;
     }
     list.innerHTML = stats.recent.map(sub => `
@@ -425,15 +1738,13 @@ async function loadSubscriberStats(){
           ${sub.user_email ? `<div class="sub-item-email">${escapeHtml(sub.user_email)}</div>` : ''}
           <div class="sub-item-date">${new Date(sub.created_at).toLocaleString('ar-EG')}</div>
         </div>
-        <span class="sub-item-badge">${sub.status === 'active' ? '✓ نشط' : '✕ ملغي'}</span>
-      </div>
-    `).join('');
-  } catch(err) {
+        <span class="sub-item-badge">✓ نشط</span>
+      </div>`).join('');
+  }catch(err){
     console.error('Error loading subscriber stats:', err);
-    document.getElementById('recentSubscribersList').innerHTML = '<div class="empty-state">خطأ في تحميل البيانات</div>';
+    list.innerHTML = '<div class="empty-state">تعذر تحميل الإحصائيات حاليًا</div>';
   }
 }
 </script>
-
 </body>
 </html>
