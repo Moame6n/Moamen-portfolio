@@ -204,11 +204,13 @@ async function initNotifyBell(){
 
       const currentSub = await reg.pushManager.getSubscription();
       if(currentSub){
+        const response = await fetch('/api/subscription-log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'unsubscribe', subscription: currentSub.toJSON() })
+        });
+        if(!response.ok) throw new Error('تعذر تسجيل إلغاء الإشعارات');
         await currentSub.unsubscribe();
-        fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions?endpoint=eq.${encodeURIComponent(currentSub.endpoint)}`, {
-          method: 'DELETE',
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-        }).catch(()=>{});
         updateBellState(false);
         return;
       }
@@ -221,12 +223,12 @@ async function initNotifyBell(){
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
       });
       const subJson = sub.toJSON();
-
-      await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
+      const response = await fetch('/api/subscription-log', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ endpoint: subJson.endpoint, p256dh: subJson.keys.p256dh, auth: subJson.keys.auth })
-      }).catch(()=>{});
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'subscribe', subscription: subJson })
+      });
+      if(!response.ok) throw new Error('تعذر تسجيل الاشتراك');
 
       updateBellState(true);
     });

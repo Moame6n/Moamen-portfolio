@@ -57,6 +57,7 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('notifyBellBtn')) return;
     const button = getButton();
     button.addEventListener('click', () => enable(button));
   });
