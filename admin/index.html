@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
 <script src="/assets/theme.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.7.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
@@ -128,9 +129,11 @@
 
 <div id="loginView" class="login-box">
   <h2>لوحة التحكم</h2>
-  <p>ادخل كلمة المرور عشان تشوف نتائج المتقدمين لأي اختبار</p>
+  <p>سجّل الدخول بحساب الإدارة عبر Supabase عشان تشوف نتائج المتقدمين</p>
+  <label>البريد الإلكتروني</label>
+  <input type="email" id="loginEmail" autocomplete="username" placeholder="admin@example.com">
   <label>كلمة المرور</label>
-  <input type="password" id="loginPass" placeholder="••••••••">
+  <input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••••">
   <button class="btn btn-primary" id="loginBtn" type="button">دخول</button>
   <div class="login-err" id="loginErr"></div>
 </div>
@@ -532,6 +535,11 @@
 
 <script src="/assets/supabase-config.js"></script>
 <script>
+const sb = getSbClient();
+let adminAccessToken = null;
+sb.auth.onAuthStateChange((_event, session) => {
+  adminAccessToken = session?.access_token || null;
+});
 let allExams = [];
 let currentAttempts = [];
 
@@ -541,6 +549,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('examSelect').addEventListener('change', loadAttempts);
   document.getElementById('searchBox').addEventListener('input', renderTable);
   document.getElementById('loginPass').addEventListener('keydown', (e) => { if(e.key === 'Enter') doLogin(); });
+  document.getElementById('loginEmail').addEventListener('keydown', (e) => { if(e.key === 'Enter') doLogin(); });
 
   document.getElementById('tabResults').addEventListener('click', () => switchTab('results'));
   document.getElementById('tabCreate').addEventListener('click', () => switchTab('create'));
@@ -621,33 +630,50 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 let passphrase = null;
-
+function supabaseHeaders(){
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${adminAccessToken || SUPABASE_ANON_KEY}`
+  };
+}
 async function doLogin(){
-  const pass = document.getElementById('loginPass').value;
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPass').value;
   const errEl = document.getElementById('loginErr');
+  const btn = document.getElementById('loginBtn');
   errEl.style.display = 'none';
-  if(!pass){
-    errEl.textContent = 'اكتب كلمة المرور';
+  if(!email || !password){
+    errEl.textContent = 'اكتب البريد الإلكتروني وكلمة المرور';
     errEl.style.display = 'block';
     return;
   }
-  passphrase = pass;
-  const ok = await showDashboard();
-  if(ok){
-  } else {
-    errEl.textContent = 'كلمة المرور غير صحيحة';
-    errEl.style.display = 'block';
+  btn.disabled = true;
+  try{
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if(error || !data.session) throw error || new Error('تعذر إنشاء جلسة آمنة');
+    adminAccessToken = data.session.access_token;
     passphrase = null;
+    if(!await showDashboard()) throw new Error('الحساب ليس ضمن حسابات الإدارة المسموح بها');
+  }catch(err){
+    await sb.auth.signOut().catch(() => {});
+    adminAccessToken = null;
+    passphrase = null;
+    errEl.textContent = err.message || 'بيانات الدخول غير صحيحة';
+    errEl.style.display = 'block';
     document.getElementById('loginView').style.display = 'block';
     document.getElementById('dashView').style.display = 'none';
+  }finally{
+    btn.disabled = false;
   }
 }
-function doLogout(){
+async function doLogout(){
+  await sb.auth.signOut().catch(() => {});
+  adminAccessToken = null;
   passphrase = null;
   document.getElementById('dashView').style.display = 'none';
   document.getElementById('loginView').style.display = 'block';
 }
-
 // Always (re)fetches the exams list on every call — this runs both on a fresh
 // login AND when restoring a saved session on page refresh, so stats never
 // silently stay empty because the list was only ever loaded once before.
@@ -663,10 +689,7 @@ async function showDashboard(){
 async function callRpc(examSlug){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_exam_results`, {
     method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'apikey': SUPABASE_ANON_KEY
-    },
+    headers: supabaseHeaders(),
     body: JSON.stringify({ p_exam_slug: examSlug, p_passphrase: passphrase })
   });
   if(!res.ok) return null;
@@ -1003,7 +1026,7 @@ const PAGE_LABELS = {
 async function loadAnalytics(){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_page_view_stats`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    headers: supabaseHeaders(),
     body: JSON.stringify({ p_passphrase: passphrase })
   });
   if(!res.ok) return;
@@ -1315,7 +1338,7 @@ let allTplLeads = [];
 async function loadTemplateStats(){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_template_leads`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    headers: supabaseHeaders(),
     body: JSON.stringify({ p_passphrase: passphrase })
   });
   if(!res.ok) return;
@@ -1514,7 +1537,7 @@ async function loadFeedback(){
 
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_feedback_list`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    headers: supabaseHeaders(),
     body: JSON.stringify({ p_passphrase: passphrase })
   });
   if(!res.ok) return;
@@ -1619,7 +1642,7 @@ async function publishBattleQuestions(){
   try{
     const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/insert_battle_questions_bulk`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      headers: supabaseHeaders(),
       body: JSON.stringify({ p_passphrase: passphrase, p_questions: parsedBattleQuestions })
     });
     if(!res.ok){
@@ -1653,7 +1676,7 @@ async function loadBattleBankStats(){
 
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_battle_bank_stats`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    headers: supabaseHeaders(),
     body: JSON.stringify({ p_passphrase: passphrase })
   });
   if(!res.ok) return;
@@ -1683,7 +1706,7 @@ async function loadBattleResults(){
 
   const histRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_battle_history`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+    headers: supabaseHeaders(),
     body: JSON.stringify({ p_passphrase: passphrase })
   });
   if(histRes.ok){
@@ -1701,7 +1724,7 @@ async function loadBattleResults(){
 async function loadSubscriberStats(){
   const list = document.getElementById('recentSubscribersList');
   try{
-    const res = await fetch('/api/subscription-stats', { headers: { 'x-admin-passphrase': passphrase } });
+    const res = await fetch('/api/subscription-stats', { headers: { 'Authorization': `Bearer ${adminAccessToken}` } });
     if(!res.ok) throw new Error('تعذر تحميل الإحصائيات');
     const stats = await res.json();
     document.getElementById('subStatTotal').textContent = stats.total || 0;

@@ -2,16 +2,20 @@ const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
-  const passphrase = req.headers['x-admin-passphrase'];
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceKey) return res.status(500).json({ error: 'Server statistics storage is not configured' });
-  if (typeof passphrase !== 'string' || passphrase.length < 12 || passphrase.length > 256) return res.status(401).json({ error: 'Unauthorized' });
 
   const supabase = createClient(url, serviceKey);
   try {
-    const { data: authRows, error: authError } = await supabase.rpc('list_exam_slugs', { p_passphrase: passphrase });
-    if (authError || !Array.isArray(authRows)) return res.status(401).json({ error: 'Unauthorized' });
+    const authorization = req.headers.authorization || '';
+    const token = authorization.startsWith('Bearer ') ? authorization.slice(7).trim() : '';
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !userData.user) return res.status(401).json({ error: 'Unauthorized' });
+    const { data: adminRow, error: adminError } = await supabase
+      .from('private_admin_users').select('user_id').eq('user_id', userData.user.id).maybeSingle();
+    if (adminError || !adminRow) return res.status(403).json({ error: 'Admin access required' });
 
     const { data: allSubs, error: allError } = await supabase
       .from('push_subscriptions').select('created_at, status').limit(10000);
