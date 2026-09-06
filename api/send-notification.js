@@ -14,8 +14,12 @@ module.exports = async (req, res) => {
   }
 
   const { title, body, url } = req.body || {};
-  if(!title || !body){
+  if(typeof title !== 'string' || typeof body !== 'string' || title.length < 1 || title.length > 120 || body.length < 1 || body.length > 500){
     res.status(400).json({ error: 'title and body are required' });
+    return;
+  }
+  if(url !== undefined && (typeof url !== 'string' || !/^\/(?!\/)/.test(url) || url.length > 500)) {
+    res.status(400).json({ error: 'Invalid notification URL' });
     return;
   }
 

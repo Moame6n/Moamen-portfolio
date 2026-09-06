@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceKey) return res.status(500).json({ error: 'Server statistics storage is not configured' });
-  if (typeof passphrase !== 'string' || !passphrase || passphrase.length > 256) return res.status(401).json({ error: 'Unauthorized' });
+  if (typeof passphrase !== 'string' || passphrase.length < 12 || passphrase.length > 256) return res.status(401).json({ error: 'Unauthorized' });
 
   const supabase = createClient(url, serviceKey);
   try {

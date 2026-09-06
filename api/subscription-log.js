@@ -12,8 +12,10 @@ module.exports = async (req, res) => {
   const auth = subscription && subscription.keys && subscription.keys.auth;
 
   if (!['subscribe', 'unsubscribe'].includes(action)) return bad(res, 400, 'Invalid action');
-  if (typeof endpoint !== 'string' || endpoint.length < 20 || endpoint.length > 2048) return bad(res, 400, 'Invalid subscription endpoint');
-  if (action === 'subscribe' && (!p256dh || !auth)) return bad(res, 400, 'Subscription keys are required');
+  if (typeof endpoint !== 'string' || endpoint.length < 20 || endpoint.length > 2048 || !/^https:\/\//i.test(endpoint)) return bad(res, 400, 'Invalid subscription endpoint');
+  if (action === 'subscribe' && (typeof p256dh !== 'string' || typeof auth !== 'string' || p256dh.length > 512 || auth.length > 256)) return bad(res, 400, 'Invalid subscription keys');
+  if (typeof userName === 'string' && userName.length > 160) return bad(res, 400, 'Invalid user name');
+  if (typeof userEmail === 'string' && userEmail.length > 320) return bad(res, 400, 'Invalid user email');
 
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
