@@ -61,6 +61,29 @@
   .rating-card-rank{ color:var(--gold); font-size:20px; font-weight:900; }
   .rating-card-points{ font-family:var(--mono); color:var(--emerald); font-size:17px; font-weight:700; }
   .rating-card-meta{ color:var(--muted); font-size:11px; line-height:1.8; text-align:left; }
+  .rating-progress{ max-width:640px; margin:-10px auto 20px; padding:0 22px; }
+  .rating-progress-head{ display:flex; justify-content:space-between; color:var(--muted); font-size:11px; margin-bottom:6px; }
+  .rating-progress-track{ height:7px; border-radius:99px; background:var(--border-soft); overflow:hidden; }
+  .rating-progress-fill{ height:100%; width:0; background:var(--gold); border-radius:inherit; transition:width .35s ease-out; }
+  .advanced-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; max-width:640px; margin:0 auto 20px; }
+  .advanced-card{ background:var(--surface); border:1px solid var(--border-soft); border-radius:10px; padding:14px; text-align:center; }
+  .advanced-card .num{ display:block; color:var(--emerald); font-family:var(--mono); font-size:18px; font-weight:700; }
+  .advanced-card .lbl{ display:block; color:var(--muted); font-size:10.5px; margin-top:4px; }
+  .category-row{ padding:12px 0; border-bottom:1px solid var(--border-soft); }
+  .category-row:last-child{ border-bottom:none; }
+  .category-head{ display:flex; justify-content:space-between; gap:8px; font-size:13px; font-weight:700; }
+  .category-meta{ color:var(--muted); font-size:11px; margin-top:5px; }
+  .category-bar{ height:4px; margin-top:7px; border-radius:99px; background:var(--border-soft); overflow:hidden; }
+  .category-bar span{ display:block; height:100%; background:var(--emerald); border-radius:inherit; }
+  .badge-grid{ display:flex; flex-wrap:wrap; gap:8px; }
+  .achievement{ padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft); color:var(--muted); font-size:11px; opacity:.55; }
+  .achievement.earned{ color:var(--gold); border-color:var(--gold); opacity:1; background:rgba(224,177,92,.08); }
+  .match-detail{ display:grid; grid-template-columns:1fr auto; gap:4px 12px; padding:12px 0; border-bottom:1px solid var(--border-soft); font-size:12px; }
+  .match-detail:last-child{ border-bottom:none; }
+  .match-result.win{ color:var(--emerald); font-weight:700; }
+  .match-result.loss{ color:var(--red); font-weight:700; }
+  .match-sub{ color:var(--muted); font-size:10.5px; grid-column:1 / -1; }
+  @media (max-width:480px){ .rating-card{ padding:15px; gap:8px; } .rating-card-meta{ font-size:10px; } }
 </style>
 </head>
 <body>
@@ -159,6 +182,33 @@
         <div><div class="rating-card-title">تصنيفك في ساحة التحدي</div><div class="rating-card-rank" id="profileRank">Bronze</div></div>
         <div class="rating-card-points" id="profileRating">1000 نقطة</div>
         <div class="rating-card-meta" id="profileRatingMeta">جارِ التحميل...</div>
+      </div>
+      <div class="rating-progress">
+        <div class="rating-progress-head"><span id="nextRankLabel">التقدم للرتبة التالية</span><span id="ratingProgressText">0%</span></div>
+        <div class="rating-progress-track"><div class="rating-progress-fill" id="ratingProgressFill"></div></div>
+      </div>
+
+      <div class="advanced-grid">
+        <div class="advanced-card"><span class="num" id="advancedWinRate">0%</span><span class="lbl">نسبة الفوز</span></div>
+        <div class="advanced-card"><span class="num" id="advancedAccuracy">0%</span><span class="lbl">متوسط الدقة</span></div>
+        <div class="advanced-card"><span class="num" id="advancedAvgTime">0s</span><span class="lbl">متوسط وقت السؤال</span></div>
+        <div class="advanced-card"><span class="num" id="advancedBestScore">0/10</span><span class="lbl">أفضل نتيجة</span></div>
+      </div>
+
+      <div class="activity-section">
+        <h3>📊 أدائي حسب التخصص</h3>
+        <div id="categoriesActivity"><div style="text-align:center;color:var(--muted);font-size:12.5px;">جارِ تحميل الإحصائيات...</div></div>
+        <div id="bestCategory" style="margin-top:12px;color:var(--gold);font-size:12px;"></div>
+      </div>
+
+      <div class="activity-section">
+        <h3>🏅 شاراتي</h3>
+        <div class="badge-grid" id="badgesActivity"></div>
+      </div>
+
+      <div class="activity-section">
+        <h3>🗂️ سجل المباريات المفصل</h3>
+        <div id="recentBattlesActivity"><div style="text-align:center;color:var(--muted);font-size:12.5px;">جارِ تحميل السجل...</div></div>
       </div>
 
       <div class="activity-section">
@@ -293,11 +343,52 @@ async function loadProfile(){
 }
 
 async function loadBattleRating(){
-  const { data: rating, error } = await sb.rpc('get_my_battle_rating');
-  if(error || !rating) return;
+  const { data, error } = await sb.rpc('get_my_battle_stats');
+  if(error || !data || data.authenticated === false) return;
+  const rating = data.rating || {};
   document.getElementById('profileRank').textContent = rating.rank_name || 'Bronze';
-  document.getElementById('profileRating').textContent = `${rating.rating_points || 1000} نقطة`;
+  document.getElementById('profileRating').textContent = `${rating.points || 1000} نقطة`;
   document.getElementById('profileRatingMeta').innerHTML = `مباريات: ${rating.matches_played || 0}<br>فوز: ${rating.wins || 0} — سلسلة: ${rating.win_streak || 0}`;
+  loadAdvancedBattleStats();
+}
+
+async function loadAdvancedBattleStats(){
+  const [summaryRes, categoryRes, recentRes, badgesRes] = await Promise.all([
+    sb.rpc('get_my_battle_stats'),
+    sb.rpc('get_my_battle_categories'),
+    sb.rpc('get_my_recent_battles'),
+    sb.rpc('get_my_battle_badges')
+  ]);
+  if(summaryRes.error || !summaryRes.data) return;
+  const summary = summaryRes.data.summary || {};
+  const rating = summaryRes.data.rating || {};
+  document.getElementById('advancedWinRate').textContent = `${summary.win_rate || 0}%`;
+  document.getElementById('advancedAccuracy').textContent = `${summary.average_accuracy || 0}%`;
+  document.getElementById('advancedAvgTime').textContent = `${summary.average_time_seconds || 0}s`;
+  document.getElementById('advancedBestScore').textContent = `${summary.best_score || 0}/10`;
+  const progress = Math.max(0, Math.min(100, Number(rating.progress_percent || 0)));
+  document.getElementById('ratingProgressFill').style.width = `${progress}%`;
+  document.getElementById('ratingProgressText').textContent = `${progress}%`;
+  document.getElementById('nextRankLabel').textContent = rating.next_rank ? `التقدم نحو ${rating.next_rank} — ${rating.next_points} نقطة` : 'أعلى رتبة وصلت لها';
+
+  const categories = Array.isArray(categoryRes.data) ? categoryRes.data : [];
+  document.getElementById('categoriesActivity').innerHTML = categories.length ? categories.map(c => `
+    <div class="category-row"><div class="category-head"><span>${escP(c.name)}</span><span>${c.win_rate || 0}% فوز</span></div>
+      <div class="category-meta">${c.matches || 0} مباراة — دقة ${c.average_accuracy || 0}% — متوسط ${c.average_time_seconds || 0}s</div>
+      <div class="category-bar"><span style="width:${Math.max(0, Math.min(100, Number(c.win_rate || 0)))}%"></span></div>
+    </div>`).join('') : '<div style="text-align:center;color:var(--muted);font-size:12.5px;">لسه مفيش مباريات مسجلة.</div>';
+  const bestCategory = categories.slice().sort((a, b) => Number(b.win_rate || 0) - Number(a.win_rate || 0) || Number(b.matches || 0) - Number(a.matches || 0))[0];
+  document.getElementById('bestCategory').textContent = bestCategory ? `⭐ أفضل تخصص: ${escP(bestCategory.name)}` : '';
+
+  const badgeLabels = { first_win:'أول فوز', streak_3:'سلسلة 3 انتصارات', streak_5:'سلسلة 5 انتصارات', accuracy_80:'دقة 80%+', multi_category:'3 تخصصات', silver_or_higher:'Silver', gold_or_higher:'Gold' };
+  const badges = badgesRes.data || {};
+  document.getElementById('badgesActivity').innerHTML = Object.entries(badgeLabels).map(([key, label]) => `<span class="achievement ${badges[key] ? 'earned' : ''}">${badges[key] ? '🏅' : '🔒'} ${label}</span>`).join('');
+
+  const recent = Array.isArray(recentRes.data) ? recentRes.data : [];
+  document.getElementById('recentBattlesActivity').innerHTML = recent.length ? recent.map(m => `
+    <div class="match-detail"><span class="match-result ${m.is_win ? 'win' : 'loss'}">${m.is_win ? '🏆 فوز' : '❌ خسارة'} ضد ${escP(m.opponent_name)}${m.vs_bot ? ' (افتراضي)' : ''}</span><span class="activity-time">${new Date(m.created_at).toLocaleDateString('ar-EG')}</span>
+      <span class="match-sub">${escP(m.category)} — ${m.player_correct}/${m.opponent_correct} صح — ${m.player_time_seconds || 0}s ${m.rating_delta == null ? '' : `— ${Number(m.rating_delta) >= 0 ? '+' : ''}${m.rating_delta} نقطة`}</span>
+    </div>`).join('') : '<div style="text-align:center;color:var(--muted);font-size:12.5px;">لسه مفيش مباريات مسجلة.</div>';
 }
 
 async function initializeAuthPage(){
