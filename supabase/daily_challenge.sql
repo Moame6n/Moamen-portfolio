@@ -32,7 +32,7 @@ revoke all on public.user_reward_balances from anon, authenticated;
 create or replace function public.get_or_create_daily_challenge(p_challenge_date date default current_date)
 returns jsonb language plpgsql security definer set search_path=public,extensions
 as 'declare ids uuid[]; result jsonb; begin
-  if p_challenge_date<current_date-interval ''1 day'' or p_challenge_date>current_date+interval ''30 days'' then raise exception ''invalid challenge date''; end if;
+  if p_challenge_date<>current_date then raise exception ''challenge date is server current date only''; end if;
   select question_ids into ids from public.daily_challenges where challenge_date=p_challenge_date and status=''ready'';
   if ids is null then
     select array_agg(id) into ids from (select id from public.battle_questions where status=''active'' and ''daily''=any(allowed_modes) order by random() limit 10) s;
@@ -45,7 +45,7 @@ as 'declare ids uuid[]; result jsonb; begin
   return result;
 end';
 revoke all on function public.get_or_create_daily_challenge(date) from public;
-grant execute on function public.get_or_create_daily_challenge(date) to anon,authenticated;
+grant execute on function public.get_or_create_daily_challenge(date) to authenticated;
 
 create or replace function public.submit_daily_challenge(p_challenge_date date default current_date,p_answers jsonb default ''[]''::jsonb,p_time_seconds numeric default 0)
 returns jsonb language plpgsql security definer set search_path=public,extensions
@@ -76,6 +76,7 @@ as 'declare u uuid:=auth.uid(); ids uuid[]; existing public.daily_challenge_atte
   insert into public.daily_challenge_attempts(challenge_date,user_id,correct_answers,total_questions,time_seconds,score,reward_points,streak_days,answers) values(p_challenge_date,u,correct,total,safe_time,score,reward,streak,p_answers);
   return jsonb_build_object(''already_completed'',false,''correct_answers'',correct,''total_questions'',total,''time_seconds'',safe_time,''score'',score,''reward_points'',reward,''streak_days'',streak); end';
 revoke all on function public.submit_daily_challenge(date,jsonb,numeric) from public;
+revoke execute on function public.submit_daily_challenge(date,jsonb,numeric) from anon;
 grant execute on function public.submit_daily_challenge(date,jsonb,numeric) to authenticated;
 
 create or replace function public.get_daily_challenge_leaderboard(p_challenge_date date default current_date)
