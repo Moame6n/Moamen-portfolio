@@ -537,6 +537,26 @@
           <option value="تحليل مالي">تحليل مالي</option>
         </select>
         <div class="hint" style="margin-top:8px;">"مختلط" مش تخصص بيتخزّن — ده وضع اختيار بيسحب عشوائي من كل التخصصات وقت التحدي نفسه.</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;">
+          <label style="font-size:12px; color:var(--text-soft);">الصعوبة
+            <select id="battleDifficultySelect" style="width:100%; margin-top:5px; padding:9px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text);">
+              <option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">صعب</option>
+            </select>
+          </label>
+          <label style="font-size:12px; color:var(--text-soft);">الحالة
+            <select id="battleStatusSelect" style="width:100%; margin-top:5px; padding:9px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text);">
+              <option value="active" selected>معتمد ويستخدم</option><option value="draft">مسودة</option><option value="paused">موقوف مؤقتًا</option>
+            </select>
+          </label>
+        </div>
+        <div style="margin-top:14px; font-size:12px; color:var(--text-soft);">وجهات الأسئلة (يمكن اختيار أكثر من وجهة)</div>
+        <div id="battleModesPicker" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;">
+          <label><input type="checkbox" value="battle" checked> المباريات</label>
+          <label><input type="checkbox" value="private" checked> تحدي صديق</label>
+          <label><input type="checkbox" value="bot" checked> الخصم الافتراضي</label>
+          <label><input type="checkbox" value="daily"> التحدي اليومي</label>
+          <label><input type="checkbox" value="tournament"> البطولات مستقبلًا</label>
+        </div>
       </div>
 
       <div class="builder-card">
@@ -1667,7 +1687,11 @@ function handleBattleImportParse(){
   }
 
   const category = document.getElementById('battleCategorySelect').value;
-  parsedBattleQuestions = parsed.map(q => ({ category, question: q.q, options: q.o, correct_index: q.c }));
+  const difficulty = document.getElementById('battleDifficultySelect').value;
+  const status = document.getElementById('battleStatusSelect').value;
+  const allowed_modes = [...document.querySelectorAll('#battleModesPicker input:checked')].map(input => input.value);
+  if(!allowed_modes.length){ showBattleImportError('اختار وجهة واحدة على الأقل للسؤال.'); return; }
+  parsedBattleQuestions = parsed.map(q => ({ category, question: q.q, options: q.o, correct_index: q.c, difficulty, status, allowed_modes }));
 
   document.getElementById('battleQuestionsPreview').innerHTML = parsedBattleQuestions.map((q, i) => `
     <div class="q-block" style="cursor:default;">
@@ -1678,7 +1702,7 @@ function handleBattleImportParse(){
 
   document.getElementById('publishBattleBtn').style.display = 'inline-flex';
 
-  let msg = `تم تحليل ${parsed.length} سؤال بنجاح ✓ (تخصص: ${category})`;
+  let msg = `تم تحليل ${parsed.length} سؤال بنجاح ✓ (تخصص: ${category} — ${difficulty} — ${status})`;
   if(failed.length) msg += `<br>تعذّر قراءة ${failed.length} سؤال (رقم ${failed.join('، ')}).`;
   resultEl.className = failed.length ? 'gen-result' : 'gen-result success';
   if(failed.length){
@@ -1751,20 +1775,17 @@ async function loadBattleBankStats(){
   const stats = await res.json();
 
   const allCategories = ['محاسبة مالية','محاسبة تكاليف','مراجعة','محاسبة إدارية','تحليل مالي'];
+  const modeLabels = { battle:'مباريات', private:'صديق', bot:'بوت', daily:'يومي', tournament:'بطولات' };
   const countMap = {};
-  stats.forEach(s => { countMap[s.category] = s.total; });
-
+  stats.forEach(s => { countMap[`${s.category}|${s.mode}|${s.status}`] = (countMap[`${s.category}|${s.mode}|${s.status}`] || 0) + Number(s.total || 0); });
   statsEl.innerHTML = allCategories.map(cat => {
-    const count = countMap[cat] || 0;
-    const ready = count >= 10;
-    return `
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border-soft);">
-        <span style="font-size:13px;">${cat}</span>
-        <span style="font-family:var(--mono); font-size:12.5px; color:${ready ? 'var(--emerald)' : 'var(--gold)'};">
-          ${count} سؤال ${ready ? '✓ جاهز' : '(محتاج 10 على الأقل)'}
-        </span>
-      </div>
-    `;
+    const rows = Object.keys(modeLabels).map(mode => {
+      const active = countMap[`${cat}|${mode}|active`] || 0;
+      const draft = countMap[`${cat}|${mode}|draft`] || 0;
+      if(!active && !draft) return '';
+      return `<span style="display:inline-block; margin:3px 0 3px 8px; font-family:var(--mono); font-size:11px; color:${active >= 10 ? 'var(--emerald)' : 'var(--gold)'};">${modeLabels[mode]}: ${active}${draft ? ` (+${draft} مسودة)` : ''}</span>`;
+    }).join('');
+    return `<div style="padding:9px 0; border-bottom:1px solid var(--border-soft);"><div style="font-size:13px; font-weight:700;">${cat}</div><div>${rows || '<span style="color:var(--muted);font-size:11px;">لا توجد أسئلة مفعّلة</span>'}</div></div>`;
   }).join('');
 }
 

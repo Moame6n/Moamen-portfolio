@@ -608,10 +608,10 @@ async function startPrivateBattleAsHost(match){
   if(privateStarting || privateStarted) return;
   privateStarting = true;
   try{
-    const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions`, {
+    const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions_for_mode`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
-      body: JSON.stringify({ p_category: myCategory, p_count: 10 })
+      body: JSON.stringify({ p_category: myCategory, p_mode: 'private', p_count: 10 })
     });
     const generatedQuestions = await qRes.json();
     const data = await privateRpc('start_private_battle', { p_invite_code: privateInviteCode, p_questions: generatedQuestions });
@@ -713,10 +713,10 @@ async function fallbackToBot(){
   }).catch(()=>{});
 
   opponentName = 'خصم افتراضي';
-  const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions`, {
+  const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions_for_mode`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
-    body: JSON.stringify({ p_category: myCategory, p_count: 10 })
+    body: JSON.stringify({ p_category: myCategory, p_mode: 'bot', p_count: 10 })
   });
   questions = await qRes.json();
 
