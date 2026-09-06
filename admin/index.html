@@ -271,9 +271,7 @@
           </div>
         </div>
         <div class="field-row">
-          <label>مفتاح إرسال الإشعارات (مرة واحدة بس)</label>
-          <input type="password" id="notifySecret" placeholder="القيمة اللي حطيتها في NOTIFY_SECRET على Vercel">
-          <div class="hint">بيُستخدم مؤقتًا أثناء الجلسة، ومطلوب عشان تقدر ترسل إشعار عند أي نشر جديد.</div>
+          <div class="hint" style="color:var(--emerald);">إرسال الإشعارات أصبح مرتبطًا بجلسة الإدارة الآمنة — لا تحتاج لإدخال Secret يدويًا.</div>
         </div>
         <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-top:6px;">
           <input type="checkbox" id="notifyOnPublishExam" checked style="width:16px; height:16px;">
@@ -714,7 +712,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('newExamTitle').addEventListener('input', autoSlug);
   // Secrets are intentionally kept only in the current page memory.
   // Never persist GitHub or notification credentials in localStorage/sessionStorage.
-  ['ghToken', 'ghTokenTpl', 'ghTokenTool', 'notifySecret'].forEach((id) => {
+  ['ghToken', 'ghTokenTpl', 'ghTokenTool'].forEach((id) => {
     const field = document.getElementById(id);
     if (field) field.autocomplete = 'off';
   });
@@ -999,18 +997,13 @@ function utf8ToBase64(str){
   return btoa(unescape(encodeURIComponent(str)));
 }
 
-function getNotificationSecret(){
-  return (document.getElementById('notifySecret')?.value || '').trim();
-}
-
 async function sendPushNotification(title, body, url){
-  const secret = getNotificationSecret();
-  if(!secret) return;
+  if(!adminAccessToken) return;
   try{
     await fetch('/api/send-notification', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-notify-secret': secret },
-      body: JSON.stringify({ title: String(title).slice(0, 120), body: String(body).slice(0, 500), url })
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminAccessToken}` },
+      body: JSON.stringify({ title: String(title).slice(0, 120), body: String(body).slice(0, 500), url, tag: 'moamen-publish-update' })
     });
   }catch(e){ console.warn('Notification delivery failed:', e); }
 }
