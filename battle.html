@@ -15,7 +15,7 @@
 <script src="/assets/theme.js"></script>
 <script src="/assets/supabase-config.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/assets/recommendations.js"></script>
 <style>
   body{ padding:0; }
   .page-hero{ padding:50px 0 10px; }
@@ -299,7 +299,7 @@
           <div class="rating-main"><span class="rating-rank" id="ratingRank">Bronze</span><span id="ratingPoints">1000 نقطة</span><span class="rating-delta" id="ratingDelta"></span></div>
           <div class="rating-meta" id="ratingMeta"></div>
         </div>
-        <div class="btn-row">
+        <div id="nextStep" style="max-width:520px;margin:0 auto;"></div><div class="btn-row">
           <button class="btn btn-primary" id="rematchBtn">تحدي تاني</button>
           <a href="/tools-exams.html" class="btn btn-outline" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">رجوع للموقع</a>
         </div>
@@ -910,6 +910,7 @@ async function showResult(oppTime, forfeit){
     ? `تعادل في الإجابات — الحسم كان بالسرعة: ${parseFloat(myTime) <= parseFloat(oppTime || myTime) ? 'كنت الأسرع.' : 'الخصم كان الأسرع.'}`
     : `أجبت ${myAccuracy}% من الأسئلة بشكل صحيح، بفارق ${Math.abs(myCorrect - oppCorrect)} إجابة عن الخصم.`;
   document.getElementById('botNote').style.display = isBot ? 'block' : 'none';
+  SiteRecommendations.show('nextStep', iWon ? {title:'حافظ على الفوز بتحدي اليوم',body:'نتيجتك اتحفظت والتحدي اليومي بيديك نقاط ومكافأة إضافية.',label:'تحدي اليوم',href:'/daily-challenge.html'} : {title:'خلّي الجولة الجاية لصالحك',body:'راجع أداءك وشوف إحصائياتك قبل ما تبدأ تحدي جديد.',label:'فتح حسابي',href:'/profile.html'});
   document.getElementById('ratingResult').style.display = 'none';
 
   try{
