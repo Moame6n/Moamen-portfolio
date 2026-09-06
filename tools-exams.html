@@ -243,14 +243,14 @@ const TAB_SECTIONS = {
   'templates-section': 'templates-section'
 };
 
-function switchSectionTab(targetId){
+function switchSectionTab(targetId, shouldScroll = true){
   document.querySelectorAll('.subnav a').forEach(a => {
     a.classList.toggle('active', a.getAttribute('href') === '#' + targetId);
   });
   Object.values(TAB_SECTIONS).forEach(id => {
     document.getElementById(id).classList.toggle('hidden-tab', id !== targetId);
   });
-  window.scrollTo({ top: document.querySelector('.subnav').offsetTop - 90, behavior: 'smooth' });
+  if(shouldScroll) window.scrollTo({ top: document.querySelector('.subnav').offsetTop - 90, behavior: 'smooth' });
 }
 
 document.querySelectorAll('.subnav a').forEach(link => {
@@ -264,7 +264,7 @@ document.querySelectorAll('.subnav a').forEach(link => {
 
 // open directly on the right tab if the URL already has a hash (e.g. shared link)
 const initialTab = window.location.hash ? window.location.hash.slice(1) : 'exams-section';
-switchSectionTab(TAB_SECTIONS[initialTab] ? initialTab : 'exams-section');
+switchSectionTab(TAB_SECTIONS[initialTab] ? initialTab : 'exams-section', false);
 
 // ==== Auto-discovery: list every .html file in /exams and /tools on GitHub,
 // read its <title> + <meta name="description"> + optional <meta name="icon">,
