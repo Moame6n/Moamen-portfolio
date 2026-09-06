@@ -223,7 +223,11 @@ document.getElementById('authSubmitBtn').addEventListener('click', async () => {
 
   try{
     if(authMode === 'signup'){
-      const { data, error } = await sb.auth.signUp({ email, password });
+      const { data, error } = await sb.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: `${window.location.origin}/profile.html?confirmed=1` }
+      });
       if(error) throw error;
 
       if(data.session){
@@ -274,6 +278,22 @@ async function loadProfile(){
   document.getElementById('avatarImg').src = profile.avatar_url || 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="76" height="76"><rect width="76" height="76" fill="%23161F2E"/><text x="50%" y="55%" font-size="28" fill="%233DDC97" text-anchor="middle" font-family="sans-serif">${profile.full_name.charAt(0)}</text></svg>`);
 
   loadActivity();
+}
+
+async function initializeAuthPage(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('confirmed') === '1'){
+    // Supabase may create a short-lived session while consuming the confirmation link.
+    // Sign it out so the user lands on the login tab as promised, not on a half-loaded profile.
+    await sb.auth.signOut().catch(() => {});
+    history.replaceState({}, document.title, '/profile.html');
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === 'login'));
+    authMode = 'login';
+    document.getElementById('nameFieldRow').style.display = 'none';
+    document.getElementById('authSubmitBtn').textContent = 'تسجيل الدخول';
+    showAuthMsg('تم تأكيد بريدك الإلكتروني بنجاح ✓ — يمكنك تسجيل الدخول الآن.', 'success');
+  }
+  await loadProfile();
 }
 
 document.getElementById('editNameBtn').addEventListener('click', async () => {
@@ -337,7 +357,7 @@ function escP(str){
   return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-loadProfile();
+initializeAuthPage();
 </script>
 <script src="/assets/notifications.js" defer></script>
 </body>
