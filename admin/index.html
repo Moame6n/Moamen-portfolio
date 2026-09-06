@@ -494,12 +494,16 @@
       </div>
 
       <div class="builder-card">
-        <h3>3. ملف الأداة المبني على القالب</h3>
+        <h3>3. ملف الأداة أو كود HTML</h3>
         <div class="dropzone" id="toolDropzone" style="padding:26px 20px;">
-          <div style="font-weight:700; font-size:14px; margin-bottom:4px;" id="toolFileLabel">اسحب ملف الأداة النهائي هنا، أو دوس للاختيار</div>
-          <div style="font-size:12px; color:var(--muted);">لازم يكون مبني من نسخة قالب الأداة اللي فيه علامات الاستخراج</div>
-          <input type="file" id="toolFileInput" accept=".html" style="display:none;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px;" id="toolFileLabel">ارفع ملف HTML، أو دوس للاختيار</div>
+          <div style="font-size:12px; color:var(--muted);">استخدم الملف أو مربع الكود بالأسفل — لا تستخدم الاثنين معًا</div>
+          <input type="file" id="toolFileInput" accept=".html,text/html" style="display:none;">
         </div>
+        <div style="display:flex; align-items:center; gap:10px; margin:16px 0 10px; color:var(--text-soft); font-size:12px;"><span style="height:1px; flex:1; background:var(--border-soft);"></span><b>أو الصق الكود مباشرة</b><span style="height:1px; flex:1; background:var(--border-soft);"></span></div>
+        <textarea id="toolCodeInput" maxlength="800000" spellcheck="false" placeholder="الصق كود HTML هنا...
+يفضل أن يحتوي على TOOL_CSS_START و TOOL_BODY_START و TOOL_JS_START للحَقن الأدق." style="width:100%; min-height:230px; resize:vertical; direction:ltr; text-align:left; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:12px; line-height:1.6; padding:14px; border:1px solid var(--border-soft); border-radius:10px; background:var(--bg); color:var(--text);"></textarea>
+        <div style="font-size:11px; color:var(--muted); margin-top:7px;">الحد الأقصى 800KB. النظام سيستخدم نفس التحقق والقالب الموحد الموجودين في رفع الملف.</div>
       </div>
 
       <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-bottom:12px;">
@@ -681,6 +685,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('toolDropzone').addEventListener('click', () => document.getElementById('toolFileInput').click());
   document.getElementById('toolFileInput').addEventListener('change', (e) => {
     if(e.target.files[0]) document.getElementById('toolFileLabel').textContent = '✓ ' + e.target.files[0].name;
+    document.getElementById('toolCodeInput').value = '';
   });
   document.getElementById('toolDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('toolDropzone').classList.add('drag'); });
   document.getElementById('toolDropzone').addEventListener('dragleave', () => document.getElementById('toolDropzone').classList.remove('drag'));
@@ -690,6 +695,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if(e.dataTransfer.files[0]){
       document.getElementById('toolFileInput').files = e.dataTransfer.files;
       document.getElementById('toolFileLabel').textContent = '✓ ' + e.dataTransfer.files[0].name;
+      document.getElementById('toolCodeInput').value = '';
     }
   });
   document.getElementById('publishToolBtn').addEventListener('click', publishTool);
@@ -1506,19 +1512,23 @@ async function publishTool(){
   const desc = document.getElementById('toolDescInput').value.trim();
   const icon = document.getElementById('toolIconInput').value.trim();
   const file = document.getElementById('toolFileInput').files[0];
+  const pastedCode = document.getElementById('toolCodeInput').value.trim();
 
   if(!token) return showToolError('من فضلك حط GitHub Token الأول.');
   if(!title || !slug || !desc) return showToolError('من فضلك املأ العنوان والـ slug والوصف.');
   if(title.includes('\\') || title.includes('\'') || title.length > 160 || desc.length > 500) return showToolError('العنوان أو الوصف أطول من الحد المسموح.');
   if(!/^[a-z0-9][a-z0-9-]{0,70}$/.test(slug)) return showToolError('الـ slug لازم يكون حروف إنجليزي صغيرة وأرقام وشرطات بس.');
-  if(!file) return showToolError('من فضلك ارفع ملف الأداة المبني على القالب.');
+  if(!file && !pastedCode) return showToolError('من فضلك ارفع ملف HTML أو الصق كود الأداة.');
+  if(file && pastedCode) return showToolError('اختار طريقة واحدة فقط: الملف أو الكود الملصوق.');
+  if(file && file.size > 800000) return showToolError('ملف الأداة أكبر من الحد المسموح (800KB).');
+  if(pastedCode.length > 800000) return showToolError('كود الأداة أكبر من الحد المسموح (800KB).');
 
   const btn = document.getElementById('publishToolBtn');
   btn.disabled = true;
   btn.textContent = 'جارِ النشر...';
 
   try{
-    const uploadedText = await file.text();
+    const uploadedText = file ? await file.text() : pastedCode;
 
     let extractedCss = extractBetween(uploadedText, '/* TOOL_CSS_START */', '/* TOOL_CSS_END */');
     let extractedBody = extractBetween(uploadedText, '<!-- TOOL_BODY_START -->', '<!-- TOOL_BODY_END -->');
