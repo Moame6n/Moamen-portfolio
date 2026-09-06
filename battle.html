@@ -91,10 +91,18 @@
   .pdot.on-me{ background:var(--emerald); }
   .pdot.on-opp{ background:var(--red); }
   .score-line{ font-family:var(--mono); font-size:12px; color:var(--text-soft); }
+  .progress-track{ height:5px; margin:8px 8px 0; border-radius:99px; background:var(--border-soft); overflow:hidden; }
+  .progress-fill{ height:100%; width:0; border-radius:inherit; transition:width .2s ease-out; }
+  .progress-fill.me{ background:var(--emerald); }
+  .progress-fill.opp{ background:var(--red); }
+  .progress-caption{ display:flex; justify-content:space-between; margin:9px 2px 0; color:var(--muted); font-size:10.5px; }
 
   .timer-box{ text-align:center; margin:14px 0 20px; }
+  .timer-label{ color:var(--muted); font-size:11px; margin-bottom:2px; }
   .timer-num{ font-family:var(--mono); font-size:30px; font-weight:700; color:var(--emerald); }
   .timer-num.low{ color:var(--red); }
+  .timer-track{ height:4px; max-width:250px; margin:7px auto 0; border-radius:99px; background:var(--border-soft); overflow:hidden; }
+  .timer-fill{ height:100%; width:100%; background:var(--emerald); transition:width 1s linear, background .2s ease; }
 
   .qnum{ font-family:var(--mono); font-size:12.5px; color:var(--gold); margin-bottom:8px; }
   .qtext{ font-size:16px; font-weight:700; margin-bottom:18px; line-height:1.7; }
@@ -121,6 +129,11 @@
   .rating-result .rating-rank{ color:var(--gold); }
   .rating-result .rating-delta{ font-family:var(--mono); color:var(--emerald); }
   .rating-result .rating-meta{ margin-top:5px; font-size:11px; color:var(--muted); }
+  .result-summary{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin:18px 0 4px; }
+  .result-stat{ padding:10px 8px; border:1px solid var(--border-soft); border-radius:8px; background:var(--surface-2); }
+  .result-stat .num{ display:block; font-family:var(--mono); font-size:15px; font-weight:700; color:var(--text); }
+  .result-stat .lbl{ display:block; margin-top:3px; color:var(--muted); font-size:10.5px; }
+  .performance-note{ color:var(--text-soft); font-size:12px; line-height:1.7; margin-top:12px; }
 
   .btn-row{ display:flex; gap:10px; margin-top:20px; }
   .btn-row .btn{ flex:1; justify-content:center; }
@@ -248,15 +261,18 @@
             <div class="name" id="meName">أنت</div>
             <div class="progress-dots" id="meDots"></div>
             <div class="score-line" id="meScore">0/10 صح</div>
+            <div class="progress-track"><div class="progress-fill me" id="meProgressFill"></div></div>
           </div>
           <div class="vs-mid">VS</div>
           <div class="vs-side opp">
             <div class="name" id="oppName">الخصم</div>
             <div class="progress-dots" id="oppDots"></div>
             <div class="score-line" id="oppScore">0/10 صح</div>
+            <div class="progress-track"><div class="progress-fill opp" id="oppProgressFill"></div></div>
           </div>
         </div>
-        <div class="timer-box"><span class="timer-num" id="timerNum">00:00</span></div>
+        <div class="progress-caption"><span>تقدمك</span><span id="progressCaption">الخصم: 0%</span></div>
+        <div class="timer-box"><div class="timer-label">الوقت المتبقي</div><span class="timer-num" id="timerNum">03:00</span><div class="timer-track"><div class="timer-fill" id="timerFill"></div></div></div>
         <div class="qnum" id="qNum">السؤال 1 من 10</div>
         <div class="qtext" id="qText">--</div>
         <div id="optsWrap"></div>
@@ -270,6 +286,13 @@
           <div class="compare-col"><div class="num" id="resOppScore" style="color:var(--red);">0</div><div class="lbl">إجابات الخصم</div></div>
           <div class="compare-col"><div class="num" id="resTime" style="color:var(--gold);">0s</div><div class="lbl">وقتك</div></div>
         </div>
+        <div class="result-summary">
+          <div class="result-stat"><span class="num" id="resAccuracy">0%</span><span class="lbl">دقتك</span></div>
+          <div class="result-stat"><span class="num" id="resOppAccuracy">0%</span><span class="lbl">دقة الخصم</span></div>
+          <div class="result-stat"><span class="num" id="resMargin">0</span><span class="lbl">فارق الإجابات</span></div>
+          <div class="result-stat"><span class="num" id="resAvgTime">0s</span><span class="lbl">متوسط السؤال</span></div>
+        </div>
+        <div class="performance-note" id="performanceNote"></div>
         <div class="bot-note" id="botNote" style="display:none;">كانت دي مواجهة ضد خصم افتراضي — لا تؤثر على التصنيف 🤖</div>
         <div class="rating-result" id="ratingResult">
           <div class="rating-main"><span class="rating-rank" id="ratingRank">Bronze</span><span id="ratingPoints">1000 نقطة</span><span class="rating-delta" id="ratingDelta"></span></div>
@@ -754,20 +777,32 @@ function startBattle(){
   document.getElementById('meName').textContent = myName;
   document.getElementById('oppName').textContent = opponentName || 'الخصم';
   buildDots('meDots'); buildDots('oppDots');
-  currentQ = 0; myCorrect = 0; oppCorrect = 0; myAnswers = [];
+  currentQ = 0; myCorrect = 0; oppCorrect = 0; oppProgress = 0; myAnswers = [];
   myFinished = false; oppFinished = false; resultShown = false;
   matchStartTime = Date.now();
+  myFinishTime = null;
+  clearInterval(timerInterval);
   timeLeft = 180;
+  updateTimerDisplay();
   timerInterval = setInterval(() => {
     timeLeft--;
-    const mm = String(Math.floor(Math.max(timeLeft,0)/60)).padStart(2,'0');
-    const ss = String(Math.max(timeLeft,0)%60).padStart(2,'0');
-    const el = document.getElementById('timerNum');
-    el.textContent = `${mm}:${ss}`;
-    el.classList.toggle('low', timeLeft <= 10);
+    updateTimerDisplay();
     if(timeLeft <= 0){ clearInterval(timerInterval); finishBattle(); }
   }, 1000);
   renderQuestion();
+}
+
+function updateTimerDisplay(){
+  const remaining = Math.max(timeLeft, 0);
+  const mm = String(Math.floor(remaining / 60)).padStart(2,'0');
+  const ss = String(remaining % 60).padStart(2,'0');
+  const el = document.getElementById('timerNum');
+  const fill = document.getElementById('timerFill');
+  if(!el || !fill) return;
+  el.textContent = `${mm}:${ss}`;
+  el.classList.toggle('low', remaining <= 10);
+  fill.style.width = `${Math.max(0, Math.min(100, remaining / 180 * 100))}%`;
+  fill.style.background = remaining <= 10 ? 'var(--red)' : 'var(--emerald)';
 }
 
 function buildDots(id){
@@ -805,6 +840,8 @@ function updateSelfProgress(index, correct){
   const dots = document.querySelectorAll('#meDots .pdot');
   dots.forEach((d,i) => d.classList.toggle('on-me', i < index));
   document.getElementById('meScore').textContent = `${correct}/${questions.length} صح`;
+  document.getElementById('meProgressFill').style.width = `${Math.min(100, index / questions.length * 100)}%`;
+  document.getElementById('progressCaption').textContent = `الخصم: ${Math.round(oppProgress / questions.length * 100)}%`;
   if(index >= questions.length){ myFinished = true; myFinishTime = ((Date.now()-matchStartTime)/1000).toFixed(1); finishBattle(); }
 }
 
@@ -812,6 +849,8 @@ function updateOpponentProgress(index, correct){
   const dots = document.querySelectorAll('#oppDots .pdot');
   dots.forEach((d,i) => d.classList.toggle('on-opp', i < index));
   document.getElementById('oppScore').textContent = `${correct}/${questions.length} صح`;
+  document.getElementById('oppProgressFill').style.width = `${Math.min(100, index / questions.length * 100)}%`;
+  document.getElementById('progressCaption').textContent = `الخصم: ${Math.round(index / questions.length * 100)}%`;
   oppProgress = index; oppCorrect = correct;
 }
 
@@ -859,6 +898,16 @@ async function showResult(oppTime, forfeit){
   document.getElementById('resMyScore').textContent = myCorrect;
   document.getElementById('resOppScore').textContent = oppCorrect;
   document.getElementById('resTime').textContent = myTime + 's';
+  const totalQuestions = Math.max(questions.length, 1);
+  const myAccuracy = Math.round(myCorrect / totalQuestions * 100);
+  const oppAccuracy = Math.round(oppCorrect / totalQuestions * 100);
+  document.getElementById('resAccuracy').textContent = `${myAccuracy}%`;
+  document.getElementById('resOppAccuracy').textContent = `${oppAccuracy}%`;
+  document.getElementById('resMargin').textContent = `${myCorrect - oppCorrect > 0 ? '+' : ''}${myCorrect - oppCorrect}`;
+  document.getElementById('resAvgTime').textContent = `${(parseFloat(myTime) / totalQuestions).toFixed(1)}s`;
+  document.getElementById('performanceNote').textContent = myCorrect === oppCorrect
+    ? `تعادل في الإجابات — الحسم كان بالسرعة: ${parseFloat(myTime) <= parseFloat(oppTime || myTime) ? 'كنت الأسرع.' : 'الخصم كان الأسرع.'}`
+    : `أجبت ${myAccuracy}% من الأسئلة بشكل صحيح، بفارق ${Math.abs(myCorrect - oppCorrect)} إجابة عن الخصم.`;
   document.getElementById('botNote').style.display = isBot ? 'block' : 'none';
   document.getElementById('ratingResult').style.display = 'none';
 
