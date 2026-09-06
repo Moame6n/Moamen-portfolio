@@ -63,6 +63,21 @@
   .pulse-ring span{ font-size:30px; }
   .wait-text{ font-size:15px; color:var(--text-soft); margin-bottom:8px; }
   .wait-count{ font-family:var(--mono); font-size:13px; color:var(--muted); }
+  .private-divider{ display:flex; align-items:center; gap:10px; margin:18px 0 14px; color:var(--muted); font-size:12px; }
+  .private-divider::before,.private-divider::after{ content:''; flex:1; height:1px; background:var(--border-soft); }
+  .private-join-box{ margin-top:18px; padding-top:18px; border-top:1px solid var(--border-soft); }
+  .private-join-box label{ display:block; color:var(--text-soft); font-size:12.5px; font-weight:700; margin-bottom:7px; }
+  .private-join-row{ display:flex; gap:8px; }
+  .private-join-row input{ flex:1; min-width:0; text-transform:uppercase; letter-spacing:1px; }
+  .private-join-row .btn{ flex:0 0 auto; padding-inline:16px; }
+  .private-hint{ color:var(--muted); font-size:12px; line-height:1.7; margin-top:8px; }
+  .private-lobby{ margin-top:18px; padding-top:18px; border-top:1px solid var(--border-soft); }
+  .private-lobby-title{ color:var(--gold); font-weight:700; font-size:13px; margin-bottom:9px; }
+  .private-link-row{ display:flex; gap:7px; }
+  .private-link-row input{ flex:1; min-width:0; direction:ltr; text-align:left; font-family:var(--mono); font-size:11px; }
+  .private-link-row .btn{ flex:0 0 auto; padding-inline:13px; }
+  .private-lobby-actions{ display:flex; gap:8px; margin-top:10px; }
+  .private-lobby-actions .btn{ flex:1; justify-content:center; }
 
   /* battle */
   .vs-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
@@ -190,6 +205,16 @@
         </div>
         <div id="entryErr" style="display:none; color:var(--red); font-size:12.5px; margin-bottom:12px;"></div>
         <button class="btn btn-primary" id="startBattleBtn" style="width:100%; justify-content:center;">ابدأ التحدي</button>
+        <div class="private-divider"><span>أو</span></div>
+        <button class="btn btn-outline" id="createPrivateBtn" style="width:100%; justify-content:center;">إنشاء تحدي خاص مع صديق</button>
+        <div class="private-join-box">
+          <label for="privateInviteInput">عندك رابط تحدي من صديق؟</label>
+          <div class="private-join-row">
+            <input type="text" id="privateInviteInput" placeholder="اكتب كود الدعوة" maxlength="8" autocomplete="off">
+            <button class="btn btn-outline" id="joinPrivateBtn" type="button">انضم</button>
+          </div>
+          <div class="private-hint" id="privateInviteHint"></div>
+        </div>
       </div>
 
       <!-- WAITING -->
@@ -197,6 +222,18 @@
         <div class="pulse-ring"><span>🔍</span></div>
         <div class="wait-text" id="waitText">بندوّر على خصم...</div>
         <div class="wait-count" id="waitCount"></div>
+        <div class="private-lobby" id="privateLobby" style="display:none;">
+          <div class="private-lobby-title">التحدي الخاص جاهز</div>
+          <div class="private-link-row">
+            <input type="text" id="privateInviteLink" readonly aria-label="رابط التحدي الخاص">
+            <button class="btn btn-outline" id="copyPrivateLinkBtn" type="button">نسخ</button>
+          </div>
+          <div class="private-lobby-actions">
+            <button class="btn btn-primary" id="sharePrivateLinkBtn" type="button">مشاركة الرابط</button>
+            <button class="btn btn-outline" id="cancelPrivateBtn" type="button">إلغاء</button>
+          </div>
+          <div class="private-hint" id="privateLobbyStatus">ابعت الرابط لصديقك، وأول ما يدخل هنبدأ المباراة.</div>
+        </div>
       </div>
 
       <!-- BATTLE -->
@@ -327,6 +364,8 @@ let matchId = null;
 let opponentName = '';
 let isBot = false;
 let waitTimeout = null, waitInterval = null;
+let privatePollInterval = null;
+let privateMode = false, privateRole = '', privateInviteCode = '', privateStarted = false, privateStarting = false;
 let matchStartTime = null, myFinishTime = null;
 let myFinished = false, oppFinished = false, resultShown = false;
 let timerInterval = null, timeLeft = 180;
@@ -338,8 +377,238 @@ function showScreen(id){
 }
 
 document.getElementById('startBattleBtn').addEventListener('click', startMatchmaking);
+document.getElementById('createPrivateBtn').addEventListener('click', createPrivateMatch);
+document.getElementById('joinPrivateBtn').addEventListener('click', joinPrivateMatch);
+document.getElementById('privateInviteInput').addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, 8);
+});
+document.getElementById('copyPrivateLinkBtn').addEventListener('click', copyPrivateLink);
+document.getElementById('sharePrivateLinkBtn').addEventListener('click', sharePrivateLink);
+document.getElementById('cancelPrivateBtn').addEventListener('click', cancelPrivateMatch);
+
+function privateRpc(name, params){
+  return sb.rpc(name, params).then(({ data, error }) => {
+    if(error) throw error;
+    return data;
+  });
+}
+
+function setPrivateHint(text, color){
+  const el = document.getElementById('privateInviteHint');
+  el.textContent = text || '';
+  el.style.color = color || 'var(--muted)';
+}
+
+function setPrivateLobbyStatus(text, color){
+  const el = document.getElementById('privateLobbyStatus');
+  el.textContent = text || '';
+  el.style.color = color || 'var(--muted)';
+}
+
+function clearPrivatePolling(){
+  if(privatePollInterval){ clearInterval(privatePollInterval); privatePollInterval = null; }
+}
+
+function resetPrivateUi(){
+  clearPrivatePolling();
+  document.getElementById('privateLobby').style.display = 'none';
+  document.getElementById('privateInviteLink').value = '';
+  document.getElementById('privateInviteInput').value = '';
+  document.getElementById('privateInviteHint').textContent = '';
+  privateMode = false; privateRole = ''; privateInviteCode = ''; privateStarted = false; privateStarting = false;
+}
+
+function privateLinkFor(code){
+  return `${location.origin}${location.pathname}?match=${encodeURIComponent(code)}`;
+}
+
+async function copyPrivateLink(){
+  const link = document.getElementById('privateInviteLink').value;
+  if(!link) return;
+  try{
+    await navigator.clipboard.writeText(link);
+    setPrivateLobbyStatus('اتنسخ الرابط — ابعته لصديقك دلوقتي.', 'var(--emerald)');
+  }catch(e){
+    const input = document.getElementById('privateInviteLink');
+    input.select();
+    document.execCommand('copy');
+    setPrivateLobbyStatus('اتنسخ الرابط — ابعته لصديقك دلوقتي.', 'var(--emerald)');
+  }
+}
+
+async function sharePrivateLink(){
+  const link = document.getElementById('privateInviteLink').value;
+  if(!link) return;
+  const shareData = { title: 'تحدي خاص', text: `${myName} دعاك لمباراة محاسبة خاصة`, url: link };
+  try{
+    if(navigator.share) await navigator.share(shareData);
+    else { await navigator.clipboard.writeText(link); setPrivateLobbyStatus('الرابط اتنسخ — ابعته لصديقك.', 'var(--emerald)'); }
+  }catch(e){ if(e.name !== 'AbortError') setPrivateLobbyStatus('انسخ الرابط يدويًا وابعته لصديقك.', 'var(--gold)'); }
+}
+
+async function createPrivateMatch(){
+  const name = document.getElementById('battleName').value.trim();
+  if(!name){ setPrivateHint('اكتب اسمك الأول عشان ننشئ التحدي.', 'var(--red)'); return; }
+  setPrivateHint('جارِ إنشاء رابط التحدي...', 'var(--gold)');
+  myName = name;
+  myCategory = document.getElementById('battleCategory').value;
+  isBot = false; privateMode = true; privateRole = 'host'; privateStarted = false; privateStarting = false;
+  try{
+    const data = await privateRpc('create_private_battle', { p_host_name: myName, p_category: myCategory });
+    matchId = data.match_id;
+    privateInviteCode = data.invite_code;
+    document.getElementById('privateInviteLink').value = privateLinkFor(privateInviteCode);
+    document.getElementById('privateLobby').style.display = 'block';
+    showScreen('waitScreen');
+    document.getElementById('waitText').textContent = 'مستني صديقك يدخل التحدي...';
+    document.getElementById('waitCount').textContent = `كود الدعوة: ${privateInviteCode}`;
+    setPrivateLobbyStatus('ابعت الرابط لصديقك، وأول ما يدخل هنبدأ المباراة.', 'var(--muted)');
+    await subscribePrivateChannel();
+    startPrivatePolling();
+  }catch(e){
+    privateMode = false; privateRole = '';
+    setPrivateHint('حصلت مشكلة في إنشاء التحدي. جرّب مرة تانية.', 'var(--red)');
+  }
+}
+
+async function joinPrivateMatch(){
+  const name = document.getElementById('battleName').value.trim();
+  const code = document.getElementById('privateInviteInput').value.trim().toUpperCase();
+  if(!name){ setPrivateHint('اكتب اسمك الأول عشان تنضم.', 'var(--red)'); return; }
+  if(!/^[A-Z0-9]{8}$/.test(code)){ setPrivateHint('اكتب كود دعوة صحيح من 8 حروف/أرقام.', 'var(--red)'); return; }
+  setPrivateHint('جارِ الانضمام للتحدي...', 'var(--gold)');
+  myName = name; privateInviteCode = code; privateMode = true; privateRole = 'guest'; isBot = false; privateStarted = false; privateStarting = false;
+  try{
+    const data = await privateRpc('join_private_battle', { p_invite_code: code, p_guest_name: myName });
+    matchId = data.match_id;
+    opponentName = data.host_name;
+    myCategory = data.category || document.getElementById('battleCategory').value;
+    const categorySelect = document.getElementById('battleCategory');
+    if([...categorySelect.options].some(o => o.value === myCategory)) categorySelect.value = myCategory;
+    document.getElementById('privateLobby').style.display = 'block';
+    document.getElementById('privateInviteLink').value = privateLinkFor(code);
+    showScreen('waitScreen');
+    document.getElementById('waitText').textContent = 'دخلت التحدي — مستني صاحبك يبدأ...';
+    document.getElementById('waitCount').textContent = `التخصص: ${myCategory}`;
+    setPrivateLobbyStatus('تم الانضمام بنجاح. المباراة هتبدأ أول ما صاحبك يجهز.', 'var(--emerald)');
+    await subscribePrivateChannel();
+    await checkPrivateState();
+    startPrivatePolling();
+    if(matchChannel) matchChannel.send({ type:'broadcast', event:'private_guest_joined', payload:{ name: myName } });
+  }catch(e){
+    privateMode = false; privateRole = '';
+    setPrivateHint(e.message && e.message.includes('already has a guest') ? 'التحدي ده اتاخد بالفعل من لاعب تاني.' : 'الرابط غير صالح أو انتهت صلاحيته.', 'var(--red)');
+  }
+}
+
+async function initializePrivateInvite(){
+  const code = new URL(location.href).searchParams.get('match');
+  if(!code) return;
+  const normalized = code.trim().toUpperCase();
+  document.getElementById('privateInviteInput').value = normalized;
+  try{
+    const data = await privateRpc('get_private_battle', { p_invite_code: normalized });
+    if(!data){ setPrivateHint('الرابط غير موجود أو انتهت صلاحيته.', 'var(--red)'); return; }
+    if(data.status === 'active' && data.questions && data.questions.length === 10){
+      setPrivateHint('المباراة بدأت بالفعل. اكتب اسمك وانضم لها.', 'var(--gold)');
+    }else{
+      setPrivateHint(`دعوة من ${data.host_name} — التخصص: ${data.category}. اكتب اسمك واضغط انضم.`, 'var(--gold)');
+    }
+  }catch(e){ setPrivateHint('تعذّر قراءة رابط التحدي حاليًا.', 'var(--red)'); }
+}
+
+async function subscribePrivateChannel(){
+  if(matchChannel) await matchChannel.unsubscribe();
+  matchChannel = sb.channel('battle-' + matchId, { config: { presence: { key: myName } } });
+  matchChannel.on('broadcast', { event: 'private_started' }, payload => {
+    const data = payload.payload || {};
+    if(!privateStarted && Array.isArray(data.questions) && data.questions.length === 10){
+      questions = data.questions;
+      opponentName = data.hostName || opponentName || 'صديقك';
+      privateStarted = true;
+      privateStarting = false;
+      clearPrivatePolling();
+      startBattle();
+    }
+  });
+  matchChannel.on('broadcast', { event: 'progress' }, payload => {
+    if(payload.payload.name !== myName) updateOpponentProgress(payload.payload.index, payload.payload.correct);
+  });
+  matchChannel.on('broadcast', { event: 'finished' }, payload => {
+    if(payload.payload.name !== myName){
+      oppFinished = true; oppCorrect = payload.payload.correct; checkForResult(payload.payload.time);
+    }
+  });
+  matchChannel.on('presence', { event: 'leave' }, ({ leftPresences }) => {
+    if(privateStarted && !myFinished && !resultShown && leftPresences.some(p => p.key !== myName)) declareForfeit();
+  });
+  await new Promise((resolve, reject) => {
+    matchChannel.subscribe(status => {
+      if(status === 'SUBSCRIBED') resolve();
+      if(status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') reject(new Error(status));
+    });
+  });
+  await matchChannel.track({ name: myName });
+}
+
+function startPrivatePolling(){
+  clearPrivatePolling();
+  privatePollInterval = setInterval(checkPrivateState, 2200);
+}
+
+async function checkPrivateState(){
+  if(!privateInviteCode || privateStarted) return;
+  try{
+    const data = await privateRpc('get_private_battle', { p_invite_code: privateInviteCode });
+    if(!data) return;
+    if(privateRole === 'host' && data.status === 'ready') await startPrivateBattleAsHost(data);
+    if(data.status === 'active' && data.questions && data.questions.length === 10 && !privateStarted){
+      questions = data.questions;
+      opponentName = privateRole === 'host' ? (data.guest_name || 'صديقك') : (data.host_name || 'صديقك');
+      privateStarted = true;
+      clearPrivatePolling();
+      startBattle();
+    }
+  }catch(e){}
+}
+
+async function startPrivateBattleAsHost(match){
+  if(privateStarting || privateStarted) return;
+  privateStarting = true;
+  try{
+    const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ p_category: myCategory, p_count: 10 })
+    });
+    const generatedQuestions = await qRes.json();
+    const data = await privateRpc('start_private_battle', { p_invite_code: privateInviteCode, p_questions: generatedQuestions });
+    questions = data.questions || generatedQuestions;
+    opponentName = match.guest_name || 'صديقك';
+    privateStarted = true;
+    clearPrivatePolling();
+    if(matchChannel) matchChannel.send({ type:'broadcast', event:'private_started', payload:{ questions, hostName: myName } });
+    startBattle();
+  }catch(e){
+    privateStarting = false;
+    setPrivateLobbyStatus('تعذّر بدء المباراة. هنحاول تلقائيًا مرة تانية.', 'var(--red)');
+  }
+}
+
+async function cancelPrivateMatch(){
+  clearPrivatePolling();
+  if(privateInviteCode){ await privateRpc('finish_private_battle', { p_invite_code: privateInviteCode }).catch(()=>{}); }
+  if(matchChannel){ await matchChannel.unsubscribe(); matchChannel = null; }
+  if(history.replaceState) history.replaceState({}, document.title, location.pathname);
+  matchId = null; opponentName = '';
+  resetPrivateUi();
+  showScreen('entryScreen');
+}
+
+initializePrivateInvite();
 
 async function startMatchmaking(){
+  resetPrivateUi();
   const name = document.getElementById('battleName').value.trim();
   const errEl = document.getElementById('entryErr');
   if(!name){
@@ -598,6 +867,8 @@ async function showResult(oppTime, forfeit){
     if(saveError) console.warn('Battle result was not saved:', saveError.message);
   }catch(e){}
 
+  if(privateMode && privateInviteCode) await privateRpc('finish_private_battle', { p_invite_code: privateInviteCode }).catch(()=>{});
+  clearPrivatePolling();
   if(matchChannel){ matchChannel.unsubscribe(); matchChannel = null; }
   loadBattleLeaderboard();
 }
@@ -622,6 +893,8 @@ function simulateBot(){
 
 document.getElementById('rematchBtn').addEventListener('click', () => {
   questions = []; matchId = null; opponentName = ''; isBot = false;
+  if(history.replaceState) history.replaceState({}, document.title, location.pathname);
+  resetPrivateUi();
   document.getElementById('entryErr').style.display = 'none';
   showScreen('entryScreen');
 });
