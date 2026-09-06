@@ -116,6 +116,11 @@
   .compare-col .num{ font-family:var(--mono); font-size:26px; font-weight:700; }
   .compare-col .lbl{ font-size:12px; color:var(--text-soft); margin-top:4px; }
   .bot-note{ font-size:11.5px; color:var(--gold); margin-top:14px; }
+  .rating-result{ margin:18px 0 4px; padding:12px 14px; border:1px solid var(--border-soft); border-radius:10px; background:var(--surface-2); display:none; }
+  .rating-result .rating-main{ display:flex; align-items:center; justify-content:center; gap:9px; font-weight:700; }
+  .rating-result .rating-rank{ color:var(--gold); }
+  .rating-result .rating-delta{ font-family:var(--mono); color:var(--emerald); }
+  .rating-result .rating-meta{ margin-top:5px; font-size:11px; color:var(--muted); }
 
   .btn-row{ display:flex; gap:10px; margin-top:20px; }
   .btn-row .btn{ flex:1; justify-content:center; }
@@ -265,7 +270,11 @@
           <div class="compare-col"><div class="num" id="resOppScore" style="color:var(--red);">0</div><div class="lbl">إجابات الخصم</div></div>
           <div class="compare-col"><div class="num" id="resTime" style="color:var(--gold);">0s</div><div class="lbl">وقتك</div></div>
         </div>
-        <div class="bot-note" id="botNote" style="display:none;">كانت دي مواجهة ضد خصم افتراضي 🤖</div>
+        <div class="bot-note" id="botNote" style="display:none;">كانت دي مواجهة ضد خصم افتراضي — لا تؤثر على التصنيف 🤖</div>
+        <div class="rating-result" id="ratingResult">
+          <div class="rating-main"><span class="rating-rank" id="ratingRank">Bronze</span><span id="ratingPoints">1000 نقطة</span><span class="rating-delta" id="ratingDelta"></span></div>
+          <div class="rating-meta" id="ratingMeta"></div>
+        </div>
         <div class="btn-row">
           <button class="btn btn-primary" id="rematchBtn">تحدي تاني</button>
           <a href="/tools-exams.html" class="btn btn-outline" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">رجوع للموقع</a>
@@ -321,7 +330,7 @@ async function loadBattleLeaderboard(){
     }
     const medalClass = i => i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
     listEl.innerHTML = data.map((p, i) => {
-      const badge = badgeForWins(p.wins);
+      const badge = p.rank_name ? { label: p.rank_name, bg: 'rgba(224,177,92,0.15)', color: 'var(--gold)' } : badgeForWins(p.wins);
       return `
         <div class="lb-row ${medalClass(i)}">
           <div class="lb-rank">${i+1}</div>
@@ -851,6 +860,7 @@ async function showResult(oppTime, forfeit){
   document.getElementById('resOppScore').textContent = oppCorrect;
   document.getElementById('resTime').textContent = myTime + 's';
   document.getElementById('botNote').style.display = isBot ? 'block' : 'none';
+  document.getElementById('ratingResult').style.display = 'none';
 
   try{
     const { error: saveError } = await sb.rpc('save_battle_result', {
@@ -865,6 +875,16 @@ async function showResult(oppTime, forfeit){
       p_category: myCategory
     });
     if(saveError) console.warn('Battle result was not saved:', saveError.message);
+    if(!saveError && !isBot){
+      const { data: rating } = await sb.rpc('get_my_battle_rating');
+      if(rating && Number.isFinite(Number(rating.rating_points))){
+        document.getElementById('ratingRank').textContent = rating.rank_name || 'Bronze';
+        document.getElementById('ratingPoints').textContent = `${rating.rating_points} نقطة`;
+        document.getElementById('ratingDelta').textContent = '';
+        document.getElementById('ratingMeta').textContent = `مباريات: ${rating.matches_played} — سلسلة الانتصارات: ${rating.win_streak}`;
+        document.getElementById('ratingResult').style.display = 'block';
+      }
+    }
   }catch(e){}
 
   if(privateMode && privateInviteCode) await privateRpc('finish_private_battle', { p_invite_code: privateInviteCode }).catch(()=>{});

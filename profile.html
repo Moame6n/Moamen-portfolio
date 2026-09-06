@@ -56,6 +56,11 @@
   .stat-card{ background:var(--surface); border:1px solid var(--border-soft); border-radius:10px; padding:14px; text-align:center; }
   .stat-card .num{ font-family:var(--mono); font-size:20px; font-weight:700; color:var(--emerald); }
   .stat-card .lbl{ font-size:10.5px; color:var(--muted); margin-top:3px; }
+  .rating-card{ max-width:640px; margin:0 auto 20px; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius); padding:18px 22px; display:flex; align-items:center; justify-content:space-between; gap:14px; }
+  .rating-card-title{ color:var(--text-soft); font-size:12px; margin-bottom:5px; }
+  .rating-card-rank{ color:var(--gold); font-size:20px; font-weight:900; }
+  .rating-card-points{ font-family:var(--mono); color:var(--emerald); font-size:17px; font-weight:700; }
+  .rating-card-meta{ color:var(--muted); font-size:11px; line-height:1.8; text-align:left; }
 </style>
 </head>
 <body>
@@ -148,6 +153,12 @@
         <div class="stat-card"><div class="num" id="statExams">0</div><div class="lbl">اختبارات</div></div>
         <div class="stat-card"><div class="num" id="statBattles">0</div><div class="lbl">مباريات</div></div>
         <div class="stat-card"><div class="num" id="statDownloads">0</div><div class="lbl">تحميلات</div></div>
+      </div>
+
+      <div class="rating-card">
+        <div><div class="rating-card-title">تصنيفك في ساحة التحدي</div><div class="rating-card-rank" id="profileRank">Bronze</div></div>
+        <div class="rating-card-points" id="profileRating">1000 نقطة</div>
+        <div class="rating-card-meta" id="profileRatingMeta">جارِ التحميل...</div>
       </div>
 
       <div class="activity-section">
@@ -278,6 +289,15 @@ async function loadProfile(){
   document.getElementById('avatarImg').src = profile.avatar_url || 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="76" height="76"><rect width="76" height="76" fill="%23161F2E"/><text x="50%" y="55%" font-size="28" fill="%233DDC97" text-anchor="middle" font-family="sans-serif">${profile.full_name.charAt(0)}</text></svg>`);
 
   loadActivity();
+  loadBattleRating();
+}
+
+async function loadBattleRating(){
+  const { data: rating, error } = await sb.rpc('get_my_battle_rating');
+  if(error || !rating) return;
+  document.getElementById('profileRank').textContent = rating.rank_name || 'Bronze';
+  document.getElementById('profileRating').textContent = `${rating.rating_points || 1000} نقطة`;
+  document.getElementById('profileRatingMeta').innerHTML = `مباريات: ${rating.matches_played || 0}<br>فوز: ${rating.wins || 0} — سلسلة: ${rating.win_streak || 0}`;
 }
 
 async function initializeAuthPage(){
