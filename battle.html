@@ -584,18 +584,18 @@ async function showResult(oppTime, forfeit){
   document.getElementById('botNote').style.display = isBot ? 'block' : 'none';
 
   try{
-    const uid = await getCurrentUserId();
-    await fetch(`${SUPABASE_URL}/rest/v1/battle_results`, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer':'return=minimal' },
-      body: JSON.stringify({
-        match_id: matchId || crypto.randomUUID(),
-        player_name: myName, opponent_name: opponentName || 'خصم افتراضي',
-        player_correct: myCorrect, opponent_correct: oppCorrect,
-        player_time_seconds: parseFloat(myTime), is_win: iWon, vs_bot: isBot, category: myCategory,
-        user_id: uid
-      })
+    const { error: saveError } = await sb.rpc('save_battle_result', {
+      p_match_id: matchId || crypto.randomUUID(),
+      p_player_name: myName,
+      p_opponent_name: opponentName || 'خصم افتراضي',
+      p_player_correct: myCorrect,
+      p_opponent_correct: oppCorrect,
+      p_player_time_seconds: parseFloat(myTime),
+      p_opponent_time_seconds: oppTime ? parseFloat(oppTime) : null,
+      p_vs_bot: isBot,
+      p_category: myCategory
     });
+    if(saveError) console.warn('Battle result was not saved:', saveError.message);
   }catch(e){}
 
   if(matchChannel){ matchChannel.unsubscribe(); matchChannel = null; }
