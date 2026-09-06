@@ -116,6 +116,7 @@
       <a href="/#home">الرئيسية</a>
       <a href="/tools-exams.html">الأدوات والاختبارات</a>
       <a href="/battle.html">تحدي مباشر</a>
+      <a href="/daily-challenge.html">التحدي اليومي</a>
       <a href="/#contact">تواصل معي</a>
     </nav>
     </div>
@@ -193,6 +194,7 @@
         <div class="advanced-card"><span class="num" id="advancedAccuracy">0%</span><span class="lbl">متوسط الدقة</span></div>
         <div class="advanced-card"><span class="num" id="advancedAvgTime">0s</span><span class="lbl">متوسط وقت السؤال</span></div>
         <div class="advanced-card"><span class="num" id="advancedBestScore">0/10</span><span class="lbl">أفضل نتيجة</span></div>
+        <div class="advanced-card"><span class="num" id="dailyRewardPoints">0</span><span class="lbl">مكافآت التحدي اليومي</span></div>
       </div>
 
       <div class="activity-section">
@@ -359,6 +361,8 @@ async function loadAdvancedBattleStats(){
     sb.rpc('get_my_recent_battles'),
     sb.rpc('get_my_battle_badges')
   ]);
+  const rewardRes = await sb.rpc('get_my_daily_reward_balance');
+  if(!rewardRes.error && rewardRes.data) document.getElementById('dailyRewardPoints').textContent = rewardRes.data.reward_points || 0;
   if(summaryRes.error || !summaryRes.data) return;
   const summary = summaryRes.data.summary || {};
   const rating = summaryRes.data.rating || {};
