@@ -30,22 +30,24 @@
   .wrap{ padding:20px 0 70px; }
 /* TOOL_CSS_START */
 
-:root{--n:#102a43;--n2:#173f5f;--g:#c49a43;--bg:#f4f1ea;--w:#fff;--ink:#182635;--mut:#687789;--ln:#dce2e8;--ok:#14755a;--bad:#a43d3d;--soft:#f7f9fb}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}.wrap{max-width:1180px;margin:auto}
-header{background:linear-gradient(135deg,var(--n),var(--n2));color:white;border-bottom:4px solid var(--g);padding:25px 16px}.brand{display:flex;gap:14px;align-items:center}.logo{width:52px;height:52px;border:2px solid var(--g);border-radius:14px;display:grid;place-items:center;color:var(--g);font-weight:900;font-size:20px}.kicker{font-size:11px;color:#e3c77f}.title{font-size:24px;font-weight:900;margin:4px 0}.sub{font-size:12px;color:#dbe4ed}
-main{padding:22px 14px 40px}.layout{display:grid;grid-template-columns:365px 1fr;gap:18px}.card{background:var(--w);border:1px solid var(--ln);border-radius:16px;overflow:hidden;box-shadow:0 7px 22px #102a4310}.head{padding:16px 18px;border-bottom:1px solid var(--ln);font-weight:900;color:var(--n)}.body{padding:17px}
-label{display:block;font-size:12px;font-weight:800;margin:0 0 6px}input,select{width:100%;padding:11px 12px;border:1px solid #cbd4de;border-radius:9px;background:white;font-size:13px;outline:0}input:focus,select:focus{border-color:var(--g);box-shadow:0 0 0 3px #c49a4320}.field{margin-bottom:13px}.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.info{background:#f7f8fa;border:1px solid var(--ln);border-right:4px solid var(--g);padding:12px;border-radius:9px;font-size:11px;line-height:1.8;margin:12px 0}.info b{color:var(--n)}
-button{width:100%;border:0;border-radius:9px;padding:12px;font-weight:900;cursor:pointer}.go{background:var(--g);color:#15263a}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.alt{background:#eaf0f5;color:var(--n)}
-.warn{display:none;padding:11px;border-radius:9px;background:#fff0f0;color:var(--bad);font-size:11px;margin-bottom:10px;line-height:1.7}
-.compliance{padding:15px 18px;border-bottom:1px solid var(--ln);display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.pill{padding:11px;border:1px solid var(--ln);border-radius:10px;background:var(--soft)}.pill small{display:block;color:var(--mut);font-size:10px;margin-bottom:5px}.pill strong{color:var(--n);font-size:15px}
-.alert{margin:15px 18px;padding:12px;border-radius:10px;background:#fff9e9;border-right:4px solid var(--g);font-size:11px;line-height:1.8}.alert b{color:var(--n)}
-.table-title{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;border-bottom:1px solid var(--ln)}.tag{background:#eaf5f1;color:var(--ok);padding:5px 8px;border-radius:20px;font-size:10px;font-weight:900}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;min-width:780px}th{background:var(--n);color:#fff;font-size:11px;padding:10px}td{font-size:11px;padding:10px;border-bottom:1px solid var(--ln);text-align:center}tr:last-child td{border-bottom:0}
-.details{padding:15px 18px}.details h3{font-size:14px;margin:0 0 9px;color:var(--n)}.details p{font-size:11px;line-height:1.9;margin:7px 0}.formula{background:#f3f6f9;border:1px solid var(--ln);border-radius:10px;padding:12px;font-size:11px;line-height:2}
-footer{padding:0 14px 30px;color:var(--mut);font-size:10px;line-height:1.8}.source{color:var(--n);font-weight:bold}
-@media(max-width:850px){.layout{grid-template-columns:1fr}.compliance{grid-template-columns:1fr 1fr}.title{font-size:20px}}
-@media(max-width:480px){.two{grid-template-columns:1fr}.compliance{grid-template-columns:1fr 1fr}}
-@media print{header{background:white;color:#111;border-bottom:1px solid #999}.layout{display:block}.layout>.card:first-child{display:none}.card{box-shadow:none;border:0}.alert{display:block}.actions{display:none}}
+
+.tool-workspace{--n:#102a43;--n2:#173f5f;--g:#c49a43;--bg:#f4f1ea;--w:#fff;--ink:#182635;--mut:#687789;--ln:#dce2e8;--ok:#14755a;--bad:#a43d3d;--soft:#f7f9fb}
+.tool-workspace,.tool-workspace *{box-sizing:border-box}.tool-workspace{color:var(--text);font-family:var(--sans)}.tool-workspace .tool-inner{max-width:1180px;margin:auto}
+.tool-workspace .tool-header{background:linear-gradient(135deg,var(--n),var(--n2));color:white;border-bottom:4px solid var(--g);padding:25px 16px}.tool-workspace .tool-brand{display:flex;gap:14px;align-items:center}.tool-workspace .tool-logo{width:52px;height:52px;border:2px solid var(--g);border-radius:14px;display:grid;place-items:center;color:var(--g);font-weight:900;font-size:20px}.tool-workspace .tool-kicker{font-size:11px;color:#e3c77f}.tool-workspace .tool-title{font-size:24px;font-weight:900;margin:4px 0}.tool-workspace .tool-sub{font-size:12px;color:#dbe4ed}
+.tool-workspace .tool-main{padding:22px 14px 40px}.tool-workspace .layout{display:grid;grid-template-columns:365px 1fr;gap:18px}.tool-workspace .card{background:var(--w);border:1px solid var(--ln);border-radius:16px;overflow:hidden;box-shadow:0 7px 22px #102a4310}.tool-workspace .head{padding:16px 18px;border-bottom:1px solid var(--ln);font-weight:900;color:var(--n)}.tool-workspace .body{padding:17px}
+.tool-workspace label{display:block;font-size:12px;font-weight:800;margin:0 0 6px}.tool-workspace input,.tool-workspace select{width:100%;padding:11px 12px;border:1px solid #cbd4de;border-radius:9px;background:white;color:var(--ink);font-size:13px;outline:0}.tool-workspace input:focus,.tool-workspace select:focus{border-color:var(--g);box-shadow:0 0 0 3px #c49a4320}.tool-workspace .field{margin-bottom:13px}.tool-workspace .two{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tool-workspace .info{background:#f7f8fa;border:1px solid var(--ln);border-right:4px solid var(--g);padding:12px;border-radius:9px;font-size:11px;line-height:1.8;margin:12px 0}.tool-workspace .info b{color:var(--n)}
+.tool-workspace button{width:100%;border:0;border-radius:9px;padding:12px;font-weight:900;cursor:pointer}.tool-workspace .go{background:var(--g);color:#15263a}.tool-workspace .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.tool-workspace .alt{background:#eaf0f5;color:var(--n)}
+.tool-workspace .warn{display:none;padding:11px;border-radius:9px;background:#fff0f0;color:var(--bad);font-size:11px;margin-bottom:10px;line-height:1.7}
+.tool-workspace .compliance{padding:15px 18px;border-bottom:1px solid var(--ln);display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.tool-workspace .pill{padding:11px;border:1px solid var(--ln);border-radius:10px;background:var(--soft)}.tool-workspace .pill small{display:block;color:var(--mut);font-size:10px;margin-bottom:5px}.tool-workspace .pill strong{color:var(--n);font-size:15px}
+.tool-workspace .alert{margin:15px 18px;padding:12px;border-radius:10px;background:#fff9e9;border-right:4px solid var(--g);font-size:11px;line-height:1.8}.tool-workspace .alert b{color:var(--n)}
+.tool-workspace .table-title{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;border-bottom:1px solid var(--ln)}.tool-workspace .tag{background:#eaf5f1;color:var(--ok);padding:5px 8px;border-radius:20px;font-size:10px;font-weight:900}.tool-workspace .scroll{overflow:auto}.tool-workspace table{width:100%;border-collapse:collapse;min-width:780px}.tool-workspace th{background:var(--n);color:#fff;font-size:11px;padding:10px}.tool-workspace td{font-size:11px;padding:10px;border-bottom:1px solid var(--ln);text-align:center} .tool-workspace tr:last-child td{border-bottom:0}
+.tool-workspace .details{padding:15px 18px}.tool-workspace .details h3{font-size:14px;margin:0 0 9px;color:var(--n)}.tool-workspace .details p{font-size:11px;line-height:1.9;margin:7px 0}.tool-workspace .formula{background:#f3f6f9;border:1px solid var(--ln);border-radius:10px;padding:12px;font-size:11px;line-height:2}
+.tool-workspace .tool-footer{padding:0 14px 30px;color:var(--mut);font-size:10px;line-height:1.8}.tool-workspace .source{color:var(--n);font-weight:bold}
+@media(max-width:850px){.tool-workspace .layout{grid-template-columns:1fr}.tool-workspace .compliance{grid-template-columns:1fr 1fr}.tool-workspace .tool-title{font-size:20px}}
+@media(max-width:480px){.tool-workspace .two{grid-template-columns:1fr}.tool-workspace .compliance{grid-template-columns:1fr 1fr}}
+@media print{.tool-workspace .tool-header{background:white;color:#111;border-bottom:1px solid #999}.tool-workspace .layout{display:block}.tool-workspace .layout>.card:first-child{display:none}.tool-workspace .card{box-shadow:none;border:0}.tool-workspace .alert{display:block}.tool-workspace .actions{display:none}}
+
 
 /* TOOL_CSS_END */
 </style>
@@ -55,20 +57,33 @@ footer{padding:0 14px 30px;color:var(--mut);font-size:10px;line-height:1.8}.sour
 
 <header class="site-nav">
   <div class="container">
+    <div class="brand-group">
     <div class="brand"><span class="dot"></span>مؤمن <span>أحمد</span></div>
+      <div class="account-widget">
+        <button class="account-avatar-btn" id="accountAvatarBtn" title="حسابي">
+          <img id="navAvatarImg" class="nav-avatar-img" src="" alt="">
+          <span id="navAvatarInitial" class="nav-avatar-initial"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+        </button>
+        <div class="account-dropdown" id="accountDropdown">
+          <div class="account-dropdown-name" id="accountDropdownName">--</div>
+          <a href="/profile.html">حسابي والإعدادات</a>
+          <button id="navLogoutBtn" type="button">تسجيل خروج</button>
+        </div>
+      </div>    </div>
     <div style="display:flex; align-items:center; gap:12px;">
     <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">
       <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
+    <button class="notify-bell-btn" id="notifyBellBtn" title="فعّل الإشعارات">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
     <button class="navtoggle" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
     <nav id="mainNav">
       <a href="/#home">الرئيسية</a>
-      <a href="/#about">من أنا؟</a>
-      <a href="/#services">خدماتي</a>
       <a href="/tools-exams.html">الأدوات والاختبارات</a>
-      <a href="/#portfolio">أعمالي</a>
-      <a href="/#blog">مدونتي</a>
+      <a href="/battle.html">تحدي مباشر</a>
+      <a href="/daily-challenge.html">التحدي اليومي</a>
       <a href="/#contact">تواصل معي</a>
     </nav>
     </div>
@@ -87,8 +102,9 @@ footer{padding:0 14px 30px;color:var(--mut);font-size:10px;line-height:1.8}.sour
 <div class="wrap">
   <div class="container">
 <!-- TOOL_BODY_START -->
-<header><div class="wrap"><div class="brand"><div class="logo">IAS</div><div><div class="kicker">IFRS ACCOUNTING STANDARD • IAS 16</div><div class="title">حاسبة إهلاك الممتلكات والآلات والمعدات</div><div class="sub">محرك حسابي مبني على متطلبات الإهلاك ذات الصلة في IAS 16</div></div></div></div></header>
-<main class="wrap">
+<div class="tool-workspace">
+<header class="tool-header"><div class="tool-inner"><div class="tool-brand"><div class="tool-logo">IAS</div><div><div class="tool-kicker">IFRS ACCOUNTING STANDARD • IAS 16</div><div class="tool-title">حاسبة إهلاك الممتلكات والآلات والمعدات</div><div class="tool-sub">محرك حسابي مبني على متطلبات الإهلاك ذات الصلة في IAS 16</div></div></div></div></header>
+<main class="tool-main tool-inner">
 <div class="layout">
 <section class="card">
 <div class="head">1 — بيانات الأصل والتقديرات المحاسبية</div>
@@ -126,7 +142,8 @@ footer{padding:0 14px 30px;color:var(--mut);font-size:10px;line-height:1.8}.sour
 </section>
 </div>
 </main>
-<footer class="wrap"><span class="source">المصدر:</span> IFRS Foundation — IAS 16 Property, Plant and Equipment. هذه الأداة لا تستبدل الحكم المهني أو قراءة المعيار الكامل، ولا تقوم وحدها باختبارات الاعتراف والقياس اللاحق والاضمحلال ومكونات الأصل والمراجعات التقديرية. <br>تم تصميم الحسابات بحيث لا تقدم الطرق الثلاث المذكورة في الفقرة 62 باعتبار أن المعيار يفرض واحدة منها؛ بل يفرض اختيار الطريقة التي تعكس نمط الاستهلاك المتوقع.</footer>
+<footer class="tool-footer tool-inner"><span class="source">المصدر:</span> IFRS Foundation — IAS 16 Property, Plant and Equipment. هذه الأداة لا تستبدل الحكم المهني أو قراءة المعيار الكامل، ولا تقوم وحدها باختبارات الاعتراف والقياس اللاحق والاضمحلال ومكونات الأصل والمراجعات التقديرية. <br>تم تصميم الحسابات بحيث لا تقدم الطرق الثلاث المذكورة في الفقرة 62 باعتبار أن المعيار يفرض واحدة منها؛ بل يفرض اختيار الطريقة التي تعكس نمط الاستهلاك المتوقع.</footer>
+</div>
 <!-- TOOL_BODY_END -->
   </div>
 </div>
