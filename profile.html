@@ -56,11 +56,12 @@
   .stat-card{ background:var(--surface); border:1px solid var(--border-soft); border-radius:10px; padding:14px; text-align:center; }
   .stat-card .num{ font-family:var(--mono); font-size:20px; font-weight:700; color:var(--emerald); }
   .stat-card .lbl{ font-size:10.5px; color:var(--muted); margin-top:3px; }
-  .rating-card{ max-width:640px; margin:0 auto 20px; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius); padding:18px 22px; display:flex; align-items:center; justify-content:space-between; gap:14px; }
+  .rating-card{ max-width:640px; margin:0 auto 20px; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius); padding:18px 22px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; }
   .rating-card-title{ color:var(--text-soft); font-size:12px; margin-bottom:5px; }
   .rating-card-rank{ color:var(--gold); font-size:20px; font-weight:900; }
   .rating-card-points{ font-family:var(--mono); color:var(--emerald); font-size:17px; font-weight:700; }
   .rating-card-meta{ color:var(--muted); font-size:11px; line-height:1.8; text-align:left; }
+  .rating-card-hint{ flex:0 0 100%; padding-top:9px; border-top:1px solid var(--border-soft); color:var(--muted); font-size:10.5px; line-height:1.7; text-align:center; }
   .rating-progress{ max-width:640px; margin:-10px auto 20px; padding:0 22px; }
   .rating-progress-head{ display:flex; justify-content:space-between; color:var(--muted); font-size:11px; margin-bottom:6px; }
   .rating-progress-track{ height:7px; border-radius:99px; background:var(--border-soft); overflow:hidden; }
@@ -183,6 +184,7 @@
         <div><div class="rating-card-title">تصنيفك في ساحة التحدي</div><div class="rating-card-rank" id="profileRank">Bronze</div></div>
         <div class="rating-card-points" id="profileRating">1000 نقطة</div>
         <div class="rating-card-meta" id="profileRatingMeta">جارِ التحميل...</div>
+        <div class="rating-card-hint">مباريات الخصم الافتراضي تدريبية — التصنيف يتحدث مع لاعب حقيقي.</div>
       </div>
       <div class="rating-progress">
         <div class="rating-progress-head"><span id="nextRankLabel">التقدم للرتبة التالية</span><span id="ratingProgressText">0%</span></div>
