@@ -341,22 +341,30 @@ async function loadProfile(){
   document.getElementById('avatarImg').src = profile.avatar_url || 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="76" height="76"><rect width="76" height="76" fill="%23161F2E"/><text x="50%" y="55%" font-size="28" fill="%233DDC97" text-anchor="middle" font-family="sans-serif">${profile.full_name.charAt(0)}</text></svg>`);
 
   loadActivity();
-  loadBattleRating();
+  await loadBattleRating();
 }
 
 async function loadBattleRating(){
-  const { data, error } = await sb.rpc('get_my_battle_stats');
-  if(error || !data || data.authenticated === false) return;
-  const rating = data.rating || {};
+  const [ratingRes, statsRes] = await Promise.all([
+    sb.rpc('get_my_battle_rating'),
+    sb.rpc('get_my_battle_stats')
+  ]);
+  const directRating = ratingRes.data && !ratingRes.error ? ratingRes.data : {};
+  const statsData = statsRes.data && !statsRes.error ? statsRes.data : {};
+  if((ratingRes.error && statsRes.error) || statsData.authenticated === false){
+    document.getElementById('profileRatingMeta').textContent = 'تعذر تحديث التصنيف حاليًا';
+    return;
+  }
+  const rating = Object.keys(directRating).length ? directRating : (statsData.rating || {});
   document.getElementById('profileRank').textContent = rating.rank_name || 'Bronze';
-  document.getElementById('profileRating').textContent = `${rating.points || 1000} نقطة`;
+  document.getElementById('profileRating').textContent = `${rating.points ?? rating.rating_points ?? 1000} نقطة`;
   document.getElementById('profileRatingMeta').innerHTML = `مباريات: ${rating.matches_played || 0}<br>فوز: ${rating.wins || 0} — سلسلة: ${rating.win_streak || 0}`;
-  loadAdvancedBattleStats();
+  loadAdvancedBattleStats(statsData);
 }
 
-async function loadAdvancedBattleStats(){
+async function loadAdvancedBattleStats(statsData = null){
   const [summaryRes, categoryRes, recentRes, badgesRes] = await Promise.all([
-    sb.rpc('get_my_battle_stats'),
+    statsData && Object.keys(statsData).length ? Promise.resolve({ data: statsData, error: null }) : sb.rpc('get_my_battle_stats'),
     sb.rpc('get_my_battle_categories'),
     sb.rpc('get_my_recent_battles'),
     sb.rpc('get_my_battle_badges')
@@ -467,6 +475,17 @@ async function loadActivity(){
     `).join('');
   }
 }
+
+let ratingRefreshTimer = null;
+function refreshRatingOnReturn(){
+  if(!currentUser || ratingRefreshTimer) return;
+  ratingRefreshTimer = setTimeout(async () => {
+    ratingRefreshTimer = null;
+    await loadBattleRating();
+  }, 250);
+}
+window.addEventListener('focus', refreshRatingOnReturn);
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') refreshRatingOnReturn(); });
 
 function escP(str){
   return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
