@@ -191,6 +191,70 @@
   @media (prefers-reduced-motion:reduce){
     .topbar button:not(.theme-toggle), .login-box button, .stat-card, .dash-tab{ transition:none; }
   }
+  /* Dashboard polish and mobile-first responsive layout. */
+  *, *::before, *::after{ box-sizing:border-box; }
+  html{ overflow-x:hidden; }
+  body{ background:var(--bg); overflow-x:hidden; }
+  .topbar{ box-shadow:0 8px 24px rgba(0,0,0,.12); }
+  .topbar .container{ max-width:1100px; width:100%; padding-left:24px; padding-right:24px; }
+  .topbar h1{ letter-spacing:-.2px; }
+  .topbar .container > div:last-child{ display:flex; align-items:center; gap:12px; }
+  .wrap{ width:100%; }
+  .builder-card, .stat-card, .login-box{ box-shadow:0 10px 28px rgba(0,0,0,.08); }
+  .builder-card h3{ display:flex; align-items:center; gap:8px; }
+  .dash-tabs{ gap:6px; padding:6px; background:var(--surface); border:1px solid var(--border-soft); border-radius:12px; }
+  .dash-tab{ margin:0; border-radius:8px; transition:background .2s,color .2s,border-color .2s; }
+  .dash-tab:hover{ color:var(--emerald); background:var(--surface-2); }
+  .dash-tab.active{ background:rgba(61,220,151,.10); border-color:var(--emerald); }
+  .toolbar select:focus, .toolbar input:focus, .field-row input:focus, .field-row textarea:focus, .login-box input:focus{ outline:2px solid rgba(61,220,151,.28); outline-offset:1px; border-color:var(--emerald); }
+  .table-scroll{ border:1px solid var(--border-soft); }
+  .table-scroll table{ border:0; }
+
+  @media (max-width:760px){
+    .topbar .container{ padding-left:16px; padding-right:16px; }
+    .topbar .container > div:last-child{ flex-wrap:wrap; justify-content:flex-end; }
+    .stats-row{ gap:10px; }
+    .stat-card{ padding:15px 10px; border-radius:10px; }
+    .stat-card .num{ font-size:23px; }
+    .builder-card{ border-radius:12px; }
+    .toolbar{ display:grid; grid-template-columns:1fr; gap:9px; align-items:stretch; }
+    .toolbar select, .toolbar input, .toolbar button{ width:100%; min-width:0; }
+    .fb-item-head{ gap:8px; flex-wrap:wrap; }
+  }
+
+  @media (max-width:640px){
+    .login-box{ width:calc(100% - 28px); margin:34px auto; padding:25px 18px; border-radius:14px; }
+    .login-box h2{ font-size:20px; }
+    .topbar{ padding:13px 0; }
+    .topbar .container{ align-items:stretch; gap:12px; }
+    .topbar h1{ font-size:18px; }
+    .topbar .container > div:last-child{ width:100%; justify-content:space-between; gap:8px; }
+    .topbar button:not(.theme-toggle){ padding:8px 12px; }
+    .wrap{ padding:18px 12px 42px; }
+    .dash-tabs{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:7px; margin-bottom:18px; padding:7px; overflow:visible; }
+    .dash-tab{ width:100%; min-height:43px; padding:9px 5px; font-size:12.5px; white-space:normal; line-height:1.35; }
+    .builder-card{ padding:15px 13px; margin-bottom:14px; }
+    .builder-card h3{ font-size:15px; line-height:1.5; }
+    .field-row input, .field-row textarea{ font-size:16px; }
+    .field-row-2{ gap:0; }
+    .q-block{ padding:13px 11px; }
+    .opt-row{ gap:7px; }
+    .opt-row input[type="text"]{ min-width:0; font-size:16px; }
+    .empty-state{ padding:42px 14px; }
+    .sub-item{ gap:8px; padding:11px 3px; }
+    .sub-item-info{ min-width:0; }
+    .sub-item-email{ overflow-wrap:anywhere; font-size:10.5px; }
+    .sub-item-badge{ padding:3px 7px; }
+    .table-scroll{ margin-left:-3px; margin-right:-3px; }
+    .table-scroll table{ min-width:620px; }
+  }
+
+  @media (max-width:380px){
+    .stats-row{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .dash-tabs{ grid-template-columns:1fr 1fr; }
+    .dash-tab{ font-size:11.5px; }
+    .topbar h1{ font-size:16px; }
+  }
 </style>
 </head>
 <body>
