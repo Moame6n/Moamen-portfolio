@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مساعد الرقابة المحاسبية | تحليل ملفات Excel وفق مبادئ IFRS | مؤمن أحمد</title>
+<meta name="description" content="مساعد رقابي محاسبي مجاني لتحليل ملفات Excel محليًا، فحص اتزان القيود، اكتشاف التكرارات، مطابقة المبيعات والتحصيلات، وتسوية الخزينة وفق الضوابط المرتبطة بموضوعات IFRS.">
+<meta name="keywords" content="مساعد الرقابة المحاسبية, تحليل Excel محاسبي, فحص القيود اليومية, تسوية الخزينة, IFRS, IAS, محاسبة, مؤمن أحمد">
+<meta name="author" content="مؤمن أحمد">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/tools/mae-accounting-control-center.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_EG">
+<meta property="og:site_name" content="مؤمن أحمد">
+<meta property="og:title" content="مساعد الرقابة المحاسبية | مؤمن أحمد">
+<meta property="og:description" content="حلل ملفات Excel محليًا، افحص القيود، اكتشف الاستثناءات، وطابق الحركات المحاسبية بسهولة.">
+<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/tools/mae-accounting-control-center.html">
+<meta property="og:image" content="https://moamen-portfolio-pi.vercel.app/assets/profile.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="مساعد الرقابة المحاسبية | مؤمن أحمد">
+<meta name="twitter:description" content="أداة رقابة وتحليل محاسبي محلية لملفات Excel مع فحص القيود والمطابقات والخزينة.">
+<meta name="twitter:image" content="https://moamen-portfolio-pi.vercel.app/assets/profile.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0E13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script src="/assets/theme.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@graph":[
+    {"@type":"WebPage","@id":"https://moamen-portfolio-pi.vercel.app/tools/mae-accounting-control-center.html#webpage","url":"https://moamen-portfolio-pi.vercel.app/tools/mae-accounting-control-center.html","name":"مساعد الرقابة المحاسبية","description":"أداة محلية لتحليل ملفات Excel وفحص القيود والمطابقات والخزينة.","inLanguage":"ar-EG","isPartOf":{"@id":"https://moamen-portfolio-pi.vercel.app/#website"}},
+    {"@type":"SoftwareApplication","name":"مساعد الرقابة المحاسبية","applicationCategory":"BusinessApplication","operatingSystem":"Web browser","url":"https://moamen-portfolio-pi.vercel.app/tools/mae-accounting-control-center.html","offers":{"@type":"Offer","price":"0","priceCurrency":"EGP"},"featureList":["تحليل ملفات Excel محليًا","فحص اتزان القيود","اكتشاف التكرارات","مطابقة المبيعات والتحصيلات","تسوية الخزينة"],"author":{"@type":"Person","name":"مؤمن أحمد","url":"https://moamen-portfolio-pi.vercel.app/"}},
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"الرئيسية","item":"https://moamen-portfolio-pi.vercel.app/"},{"@type":"ListItem","position":2,"name":"الأدوات والاختبارات","item":"https://moamen-portfolio-pi.vercel.app/tools-exams.html#tools-section"},{"@type":"ListItem","position":3,"name":"مساعد الرقابة المحاسبية","item":"https://moamen-portfolio-pi.vercel.app/tools/mae-accounting-control-center.html"}]}
+  ]
+}
+</script>
+<style>
+.page-hero{padding:42px 0 18px}.page-hero .back{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12.5px;color:var(--emerald);text-decoration:none;margin-bottom:16px}.page-hero h1{font-size:34px;margin-bottom:10px}.page-hero p{color:var(--text-soft);font-size:15px;max-width:820px;line-height:1.85}.tool-shell{padding:0 0 55px}.tool-intro{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0 20px}.tool-intro-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px}.tool-intro-card h2{font-size:18px;margin-bottom:7px}.tool-intro-card p{color:var(--text-soft);font-size:13px;line-height:1.8;margin:0}.tool-intro-card ul{color:var(--text-soft);font-size:13px;line-height:2;margin:7px 0 0;padding-right:18px}.tool-disclaimer{border-right:3px solid var(--gold);background:rgba(224,177,92,.08);padding:12px 15px;border-radius:9px;color:var(--text-soft);font-size:12.5px;line-height:1.8;margin-bottom:18px}.mae-xa{--mae-primary:var(--emerald);--mae-primary-2:var(--gold);--mae-bg:var(--bg);--mae-card:var(--surface);--mae-text:var(--text);--mae-muted:var(--muted);--mae-border:var(--border-soft);--mae-success:var(--emerald);--mae-warning:var(--gold);--mae-danger:var(--red)}
+@media(max-width:700px){.tool-intro{grid-template-columns:1fr}.page-hero h1{font-size:27px}}
+</style>
+<style>
+/* =========================
+   Scoped styles only.
+   No global body/header/footer styling.
+   ========================= */
+.mae-xa{
+  --mae-primary:var(--primary-color,var(--primary,#2563eb));
+  --mae-primary-2:var(--secondary-color,var(--secondary,#7c3aed));
+  --mae-bg:var(--background-color,var(--bg,#f6f8fb));
+  --mae-card:var(--card-bg,#fff);
+  --mae-text:var(--text-color,var(--text,#172033));
+  --mae-muted:var(--muted-color,var(--muted,#64748b));
+  --mae-border:var(--border-color,var(--border,#e2e8f0));
+  --mae-success:var(--success-color,#16a34a);
+  --mae-warning:var(--warning-color,#d97706);
+  --mae-danger:var(--danger-color,#dc2626);
+  --mae-info:#0891b2;
+  color:var(--mae-text);font-family:inherit;line-height:1.55;
+  background:var(--mae-bg);border:1px solid var(--mae-border);border-radius:22px;
+  box-sizing:border-box;overflow:hidden;
+}
+.mae-xa *{box-sizing:border-box}
+.mae-xa button,.mae-xa input,.mae-xa select,.mae-xa textarea{font:inherit}
+.mae-xa button{cursor:pointer}
+.mae-app{padding:16px}
+.mae-top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+.mae-title{font-size:clamp(20px,3vw,30px);font-weight:900;margin:0}
+.mae-sub{color:var(--mae-muted);font-size:13px;margin-top:3px}
+.mae-actions{display:flex;gap:8px;flex-wrap:wrap}
+.mae-btn{border:1px solid var(--mae-border);background:var(--mae-card);color:var(--mae-text);padding:9px 13px;border-radius:12px;font-weight:700}
+.mae-btn:hover{border-color:var(--mae-primary)}
+.mae-btn:focus-visible,.mae-nav button:focus-visible,.mae-input:focus-visible,.mae-select:focus-visible,.mae-textarea:focus-visible{outline:3px solid color-mix(in srgb,var(--mae-primary) 28%,transparent);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.mae-drop{transition:none}}
+.mae-btn.primary{background:var(--mae-primary);border-color:var(--mae-primary);color:#fff}
+.mae-btn.danger{color:#fff;background:var(--mae-danger);border-color:var(--mae-danger)}
+.mae-btn.ghost{background:transparent}
+.mae-nav{display:flex;gap:7px;overflow:auto;padding:4px;margin-bottom:14px;border-bottom:1px solid var(--mae-border)}
+.mae-nav button{white-space:nowrap;border:0;background:transparent;color:var(--mae-muted);padding:10px 12px;border-radius:10px 10px 0 0;font-weight:800}
+.mae-nav button.active{color:var(--mae-primary);background:color-mix(in srgb,var(--mae-primary) 9%,transparent);box-shadow:inset 0 -2px var(--mae-primary)}
+.mae-page{display:none}.mae-page.active{display:block}
+.mae-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.mae-col-3{grid-column:span 3}.mae-col-4{grid-column:span 4}.mae-col-6{grid-column:span 6}.mae-col-8{grid-column:span 8}.mae-col-12{grid-column:span 12}
+.mae-card{background:var(--mae-card);border:1px solid var(--mae-border);border-radius:17px;padding:15px;min-width:0}
+.mae-card h3,.mae-card h4{margin:0 0 8px;font-weight:900}
+.mae-kpi{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.mae-kpi .num{font-size:28px;font-weight:950}
+.mae-kpi .label{color:var(--mae-muted);font-size:12px;font-weight:700}
+.mae-iconbox{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--mae-primary) 10%,transparent);color:var(--mae-primary);font-size:19px}
+.mae-drop{border:2px dashed var(--mae-border);border-radius:18px;padding:28px;text-align:center;background:color-mix(in srgb,var(--mae-primary) 3%,transparent);transition:.2s}
+.mae-drop.drag{border-color:var(--mae-primary);background:color-mix(in srgb,var(--mae-primary) 10%,transparent)}
+.mae-drop strong{display:block;font-size:18px;margin-bottom:5px}
+.mae-help{color:var(--mae-muted);font-size:12px}
+.mae-filelist{display:grid;gap:8px;margin-top:12px}
+.mae-file{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--mae-border);border-radius:12px;padding:10px}
+.mae-file-main{min-width:0}.mae-file-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mae-file-meta{font-size:11px;color:var(--mae-muted)}
+.mae-badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900}
+.mae-badge.ok{background:#dcfce7;color:#166534}.mae-badge.warn{background:#fef3c7;color:#92400e}.mae-badge.bad{background:#fee2e2;color:#991b1b}.mae-badge.info{background:#cffafe;color:#155e75}.mae-badge.neutral{background:#eef2f7;color:#475569}
+.mae-table-wrap{overflow:auto;border:1px solid var(--mae-border);border-radius:13px}
+.mae-table{width:100%;border-collapse:collapse;min-width:620px}
+.mae-table th,.mae-table td{padding:9px 10px;border-bottom:1px solid var(--mae-border);text-align:right;font-size:12px;white-space:nowrap}
+.mae-table th{background:color-mix(in srgb,var(--mae-primary) 6%,var(--mae-card));font-weight:900}
+.mae-table tr:last-child td{border-bottom:0}
+.mae-input,.mae-select,.mae-textarea{width:100%;border:1px solid var(--mae-border);background:var(--mae-card);color:var(--mae-text);border-radius:10px;padding:9px 10px;outline:none}
+.mae-input:focus,.mae-select:focus,.mae-textarea:focus{border-color:var(--mae-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--mae-primary) 12%,transparent)}
+.mae-form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.mae-field label{display:block;font-size:12px;font-weight:800;margin-bottom:5px}
+.mae-full{grid-column:1/-1}
+.mae-issue{border:1px solid var(--mae-border);border-right:4px solid var(--mae-warning);border-radius:13px;padding:11px;background:var(--mae-card);margin-bottom:8px}
+.mae-issue.high{border-right-color:var(--mae-danger)}.mae-issue.low{border-right-color:var(--mae-info)}
+.mae-issue-top{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.mae-issue-title{font-weight:900}.mae-issue-body{font-size:12px;color:var(--mae-muted);margin-top:5px}
+.mae-issue-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.mae-mini{font-size:11px;padding:6px 8px;border-radius:8px;border:1px solid var(--mae-border);background:var(--mae-card)}
+.mae-progress{height:9px;background:var(--mae-border);border-radius:999px;overflow:hidden}.mae-progress>i{display:block;height:100%;background:var(--mae-primary);width:0}
+.mae-empty{text-align:center;padding:25px;color:var(--mae-muted)}
+.mae-once{border:1px solid color-mix(in srgb,var(--mae-primary) 25%,var(--mae-border));background:color-mix(in srgb,var(--mae-primary) 5%,var(--mae-card));border-radius:16px;padding:15px;margin-bottom:12px}
+.mae-guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mae-tip{border:1px solid var(--mae-border);border-right:4px solid var(--mae-primary);border-radius:13px;padding:12px;background:var(--mae-card)}.mae-tip strong{display:block;margin-bottom:4px}.mae-tip p{margin:0;color:var(--mae-muted);font-size:12px}.mae-tip.warn{border-right-color:var(--mae-warning)}.mae-tip.ok{border-right-color:var(--mae-success)}
+.mae-steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.mae-step{font-size:11px;font-weight:900;padding:6px 9px;border-radius:999px;background:var(--mae-border);color:var(--mae-muted)}.mae-step.active{background:var(--mae-primary);color:#fff}
+.mae-rule{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--mae-border);padding:10px;border-radius:11px;margin-bottom:7px}
+.mae-switch{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800}.mae-switch input{accent-color:var(--mae-primary)}
+.mae-modal{position:fixed;inset:0;background:rgba(15,23,42,.52);z-index:99999;display:none;align-items:center;justify-content:center;padding:16px}.mae-modal.open{display:flex}
+.mae-modal-box{width:min(850px,100%);max-height:90vh;overflow:auto;background:var(--mae-card);border-radius:18px;padding:18px}
+.mae-toast{position:fixed;left:16px;bottom:16px;z-index:100000;max-width:min(380px,calc(100vw - 32px));background:#111827;color:#fff;padding:11px 14px;border-radius:12px;display:none;font-size:12px}
+.mae-toast.show{display:block}
+.mae-checklist{display:grid;gap:7px}.mae-check{display:flex;gap:9px;align-items:center;border:1px solid var(--mae-border);padding:9px;border-radius:10px}.mae-check input{accent-color:var(--mae-success)}
+.mae-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;direction:ltr;text-align:left;font-size:11px;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:10px;overflow:auto}
+@media(max-width:900px){.mae-col-3,.mae-col-4,.mae-col-6,.mae-col-8{grid-column:span 6}}
+@media(max-width:620px){.mae-app{padding:10px}.mae-col-3,.mae-col-4,.mae-col-6,.mae-col-8,.mae-col-12{grid-column:1/-1}.mae-form{grid-template-columns:1fr}.mae-actions{width:100%}.mae-actions .mae-btn{flex:1}.mae-table{min-width:540px}.mae-guide-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-nav"><div class="container"><div class="brand-group"><div class="brand"><span class="dot"></span>مؤمن <span>أحمد</span></div></div><div style="display:flex;align-items:center;gap:12px"><button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي والنهاري"><svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/></svg></button><button class="navtoggle" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button><nav id="mainNav"><a href="/#home">الرئيسية</a><a href="/#about">من أنا؟</a><a href="/#services">خدماتي</a><a href="/tools-exams.html#tools-section">الأدوات والاختبارات</a><a href="/daily-challenge.html">التحدي اليومي</a><a href="/#portfolio">أعمالي</a><a href="/#blog">مدونتي</a><a href="/#contact">تواصل معي</a></nav></div></div></header>
+<main>
+<section class="page-hero"><div class="container"><a href="/tools-exams.html#tools-section" class="back"><i data-lucide="arrow-right"></i> رجوع إلى الأدوات</a><div class="eyebrow">أداة مجانية · تعمل محليًا</div><h1>مساعد الرقابة المحاسبية</h1><p>حلّل ملفات Excel الخاصة بك، راجع اتزان القيود، اكتشف الاستثناءات، طابق الحركات، وسوِّ الخزينة من خلال مساحة عمل واحدة مصممة للمحاسبين.</p><div class="tool-intro"><div class="tool-intro-card"><h2>ماذا تفعل الأداة؟</h2><ul><li>قراءة ملفات XLSX وXLS وCSV محليًا.</li><li>فحص اتزان القيود والقيم الناقصة والتكرارات.</li><li>مطابقة المبيعات والتحصيلات والمشتريات والمدفوعات.</li><li>تسوية الخزينة ومراجعة الاستثناءات.</li></ul></div><div class="tool-intro-card"><h2>الخصوصية وحدود الاستخدام</h2><p>تتم قراءة الملفات داخل المتصفح ولا تُرفع إلى خادم في هذا الإصدار. النتائج استثناءات رقابية تحتاج مراجعة محاسب مسؤول، وليست قوائم مالية أو حكمًا نهائيًا بالامتثال لمعايير IFRS.</p></div></div><div class="tool-disclaimer"><strong>تنبيه مهني:</strong> استخدم نسخة من ملفاتك الأصلية، وراجع ربط الأعمدة والتصنيف قبل اعتماد أي نتيجة أو اتخاذ إجراء محاسبي.</div></div></section>
+<section class="tool-shell"><div class="container"><div class="mae-xa" data-mae-excel-assistant>
+<div class="mae-app">
+  <div class="mae-top">
+    <div>
+      <h2 class="mae-title">مساعد الرقابة المحاسبية</h2>
+      <div class="mae-sub">Excel Accounting Control Center — تحليل ومطابقة ورقابة محلية على جهازك</div>
+    </div>
+    <div class="mae-actions">
+      <button class="mae-btn" data-action="backup">نسخة احتياطية</button>
+      <button class="mae-btn" data-action="restore">استعادة</button>
+      <button class="mae-btn danger" data-action="wipe">مسح البيانات</button>
+      <input type="file" id="maeRestoreFile" accept=".json" hidden>
+    </div>
+  </div>
+
+  <div class="mae-once" id="maeOnboarding" hidden>
+    <div class="mae-steps"><span class="mae-step active" data-step="1">1 التعريف</span><span class="mae-step" data-step="2">2 ملفاتك</span><span class="mae-step" data-step="3">3 التفضيلات</span><span class="mae-step" data-step="4">4 جاهز</span></div>
+    <div id="maeOnboardBody"></div>
+  </div>
+
+  <nav class="mae-nav">
+    <button class="active" data-page="dashboard">الرئيسية</button>
+    <button data-page="files">ملفاتي</button>
+    <button data-page="mapping">ربط الأعمدة</button>
+    <button data-page="control">الرقابة والمطابقة</button>
+    <button data-page="cash">الخزينة والبنك</button>
+    <button data-page="learning">ذاكرة الأداة</button>
+    <button data-page="close">الإقفال</button>
+    <button data-page="standards">المعايير والقواعد</button>
+    <button data-page="guide">دليل الاستخدام</button>
+    <button data-page="settings">الإعدادات</button>
+  </nav>
+
+  <section class="mae-page active" id="maePage-dashboard">
+    <div class="mae-grid">
+      <div class="mae-card mae-col-3"><div class="mae-kpi"><div><div class="label">الملفات المحللة</div><div class="num" id="kFiles">0</div></div><div class="mae-iconbox">📁</div></div></div>
+      <div class="mae-card mae-col-3"><div class="mae-kpi"><div><div class="label">الصفوف المقروءة</div><div class="num" id="kRows">0</div></div><div class="mae-iconbox">▤</div></div></div>
+      <div class="mae-card mae-col-3"><div class="mae-kpi"><div><div class="label">الاستثناءات</div><div class="num" id="kIssues">0</div></div><div class="mae-iconbox">⚠</div></div></div>
+      <div class="mae-card mae-col-3"><div class="mae-kpi"><div><div class="label">قواعد المستخدم</div><div class="num" id="kRules">0</div></div><div class="mae-iconbox">🧠</div></div></div>
+      <div class="mae-card mae-col-8">
+        <h3>مركز العمل اليومي</h3>
+        <div class="mae-grid">
+          <div class="mae-card mae-col-6"><b>حالة البيانات</b><p class="mae-help" id="dashDataStatus">لم يتم استيراد ملفات بعد.</p><div class="mae-progress"><i id="coverageBar"></i></div><p class="mae-help" id="readinessText">ارفع ملفًا لبدء التحقق.</p></div>
+          <div class="mae-card mae-col-6"><b>آخر تحليل</b><p class="mae-help" id="lastRun">لم يبدأ التحليل.</p><button class="mae-btn primary" data-action="analyze">تشغيل الفحص الآن</button></div>
+        </div>
+      </div>
+      <div class="mae-card mae-col-4">
+        <h3>اختصارات</h3>
+        <div class="mae-actions">
+          <button class="mae-btn primary" data-page-go="files">+ استيراد Excel</button>
+          <button class="mae-btn" data-page-go="cash">تسوية الخزينة</button>
+          <button class="mae-btn" data-page-go="control">عرض الاستثناءات</button>
+        </div>
+      </div>
+      <div class="mae-card mae-col-6"><h3>الأخطاء حسب الخطورة</h3><div id="severitySummary" class="mae-empty">لا توجد نتائج بعد.</div></div>
+      <div class="mae-card mae-col-6"><h3>ملاحظات مهمة</h3><div class="mae-help">الأداة رقابية وتحليلية وليست دفتر الأستاذ أو مصدرًا مستقلًا للحقيقة. عدم وجود حركة في ملف مرفوع لا يثبت أن الحركة لم تحدث؛ بل يعني أن الحركة غير موجودة ضمن البيانات المتاحة للتحليل.</div></div>
+      <div class="mae-card mae-col-12"><div class="mae-kpi"><div><h3>إرشاد سريع</h3><p class="mae-help">ابدأ بملفاتك، راجع ربط الأعمدة، ثم شغّل الفحص. يمكنك فتح الدليل الكامل من التبويب المخصص في أي وقت.</p></div><button class="mae-btn" data-page-go="guide">فتح الدليل</button></div></div>
+    </div>
+  </section>
+
+  <section class="mae-page" id="maePage-guide">
+    <div class="mae-card">
+      <h3>دليل الاستخدام السريع</h3>
+      <p class="mae-help">إرشادات تظهر في أول زيارة فقط داخل شاشة التعريف، وهذا الدليل يظل متاحًا لك لاحقًا من دون إزعاج.</p>
+      <div class="mae-guide-grid">
+        <div class="mae-tip"><strong>1. ابدأ بنسخة من ملفاتك</strong><p>احتفظ بالملف الأصلي كما هو، واستخدم نسخة للتحليل. الأداة تقرأ البيانات محليًا ولا ترفعها إلى خادم.</p></div>
+        <div class="mae-tip"><strong>2. ابدأ بملف واحد</strong><p>ارفع دفتر الأستاذ أو القيود أولًا، ثم أضف المبيعات والمشتريات والبنك والخزينة عند الحاجة.</p></div>
+        <div class="mae-tip"><strong>3. راجع التصنيف</strong><p>التصنيف اقتراح آلي. صححه يدويًا إذا كان اسم الملف أو الأعمدة لا يوضح نوع البيانات.</p></div>
+        <div class="mae-tip"><strong>4. راجع ربط الأعمدة</strong><p>قبل الفحص، تأكد من التاريخ ورقم المستند والحساب والمدين والدائن والمبلغ. الربط الخاطئ ينتج نتيجة خاطئة.</p></div>
+        <div class="mae-tip ok"><strong>5. شغّل الفحص</strong><p>النتائج استثناءات تستحق المراجعة، وليست إثباتًا تلقائيًا لخطأ أو احتيال.</p></div>
+        <div class="mae-tip warn"><strong>6. لا تعتمد نتيجة منفردة</strong><p>افحص المستندات والسياسة المحاسبية والعملة والفترة قبل تسجيل أي قيد أو اتخاذ قرار نهائي.</p></div>
+        <div class="mae-tip"><strong>7. سجّل قراراتك</strong><p>استخدم تمت المراجعة أو ليست مشكلة أو أبقيها للمراجعة. ستتذكر الأداة قراراتك محليًا عند تفعيل الذاكرة.</p></div>
+        <div class="mae-tip"><strong>8. خذ نسخة احتياطية</strong><p>استخدم النسخة الاحتياطية قبل مسح البيانات أو تغيير الجهاز. ملف النسخة بصيغة JSON.</p></div>
+      </div>
+    </div>
+    <div class="mae-card" style="margin-top:12px"><h3>متى تكون النتيجة موثوقة؟</h3><div class="mae-help">تزداد موثوقية النتيجة عندما تكون الفترة مكتملة، والعملات موحدة، وربط الأعمدة صحيحًا، ورقم القيد واضحًا، وملفات الطرفين متاحة. لا توجد أداة آلية تضمن دقة 100% في كل ملف؛ الحكم النهائي يظل للمحاسب المسؤول.</div></div>
+  </section>
+
+  <section class="mae-page" id="maePage-files">
+    <div class="mae-card">
+      <h3>استيراد ملفات العمل</h3>
+      <div class="mae-drop" id="dropzone">
+        <strong>اسحب ملفات Excel هنا</strong>
+        <div class="mae-help">يدعم XLSX / XLS / CSV. تتم القراءة داخل المتصفح ولا يتم رفع بيانات الملفات إلى قاعدة بيانات الموقع.</div>
+        <br><button class="mae-btn primary" id="pickFiles">اختيار الملفات</button>
+        <input type="file" id="maeFiles" accept=".xlsx,.xls,.csv" multiple hidden>
+      </div>
+      <div id="fileList" class="mae-filelist"></div>
+    </div>
+    <div class="mae-grid" style="margin-top:12px">
+      <div class="mae-card mae-col-6"><h3>طريقة التصنيف</h3><div id="classificationList" class="mae-empty">ارفع ملفات أولًا.</div></div>
+      <div class="mae-card mae-col-6"><h3>معاينة البيانات</h3><div id="previewBox" class="mae-empty">اختر ملفًا من القائمة.</div></div>
+    </div>
+  </section>
+
+  <section class="mae-page" id="maePage-mapping">
+    <div class="mae-card">
+      <h3>ربط الأعمدة والتعرف على بنية ملفك</h3>
+      <p class="mae-help">الربط يتم اقتراحه تلقائيًا اعتمادًا على أسماء الأعمدة، ويمكنك تصحيحه. التصحيحات تحفظ محليًا كذاكرة خاصة بطريقة عملك.</p>
+      <div id="mappingBox" class="mae-empty">لا توجد ملفات قابلة للربط.</div>
+    </div>
+  </section>
+
+  <section class="mae-page" id="maePage-control">
+    <div class="mae-grid">
+      <div class="mae-card mae-col-4"><h3>الفحص</h3><div class="mae-form">
+        <div class="mae-field mae-full"><label>نطاق الفحص</label><select class="mae-select" id="controlScope"><option value="all">كل البيانات</option><option value="journal">القيود اليومية</option><option value="sales">المبيعات والتحصيلات</option><option value="purchases">المشتريات والمدفوعات</option><option value="bank">البنك</option><option value="cash">الخزينة</option></select></div>
+        <div class="mae-field"><label>هامش فرق المبلغ</label><input class="mae-input" id="amountTolerance" type="number" step="0.01" value="0.01"></div>
+        <div class="mae-field"><label>هامش فرق التاريخ (يوم)</label><input class="mae-input" id="dateTolerance" type="number" min="0" value="1"></div>
+        <div class="mae-field mae-full"><button class="mae-btn primary" data-action="analyze">تشغيل محرك الرقابة</button></div>
+      </div></div>
+      <div class="mae-card mae-col-8"><h3>الاستثناءات</h3><div id="issuesBox" class="mae-empty">شغّل الفحص لعرض النتائج.</div></div>
+    </div>
+  </section>
+
+  <section class="mae-page" id="maePage-cash">
+    <div class="mae-grid">
+      <div class="mae-card mae-col-6">
+        <h3>تسوية الخزينة</h3>
+        <div class="mae-form">
+          <div class="mae-field"><label>رصيد أول المدة</label><input class="mae-input" id="cashOpening" type="number" step="0.01" value="0"></div>
+          <div class="mae-field"><label>الجرد الفعلي للنقدية</label><input class="mae-input" id="cashActual" type="number" step="0.01" value="0"></div>
+          <div class="mae-field"><label>مقبوضات إضافية</label><input class="mae-input" id="cashAdjustIn" type="number" step="0.01" value="0"></div>
+          <div class="mae-field"><label>مدفوعات إضافية</label><input class="mae-input" id="cashAdjustOut" type="number" step="0.01" value="0"></div>
+          <div class="mae-field mae-full"><button class="mae-btn primary" data-action="cashCalc">حساب التسوية</button></div>
+        </div>
+        <div id="cashResult" style="margin-top:12px" class="mae-empty">أدخل الأرقام ثم احسب.</div>
+      </div>
+      <div class="mae-card mae-col-6"><h3>المعادلة الرقابية</h3><div class="mae-code">الرصيد المتوقع = أول المدة + المقبوضات - المدفوعات + التسويات</div><p class="mae-help">الفرق بين الجرد الفعلي والمتوقع هو فرق تسوية يحتاج تفسيرًا ومراجعة مستندات قبل تسجيل أي قيد.</p><button class="mae-btn" data-action="bankAuto">فحص حركات البنك من الملفات</button><div id="bankSummary" style="margin-top:10px"></div></div>
+    </div>
+  </section>
+
+  <section class="mae-page" id="maePage-learning">
+    <div class="mae-grid">
+      <div class="mae-card mae-col-6"><h3>ما تعلمته الأداة عن ملفاتك</h3><div id="memoryBox" class="mae-empty">لا توجد تفضيلات محفوظة.</div></div>
+      <div class="mae-card mae-col-6"><h3>القواعد الشخصية</h3><div id="rulesBox"></div><button class="mae-btn primary" data-action="newRule">+ إضافة قاعدة شخصية</button></div>
+      <div class="mae-card mae-col-12"><h3>سجل قرارات المراجعة</h3><div id="decisionsBox" class="mae-empty">لم تسجل قرارات بعد.</div></div>
+    </div>
+  </section>
+
+  <section class="mae-page" id="maePage-close">
+    <div class="mae-grid">
+      <div class="mae-card mae-col-5"><h3>قائمة الإقفال</h3><div id="closeChecklist" class="mae-checklist"></div></div>
+      <div class="mae-card mae-col-7"><h3>حالة الإقفال</h3><div id="closeStatus" class="mae-empty">ابدأ من قائمة الفحص.</div><button class="mae-btn primary" data-action="closeReport">تحديث تقرير الإقفال</button></div>
+    </div>
+  </section>
+
+  <section class="mae-page" id="maePage-standards">
+    <div class="mae-card">
+      <h3>محرك القواعد المحاسبية المرجعية</h3>
+      <p class="mae-help">هذه الصفحة تستخدم مبادئ رقابية قابلة للاختبار وليست بديلًا عن الحكم المهني أو النصوص الرسمية للمعايير. لا يتم نسخ النصوص الكاملة للمعايير داخل الأداة.</p>
+      <div id="standardsBox"></div>
+    </div>
+  </section>
+
+  <section class="mae-page" id="maePage-settings">
+    <div class="mae-grid">
+      <div class="mae-card mae-col-6"><h3>إعدادات السلوك</h3>
+        <label class="mae-switch"><input type="checkbox" id="learnEnabled" checked> حفظ تصحيحاتي وتفضيلاتي محليًا</label><br>
+        <label class="mae-switch"><input type="checkbox" id="suggestRules" checked> اقتراح قاعدة عند تكرار نفس التصحيح</label><br>
+        <label class="mae-switch"><input type="checkbox" id="ignoreResolved" checked> إخفاء الحالات التي سبق اعتمادها كـ"ليست مشكلة"</label>
+      </div>
+      <div class="mae-card mae-col-6"><h3>الخصوصية</h3><p class="mae-help">الملفات والبيانات والتحليلات وذاكرة المستخدم تحفظ في متصفح المستخدم عبر IndexedDB/LocalStorage حسب المتاح. لا يحتوي هذا الإصدار على API لإرسال بيانات Excel إلى خادم.</p><button class="mae-btn" data-action="resetMemory">إعادة ضبط ذاكرة التخصيص</button></div>
+      <div class="mae-card mae-col-12"><h3>حدود الأداة</h3><ul class="mae-help"><li>لا تثبت الأداة وقوع خطأ أو احتيال؛ هي تحدد استثناءات تستحق المراجعة.</li><li>غياب حركة من ملف ناقص لا يثبت أن الحركة لم تحدث.</li><li>المعايير تتطلب أحكامًا ووقائع وتقديرات لا يمكن حسمها آليًا دائمًا.</li><li>أي تسجيل قيد أو قرار محاسبي نهائي يجب أن يراجعه مسؤول مختص.</li></ul></div>
+    </div>
+  </section>
+</div>
+
+<div class="mae-modal" id="ruleModal">
+  <div class="mae-modal-box">
+    <h3>إضافة قاعدة شخصية</h3>
+    <div class="mae-form">
+      <div class="mae-field"><label>اسم القاعدة</label><input class="mae-input" id="ruleName" placeholder="مثال: تكرار رقم الفاتورة بين الفروع"></div>
+      <div class="mae-field"><label>النطاق</label><select class="mae-select" id="ruleScope"><option value="all">كل البيانات</option><option value="sales">المبيعات</option><option value="purchases">المشتريات</option><option value="cash">الخزينة</option><option value="bank">البنك</option><option value="journal">القيود</option></select></div>
+      <div class="mae-field mae-full"><label>القاعدة/الملاحظة</label><textarea class="mae-textarea" id="ruleText" rows="4" placeholder="اكتب متى تعتبر الحالة طبيعية أو كيف تريد التعامل معها"></textarea></div>
+    </div>
+    <div class="mae-actions" style="margin-top:12px"><button class="mae-btn primary" data-action="saveRule">حفظ</button><button class="mae-btn" data-action="closeModal">إلغاء</button></div>
+  </div>
+</div>
+<div class="mae-toast" id="toast"></div>
+</div></div></section>
+</main>
+<footer class="site-footer"><div class="container"><div style="margin-bottom:10px"><a href="https://wa.me/201154960694" target="_blank" rel="noopener">واتساب</a><a href="https://www.linkedin.com/in/moamen-ahmed-900921223" target="_blank" rel="noopener">LinkedIn</a><a href="https://www.facebook.com/acc.mo.men.ahmed.mohamed" target="_blank" rel="noopener">Facebook</a></div>جميع الحقوق محفوظة © 2026 مؤمن أحمد</div></footer>
+<script>
+(()=>{"use strict";
+const root=document.querySelector("[data-mae-excel-assistant]");
+if(!root||root.dataset.initialized)return;
+root.dataset.initialized="1";
+
+const $=s=>root.querySelector(s), $$=s=>[...root.querySelectorAll(s)];
+const DB_NAME="mae_accounting_control_v1", DB_STORE="state";
+const KEY="state";
+const defaultState={
+  version:1, files:[], issues:[], mappings:{}, classifications:{}, rules:[],
+  decisions:[], memory:{filePatterns:{}, columnMappings:{}, ignoredFingerprints:{}},
+  settings:{learnEnabled:true,suggestRules:true,ignoreResolved:true},
+  cash:{opening:0,actual:0,adjustIn:0,adjustOut:0}, lastRun:null
+};
+let state=structuredClone(defaultState), XLSXLib=null;
+
+const aliases={
+ date:["date","التاريخ","تاريخ","تاريخ الحركة","transaction date","posting date","invoice date"],
+ doc:["invoice","invoice no","invoice number","رقم الفاتورة","رقم المستند","رقم القيد","رقم سند","document no","voucher no","reference","ref"],
+ desc:["description","الوصف","البيان","الشرح","تفاصيل","narration","details"],
+ account:["account","الحساب","اسم الحساب","كود الحساب","account name","gl account"],
+ debit:["debit","مدين","المدين","debit amount"],
+ credit:["credit","دائن","الدائن","credit amount"],
+ amount:["amount","المبلغ","القيمة","الإجمالي","total","net","value"],
+ customer:["customer","العميل","اسم العميل","customer name"],
+ supplier:["supplier","المورد","اسم المورد","supplier name"],
+ bank:["bank","البنك","الحساب البنكي","bank account"],
+ cash:["cash","الخزينة","نقدية","cash account"],
+ tax:["tax","vat","ضريبة","ضريبة القيمة المضافة","vat amount"],
+ due:["due date","تاريخ الاستحقاق","الاستحقاق"],
+ paid:["paid","مدفوع","المسدد","paid amount","تحصيل"],
+ branch:["branch","الفرع","branch name"],
+ currency:["currency","العملة","currency code"]
+};
+
+const stds=[
+ {id:"IAS1",name:"IAS 1 / Presentation",note:"عرض القوائم المالية، المقارنات، العرض المنظم والمعلومات الجوهرية.",active:"حتى تطبيق IFRS 18 حسب تاريخ النفاذ."},
+ {id:"IFRS18",name:"IFRS 18 / Presentation and Disclosure",note:"معيار العرض والإفصاح الجديد؛ تاريخ نفاذه يبدأ للفترات السنوية في 1 يناير 2027 مع السماح بالتطبيق المبكر.",active:"راقبه عند تحديد الفترة والسياسة المحاسبية."},
+ {id:"IAS2",name:"IAS 2 / Inventories",note:"المخزون يقاس بالأقل من التكلفة وصافي القيمة القابلة للتحقق، مع رقابة على طريقة التكلفة.",active:"رقابي"},
+ {id:"IAS7",name:"IAS 7 / Cash Flows",note:"تصنيف وعرض التدفقات النقدية ومطابقة النقد وما في حكمه.",active:"رقابي"},
+ {id:"IAS8",name:"IAS 8 / Policies, Estimates and Errors",note:"اتساق السياسات والتغييرات والتصحيح والأخطاء المحاسبية.",active:"رقابي"},
+ {id:"IAS10",name:"IAS 10 / Events after Reporting Period",note:"تمييز الأحداث المعدلة وغير المعدلة بعد فترة التقرير.",active:"رقابي"},
+ {id:"IAS12",name:"IAS 12 / Income Taxes",note:"الضريبة الحالية والمؤجلة وعرض ومطابقة أرصدة الضريبة.",active:"رقابي"},
+ {id:"IAS16",name:"IAS 16 / Property, Plant and Equipment",note:"التكلفة، الاعتراف، القياس اللاحق، الإهلاك والمراجعة الدورية للعمر والقيمة المتبقية.",active:"رقابي"},
+ {id:"IAS21",name:"IAS 21 / Foreign Exchange",note:"العملة الوظيفية ومعالجة معاملات العملات الأجنبية وفروق الترجمة.",active:"رقابي"},
+ {id:"IAS23",name:"IAS 23 / Borrowing Costs",note:"رسملة تكاليف الاقتراض المؤهلة للأصل المؤهل عند استيفاء الشروط.",active:"رقابي"},
+ {id:"IAS36",name:"IAS 36 / Impairment",note:"مقارنة القيمة الدفترية بالمبلغ القابل للاسترداد عند وجود مؤشرات، مع اختبارات سنوية لفئات محددة.",active:"رقابي"},
+ {id:"IAS37",name:"IAS 37 / Provisions",note:"الالتزام الحالي، احتمال التدفق الخارج، وإمكانية التقدير الموثوق.",active:"رقابي"},
+ {id:"IAS38",name:"IAS 38 / Intangibles",note:"الاعتراف والقياس والإطفاء والانخفاض للأصول غير الملموسة.",active:"رقابي"},
+ {id:"IFRS9",name:"IFRS 9 / Financial Instruments",note:"تصنيف وقياس الأدوات المالية ومفهوم خسائر الائتمان المتوقعة ضمن نطاقه.",active:"رقابي"},
+ {id:"IFRS13",name:"IFRS 13 / Fair Value",note:"إطار قياس القيمة العادلة والإفصاحات ذات الصلة.",active:"رقابي"},
+ {id:"IFRS15",name:"IFRS 15 / Revenue",note:"نموذج الاعتراف بالإيراد من العقود مع العملاء وتحديد توقيت الاعتراف.",active:"رقابي"},
+ {id:"IFRS16",name:"IFRS 16 / Leases",note:"إطار محاسبة الإيجارات للمستأجر والمؤجر ضمن نطاق المعيار.",active:"رقابي"},
+ {id:"IAS19",name:"IAS 19 / Employee Benefits",note:"منافع الموظفين والالتزامات المتعلقة بها.",active:"رقابي"}
+];
+
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
+function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function num(x){
+ if(x===null||x===undefined||x==="")return null;
+ let s=String(x).trim().replace(/[٠-٩]/g,d=>String(d.charCodeAt(0)-1632)).replace(/[۰-۹]/g,d=>String(d.charCodeAt(0)-1776));
+ const negative=/^\s*\(.*\)\s*$/.test(s)||/(^|\s)(cr|credit|دائن|سالب)(\s|$)/i.test(s);
+ s=s.replace(/[()]/g,"").replace(/[^\d,.-]/g,"");
+ if(!/[\d]/.test(s))return null;
+ const comma=s.lastIndexOf(","), dot=s.lastIndexOf(".");
+ if(comma>=0&&dot>=0){s=comma>dot?s.replace(/\./g,"").replace(",","."):s.replace(/,/g,"");}
+ else if(comma>=0){const decimals=s.length-comma-1;s=decimals<=2?s.replace(",","."):s.replace(/,/g,"");}
+ else s=s.replace(/,/g,"");
+ const n=Number(s);if(!Number.isFinite(n))return null;return negative? -Math.abs(n):n;
+}
+function norm(x){return String(x??"").trim().toLowerCase().replace(/[\u064B-\u065F\u0670]/g,"").replace(/[ـ]/g,"").replace(/[٠-٩]/g,d=>String(d.charCodeAt(0)-1632)).replace(/[۰-۹]/g,d=>String(d.charCodeAt(0)-1776)).replace(/\s+/g," ")}
+function dateObj(x){
+ if(x instanceof Date&&!isNaN(x))return x;
+ if(typeof x==="number"&&XLSXLib?.SSF){const o=XLSXLib.SSF.parse_date_code(x);if(o)return new Date(o.y,o.m-1,o.d)}
+ const raw=String(x??"").trim(), m=raw.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
+ if(m){const y=Number(m[3])<100?2000+Number(m[3]):Number(m[3]);const d=new Date(y,Number(m[2])-1,Number(m[1]));if(!isNaN(d))return d;}
+ const d=new Date(raw);return isNaN(d)?null:d;
+}
+function dateKey(x){const d=dateObj(x);return d?d.toISOString().slice(0,10):""}
+function daysBetween(a,b){const x=dateObj(a),y=dateObj(b);return x&&y?Math.abs((x-y)/86400000):999999}
+function fingerprint(o){const raw=JSON.stringify(o),h=Array.from(raw).reduce((n,c)=>(n*31+c.charCodeAt(0))>>>0,2166136261);return `${h.toString(16)}-${raw.length}`}
+function movement(r,m){
+ const debit=m.debit?num(r[m.debit]):null,credit=m.credit?num(r[m.credit]):null;
+ if(debit!==null||credit!==null)return (debit||0)-(credit||0);
+ return m.amount?num(r[m.amount]):null;
+}
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2800)}
+function save(){return idbPut(KEY,state)}
+function idbOpen(){return new Promise((res,rej)=>{if(!indexedDB)return res(null);const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>r.result.createObjectStore(DB_STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function idbGet(){try{const db=await idbOpen();if(!db)return JSON.parse(localStorage.getItem("mae_state")||"null");return new Promise((res,rej)=>{const r=db.transaction(DB_STORE,"readonly").objectStore(DB_STORE).get(KEY);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error)})}catch(e){return JSON.parse(localStorage.getItem("mae_state")||"null")}}
+async function idbPut(k,v){try{const db=await idbOpen();if(!db){localStorage.setItem("mae_state",JSON.stringify(v));return}return new Promise((res,rej)=>{const r=db.transaction(DB_STORE,"readwrite").objectStore(DB_STORE).put(v,k);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}catch(e){localStorage.setItem("mae_state",JSON.stringify(v))}}
+
+function classify(name,headers){
+ const s=norm(name+" "+headers.join(" "));
+ const tests=[
+  ["bank",["bank","بنك","كشف حساب","statement"]],
+  ["cash",["cash","خزينة","نقدية","عهدة"]],
+  ["sales",["sales","مبيعات","فاتورة بيع","revenue","إيرادات"]],
+  ["purchases",["purchase","مشتريات","فاتورة شراء","suppliers","موردين"]],
+  ["receivables",["receivable","customers","عملاء","تحصيل","مدينون"]],
+  ["payables",["payable","موردين","دائنون","payments","مدفوعات"]],
+  ["journal",["journal","ledger","general ledger","قيد","دفتر الأستاذ","حسابات الأستاذ"]],
+  ["expenses",["expense","مصروف","مصاريف"]],
+  ["payroll",["payroll","salary","رواتب","مرتبات","أجور"]],
+  ["inventory",["inventory","stock","مخزون","صنف","كمية"]],
+  ["assets",["asset","fixed asset","أصول","إهلاك"]],
+  ["tax",["tax","vat","ضريبة","ضرائب"]]
+ ];
+ let best=["unknown",0]; for(const [type,words] of tests){let score=words.reduce((n,w)=>n+(s.includes(norm(w))?1:0),0);if(score>best[1])best=[type,score]}
+ return best[0];
+}
+function suggestMapping(headers){
+ const out={}; for(const [field,als] of Object.entries(aliases)){
+  let best=null,score=0;
+  headers.forEach(h=>{const nh=norm(h);als.forEach(a=>{const na=norm(a);let sc=nh===na?100:(nh.includes(na)||na.includes(nh)?60:0);if(sc>score){score=sc;best=h}})});
+  if(best)out[field]=best;
+ } return out;
+}
+function rowsFromFile(f){return f.sheets.flatMap(s=>s.rows.map(r=>({...r,__sheet:s.name,__file:f.name})))}
+
+async function loadXLSX(){
+ if(window.XLSX)return window.XLSX;
+ if(XLSXLib)return XLSXLib;
+ return new Promise((resolve,reject)=>{
+  const sc=document.createElement("script");
+  sc.src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js";
+  sc.onload=()=>{XLSXLib=window.XLSX;resolve(XLSXLib)};
+  sc.onerror=()=>reject(new Error("تعذر تحميل محرك Excel. يمكنك تجربة CSV أو السماح بتحميل مكتبة SheetJS."));
+  document.head.appendChild(sc);
+ });
+}
+async function parseFile(file){
+ const XLSX=await loadXLSX(), buf=await file.arrayBuffer();
+ const wb=XLSX.read(buf,{type:"array",cellDates:true,codepage:65001});
+ const sheets=wb.SheetNames.map(name=>{
+   const ws=wb.Sheets[name], matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:true});
+   const rawHeaders=(matrix.shift()||[]).map((x,i)=>String(x||`عمود ${i+1}`));
+   const headers=rawHeaders.map((h,i)=>h||`عمود ${i+1}`);
+   const rows=matrix.filter(r=>r.some(v=>v!=="")).map(arr=>{const o={};headers.forEach((h,i)=>o[h]=arr[i]??"");return o});
+   return {name,headers,rows,classification:classify(file.name+" "+name,headers)};
+ });
+ return {id:uid(),name:file.name,size:file.size,updated:new Date().toISOString(),sheets};
+}
+
+function render(){
+ $("#kFiles").textContent=state.files.length;
+ $("#kRows").textContent=state.files.reduce((n,f)=>n+f.sheets.reduce((m,s)=>m+s.rows.length,0),0).toLocaleString("ar-EG");
+ $("#kIssues").textContent=state.issues.filter(i=>i.status==="open").length;
+ $("#kRules").textContent=state.rules.length;
+ $("#lastRun").textContent=state.lastRun?new Date(state.lastRun).toLocaleString("ar-EG"):"لم يبدأ التحليل.";
+ $("#dashDataStatus").textContent=state.files.length?`${state.files.length} ملف، ${state.files.reduce((n,f)=>n+f.sheets.length,0)} Sheet، والبيانات محفوظة محليًا.`:"لم يتم استيراد ملفات بعد.";
+ const ready=readiness();$("#coverageBar").style.width=ready.score+"%";$("#readinessText").textContent=`جاهزية الفحص: ${ready.score}% — ${ready.label}`;
+ const sev={critical:0,high:0,medium:0,low:0};state.issues.filter(i=>i.status==="open").forEach(i=>sev[i.severity]=(sev[i.severity]||0)+1);
+ $("#severitySummary").innerHTML=Object.entries(sev).map(([k,v])=>`<span class="mae-badge ${k==="critical"||k==="high"?"bad":k==="medium"?"warn":"info"}">${k}: ${v}</span>`).join(" ")||"لا توجد نتائج";
+ renderFiles();renderMappings();renderIssues();renderMemory();renderRules();renderStandards();renderChecklist();renderClose();
+}
+function readiness(){
+ const total=state.files.reduce((n,f)=>n+f.sheets.length,0),mapped=state.files.reduce((n,f)=>n+f.sheets.filter(s=>{const m=state.mappings[f.id+"|"+s.name]||suggestMapping(s.headers);return m.date&&(m.doc||m.amount)}).length,0);
+ if(!total)return {score:0,label:"ابدأ برفع ملف واحد على الأقل",tone:"warn"};
+ const score=Math.round((mapped/total)*100),label=score===100?"الملفات الأساسية قابلة للفحص":`${total-mapped} Sheet يحتاج مراجعة الربط`;
+ return {score,label,tone:score===100?"ok":"warn"};
+}
+function renderFiles(){
+ const box=$("#fileList");if(!state.files.length){box.innerHTML='<div class="mae-empty">لا توجد ملفات.</div>';$("#classificationList").innerHTML='<div class="mae-empty">ارفع ملفات أولًا.</div>';return}
+ box.innerHTML=state.files.map(f=>`<div class="mae-file"><div class="mae-file-main"><div class="mae-file-name">${esc(f.name)}</div><div class="mae-file-meta">${(f.size/1024).toFixed(1)} KB · ${f.sheets.length} Sheet</div></div><div><span class="mae-badge info">${f.sheets.reduce((n,s)=>n+s.rows.length,0).toLocaleString("ar-EG")} صف</span> <button class="mae-mini" data-file-preview="${f.id}">معاينة</button> <button class="mae-mini" data-file-delete="${f.id}">حذف</button></div></div>`).join("");
+ $("#classificationList").innerHTML=state.files.flatMap(f=>f.sheets.map(s=>`<div class="mae-rule"><div><b>${esc(f.name)} / ${esc(s.name)}</b><div class="mae-help">${s.rows.length} صف · تصنيف مقترح: <b>${esc(s.classification)}</b></div></div><select class="mae-select" style="width:160px" data-class="${f.id}|${s.name}">${["unknown","sales","purchases","receivables","payables","cash","bank","journal","expenses","payroll","inventory","assets","tax"].map(x=>`<option ${x===s.classification?"selected":""} value="${x}">${x}</option>`).join("")}</select></div>`)).join("");
+}
+function renderPreview(f){
+ const s=f.sheets[0], rows=s.rows.slice(0,8);
+ $("#previewBox").innerHTML=`<div class="mae-help">${esc(f.name)} / ${esc(s.name)}</div><div class="mae-table-wrap"><table class="mae-table"><thead><tr>${s.headers.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${s.headers.map(h=>`<td>${esc(r[h])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+function renderMappings(){
+ if(!state.files.length){$("#mappingBox").innerHTML='<div class="mae-empty">ارفع ملفات أولًا.</div>';return}
+ let html="";
+ state.files.forEach(f=>f.sheets.forEach(s=>{
+   const key=f.id+"|"+s.name,m=state.mappings[key]||suggestMapping(s.headers);
+   html+=`<div class="mae-card" style="margin-bottom:10px"><h4>${esc(f.name)} / ${esc(s.name)} <span class="mae-badge neutral">${esc(s.classification)}</span></h4><div class="mae-grid">${Object.entries(aliases).map(([field])=>`<div class="mae-col-3"><label class="mae-help">${field}</label><select class="mae-select" data-map="${key}|${field}"><option value="">— غير مستخدم —</option>${s.headers.map(h=>`<option ${m[field]===h?"selected":""} value="${esc(h)}">${esc(h)}</option>`).join("")}</select></div>`).join("")}</div></div>`;
+ }));$("#mappingBox").innerHTML=html;
+}
+function issue(id,type,title,severity,detail,context,extra={}){
+ const fp=fingerprint({type,context});
+ if(state.memory.ignoredFingerprints[fp] && state.settings.ignoreResolved)return;
+ return {id:uid(),fp,type,title,severity,detail,context,status:"open",created:new Date().toISOString(),...extra};
+}
+function detectDuplicates(){
+ const out=[];
+ state.files.forEach(f=>f.sheets.forEach(s=>{
+  const m=state.mappings[f.id+"|"+s.name]||suggestMapping(s.headers),doc=m.doc,branch=m.branch;
+  if(!doc)return;
+  const map=new Map();
+  s.rows.forEach((r,idx)=>{const d=norm(r[doc]);if(!d)return;const b=branch?norm(r[branch]):"";const key=s.classification==="journal"?d+"|"+b+"|"+JSON.stringify([m.date?dateKey(r[m.date]):"",m.account?norm(r[m.account]):"",m.debit?num(r[m.debit]):null,m.credit?num(r[m.credit]):null,m.desc?norm(r[m.desc]):""]):d+"|"+b;if(!map.has(key))map.set(key,[]);map.get(key).push(idx)});
+  map.forEach((rows,key)=>{if(rows.length>1){const [document,branchName]=key.split("|");out.push(issue("","DUPLICATE_DOCUMENT","تكرار محتمل في رقم المستند","high",`المستند "${document}" ظهر ${rows.length} مرة داخل ${f.name} / ${s.name}${branchName?` للفرع ${branchName}`:""}. قد يكون طبيعيًا إذا كان الترقيم يسمح بالتكرار بين الفروع أو أنواع المستندات، لذلك يحتاج مراجعة.`,{file:f.name,sheet:s.name,document,branch:branchName,rows:rows.map(i=>i+2)}))}});
+ }));
+ return out;
+}
+function detectJournal(){
+ const out=[],tol=Number($("#amountTolerance")?.value||.01);
+ state.files.forEach(f=>f.sheets.filter(s=>s.classification==="journal").forEach(s=>{
+  const m=state.mappings[f.id+"|"+s.name]||suggestMapping(s.headers);if(!m.debit||!m.credit)return;
+  const groups=new Map();
+  s.rows.forEach((r,i)=>{const key=m.doc?norm(r[m.doc]):`row-${i+2}`;if(!groups.has(key))groups.set(key,{debit:0,credit:0,rows:[]});const g=groups.get(key);g.debit+=num(r[m.debit])||0;g.credit+=num(r[m.credit])||0;g.rows.push(i+2)});
+  groups.forEach((g,key)=>{const diff=g.debit-g.credit;if(Math.abs(diff)>tol&&(g.debit!==0||g.credit!==0))out.push(issue("","JOURNAL_IMBALANCE","قيد يحتاج مراجعة توازن","critical",`المجموعة ${key} في ${f.name} / ${s.name}: إجمالي المدين ${g.debit.toFixed(2)} مقابل إجمالي الدائن ${g.credit.toFixed(2)}، والفرق ${diff.toFixed(2)}. تم التجميع حسب رقم المستند عند توفره.`,{file:f.name,sheet:s.name,group:key,rows:g.rows,debit:g.debit,credit:g.credit,difference:diff}))});
+ }));
+ return out;
+}
+function detectMissingFields(){
+ const out=[];
+ state.files.forEach(f=>f.sheets.forEach(s=>{
+  const m=state.mappings[f.id+"|"+s.name]||suggestMapping(s.headers),important=[["date","التاريخ"],["doc","رقم المستند"]];
+  if(s.classification==="journal")important.push(["account","الحساب"]);
+  if(["sales","purchases","cash","bank","receivables","payables"].includes(s.classification))important.push(["amount","المبلغ"]);
+  important.forEach(([field,label])=>{if(!m[field])return;s.rows.forEach((r,i)=>{if(String(r[m[field]]??"").trim()==="")out.push(issue("","MISSING_FIELD","بيانات أساسية ناقصة","medium",`الصف ${i+2} لا يحتوي على ${label}.`,{file:f.name,sheet:s.name,row:i+2,field}))})});
+ }));
+ return out;
+}
+function detectNegativeCash(){
+ const out=[];
+ state.files.forEach(f=>f.sheets.filter(s=>s.classification==="cash").forEach(s=>{
+  const m=state.mappings[f.id+"|"+s.name]||suggestMapping(s.headers),ordered=s.rows.map((r,i)=>({r,i,date:m.date?dateObj(r[m.date]):null})).sort((a,b)=>(a.date||0)-(b.date||0));
+  let balance=num($("#cashOpening")?.value)||0;
+  ordered.forEach(x=>{const move=movement(x.r,m);if(move===null)return;balance+=move;if(balance<-(Number($("#amountTolerance")?.value||.01)))out.push(issue("","NEGATIVE_CASH_BALANCE","رصيد خزينة سالب يحتاج مراجعة","high",`بعد الصف ${x.i+2} في ${f.name} / ${s.name} أصبح الرصيد التراكمي التقديري ${balance.toFixed(2)} سالبًا. راجع رصيد أول المدة واتجاه المدين/الدائن واكتمال الحركات.`,{file:f.name,sheet:s.name,row:x.i+2,balance}))});
+ }));
+ return out;
+}
+function detectDataQuality(){
+ const out=[];
+ state.files.forEach(f=>f.sheets.forEach(s=>{
+  const m=state.mappings[f.id+"|"+s.name]||suggestMapping(s.headers),fields=[...new Set([m.amount,m.debit,m.credit].filter(Boolean))];
+  fields.forEach(field=>s.rows.forEach((r,i)=>{if(String(r[field]??"").trim()!==""&&num(r[field])===null)out.push(issue("","INVALID_AMOUNT","قيمة مبلغ غير قابلة للقراءة","high",`الصف ${i+2} والعمود "${field}": "${r[field]}". راجع تنسيق الرقم أو العملة.`,{file:f.name,sheet:s.name,row:i+2,field,value:r[field]}))}));
+ }));
+ return out;
+}
+function reconcilePairs(){
+ const out=[],buckets={};
+ state.files.forEach(f=>f.sheets.forEach(s=>{const type=s.classification;if(["sales","purchases","cash","bank","receivables","payables"].includes(type)){const m=state.mappings[f.id+"|"+s.name]||suggestMapping(s.headers);buckets[type]=(buckets[type]||[]).concat(s.rows.map((r,i)=>({r,m,file:f.name,sheet:s.name,row:i+2,type})))}}));
+ const pairs=[["sales","receivables","مبيعات مقابل تحصيلات"],["purchases","payables","مشتريات مقابل مدفوعات"],["cash","bank","خزينة مقابل بنك"]],tol=Number($("#amountTolerance")?.value||.01),dateTol=Number($("#dateTolerance")?.value||1);
+ pairs.forEach(([a,b,label])=>{if(!buckets[a]||!buckets[b])return;const used=new Set();buckets[a].forEach(x=>{const xm=x.m,xd=xm.doc?norm(x.r[xm.doc]):"",xa=movement(x.r,xm),xdate=xm.date?dateObj(x.r[xm.date]):null;if(xa===null)return;let match=-1;for(let i=0;i<buckets[b].length;i++){if(used.has(i))continue;const y=buckets[b][i],ym=y.m,yd=ym.doc?norm(y.r[ym.doc]):"",ya=movement(y.r,ym),ydate=ym.date?dateObj(y.r[ym.date]):null;const sameDoc=xd&&yd&&xd===yd,sameAmount=ya!==null&&Math.abs(Math.abs(ya)-Math.abs(xa))<=tol,sameDate=!xdate||!ydate||daysBetween(xdate,ydate)<=dateTol;if((sameDoc||sameAmount)&&sameDate){match=i;break}}if(match<0)out.push(issue("","UNMATCHED_PAIR","حركة غير مطابقة في ملف مقابل","high",`${label}: الحركة من ${x.file}/${x.sheet} الصف ${x.row} لم تجد تطابقًا فريدًا ضمن البيانات المرفوعة بعد مقارنة المرجع/المبلغ والتاريخ. قد تكون الحركة مجمعة أو آجلة أو ضمن ملف ناقص.`,{left:x.file,sheet:x.sheet,row:x.row,type:a}));else used.add(match)});});
+ return out;
+}
+function runAnalysis(){
+ if(!state.files.length){toast("ارفع ملفًا واحدًا على الأقل قبل تشغيل الفحص.");return}
+ const ready=readiness();if(ready.score<100)toast("راجع ربط الأعمدة قبل اعتماد النتائج؛ سيستمر الفحص بالحقول المتاحة.");
+ let all=[...detectDuplicates(),...detectJournal(),...detectMissingFields(),...detectNegativeCash(),...detectDataQuality(),...reconcilePairs()];
+ const seen=new Set(),fresh=[];all.forEach(i=>{if(i&&!seen.has(i.fp)){seen.add(i.fp);fresh.push(i)}});
+ state.issues=fresh;
+ state.lastRun=new Date().toISOString();save();render();toast(`اكتمل الفحص: ${fresh.length} استثناء`);
+}
+function renderIssues(){
+ const box=$("#issuesBox"), list=state.issues.filter(i=>i.status==="open");
+ if(!list.length){box.innerHTML='<div class="mae-empty">لا توجد استثناءات مفتوحة حاليًا.</div>';return}
+ box.innerHTML=list.map(i=>`<div class="mae-issue ${i.severity}"><div class="mae-issue-top"><div><span class="mae-badge ${i.severity==="critical"||i.severity==="high"?"bad":i.severity==="medium"?"warn":"info"}">${esc(i.severity)}</span> <span class="mae-issue-title">${esc(i.title)}</span></div><span class="mae-help">${new Date(i.created).toLocaleString("ar-EG")}</span></div><div class="mae-issue-body">${esc(i.detail)}</div><div class="mae-issue-actions"><button class="mae-mini" data-resolve="${i.id}|confirmed">تمت المراجعة</button><button class="mae-mini" data-resolve="${i.id}|not_issue">ليست مشكلة</button><button class="mae-mini" data-resolve="${i.id}|keep">أبقيها للمراجعة</button></div></div>`).join("");
+}
+function resolveIssue(id,decision){
+ const i=state.issues.find(x=>x.id===id);if(!i)return;
+ if(decision==="keep")return;
+ i.status="resolved";i.resolution=decision;i.resolvedAt=new Date().toISOString();
+ state.decisions.unshift({id:uid(),issueId:id,decision,type:i.type,context:i.context,at:i.resolvedAt});
+ if(decision==="not_issue"&&state.settings.learnEnabled)state.memory.ignoredFingerprints[i.fp]=true;
+ save();render();toast("تم حفظ قرار المراجعة محليًا.");
+}
+function renderMemory(){
+ const mem=state.memory, files=Object.entries(mem.filePatterns||{}), maps=Object.entries(mem.columnMappings||{}), ignored=Object.keys(mem.ignoredFingerprints||{}).length;
+ $("#memoryBox").innerHTML=`<div class="mae-rule"><span>أنماط الملفات المحفوظة</span><b>${files.length}</b></div><div class="mae-rule"><span>ربط أعمدة محفوظ</span><b>${maps.length}</b></div><div class="mae-rule"><span>استثناءات اعتمدتها سابقًا</span><b>${ignored}</b></div><p class="mae-help">هذه الذاكرة تخص هذا المتصفح فقط ويمكن حذفها من الإعدادات.</p>`;
+ const db=state.decisions.slice(0,20);$("#decisionsBox").innerHTML=db.length?`<div class="mae-table-wrap"><table class="mae-table"><thead><tr><th>التاريخ</th><th>النوع</th><th>القرار</th></tr></thead><tbody>${db.map(x=>`<tr><td>${new Date(x.at).toLocaleString("ar-EG")}</td><td>${esc(x.type)}</td><td>${esc(x.decision)}</td></tr>`).join("")}</tbody></table></div>`:'<div class="mae-empty">لم تسجل قرارات بعد.</div>';
+}
+function renderRules(){
+ $("#rulesBox").innerHTML=state.rules.length?state.rules.map(r=>`<div class="mae-rule"><div><b>${esc(r.name)}</b><div class="mae-help">${esc(r.scope)} · ${esc(r.text)}</div></div><button class="mae-mini" data-rule-delete="${r.id}">حذف</button></div>`).join(""):'<div class="mae-empty">لا توجد قواعد شخصية.</div>';
+}
+function renderStandards(){
+ $("#standardsBox").innerHTML=stds.map(s=>`<div class="mae-rule"><div><b>${esc(s.id)} — ${esc(s.name)}</b><div class="mae-help">${esc(s.note)}</div></div><span class="mae-badge info">${esc(s.active)}</span></div>`).join("");
+}
+function renderChecklist(){
+ const items=[
+  ["data","استيراد الملفات الأساسية"],
+  ["map","مراجعة ربط الأعمدة"],
+  ["duplicates","مراجعة التكرارات"],
+  ["journal","فحص توازن القيود"],
+  ["bank","تسوية البنك"],
+  ["cash","جرد وتسوية الخزينة"],
+  ["pairs","مراجعة المطابقات"],
+  ["backup","أخذ نسخة احتياطية"]
+ ];
+ $("#closeChecklist").innerHTML=items.map(([id,label])=>`<label class="mae-check"><input type="checkbox" data-check="${id}"> <span>${label}</span></label>`).join("");
+}
+function renderClose(){
+ const checks=$$("[data-check]"), done=checks.filter(x=>x.checked).length,total=checks.length;
+ $("#closeStatus").innerHTML=`<div class="mae-kpi"><div><div class="label">نسبة إتمام قائمة الإقفال</div><div class="num">${Math.round(done/total*100)}%</div></div><div class="mae-iconbox">${done===total?"✓":"!"}</div></div><p class="mae-help">${done===total?"كل عناصر القائمة تم تعليمها. راجع الاستثناءات قبل الإقفال النهائي.":`تم إنجاز ${done} من ${total}.`}</p>`;
+}
+function cashCalc(){
+ const opening=num($("#cashOpening").value)||0,actual=num($("#cashActual").value)||0,ai=num($("#cashAdjustIn").value)||0,ao=num($("#cashAdjustOut").value)||0;
+ const flows=state.files.flatMap(f=>f.sheets.filter(s=>s.classification==="cash").map(s=>{const m=state.mappings[f.id+"|"+s.name]||suggestMapping(s.headers);return {s,m}})).reduce((x,o)=>{o.s.rows.forEach(r=>{const n=movement(r,o.m);if(n!==null)x.net+=n});return x},{net:0});
+ const expected=opening+flows.net+ai-ao,variance=actual-expected;
+ state.cash={opening,actual,adjustIn:ai,adjustOut:ao,expected,variance};save();
+ $("#cashResult").innerHTML=`<div class="mae-grid"><div class="mae-card mae-col-6"><b>الرصيد المتوقع</b><div class="num">${expected.toLocaleString("ar-EG",{maximumFractionDigits:2})}</div></div><div class="mae-card mae-col-6"><b>الفرق</b><div class="num">${variance.toLocaleString("ar-EG",{maximumFractionDigits:2})}</div></div></div><p><span class="mae-badge ${Math.abs(variance)<=.01?"ok":"bad"}">${Math.abs(variance)<=.01?"متطابق":"يحتاج مراجعة"}</span></p>`;
+}
+function bankAuto(){
+ const banks=state.files.flatMap(f=>f.sheets.filter(s=>s.classification==="bank").map(s=>({f,s})));
+ $("#bankSummary").innerHTML=banks.length?banks.map(x=>`<div class="mae-rule"><b>${esc(x.f.name)} / ${esc(x.s.name)}</b><span class="mae-badge info">${x.s.rows.length} حركة</span></div>`).join(""):"<div class='mae-empty'>لم يتم التعرف على ملف بنك. يمكنك تعديل تصنيف الـSheet من ملفاتي.</div>";
+}
+function newRule(){$("#ruleModal").classList.add("open")}
+function saveRule(){
+ const name=$("#ruleName").value.trim(),text=$("#ruleText").value.trim(),scope=$("#ruleScope").value;
+ if(!name||!text){toast("اكتب اسم القاعدة ووصفها.");return}
+ state.rules.push({id:uid(),name,text,scope,created:new Date().toISOString()});save();$("#ruleModal").classList.remove("open");$("#ruleName").value="";$("#ruleText").value="";render();toast("تم حفظ القاعدة محليًا.");
+}
+function backup(){
+ const blob=new Blob([JSON.stringify(state)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="accounting-control-backup.json";a.click();URL.revokeObjectURL(a.href);
+}
+function restore(file){
+ const r=new FileReader();r.onload=async()=>{try{const x=JSON.parse(r.result);if(!x||!x.version)throw 0;state={...clone(defaultState),...x};await save();render();toast("تمت استعادة النسخة الاحتياطية.");}catch(e){toast("ملف النسخة الاحتياطية غير صالح.");}};r.readAsText(file);
+}
+function wipe(){
+ if(!confirm("سيتم حذف الملفات والنتائج والذاكرة المحلية لهذه الأداة من هذا المتصفح. هل تريد المتابعة؟"))return;
+ state=clone(defaultState);save();render();toast("تم مسح البيانات المحلية.");
+}
+function onboarding(){
+ if(localStorage.getItem("mae_onboarded")==="1")return;
+ $("#maeOnboarding").hidden=false;let step=1;
+ const body=$("#maeOnboardBody");
+ const show=()=>{
+   $$(".mae-step").forEach(x=>x.classList.toggle("active",Number(x.dataset.step)===step));
+   if(step===1)body.innerHTML=`<h3>الأداة ستتعرف على طريقة عملك</h3><p class="mae-help">ملفاتك لا تُرسل إلى السيرفر من هذا الإصدار. سنقرأ بنية الملفات محليًا، ونحفظ تصحيحاتك كتفضيلات خاصة بهذا المتصفح. ستظهر هذه الإرشادات مرة واحدة فقط، ويمكنك فتح دليل الاستخدام لاحقًا من التبويب المخصص.</p><button class="mae-btn primary" id="obNext">التالي</button>`;
+   if(step===2)body.innerHTML=`<h3>ابدأ بملفاتك الحقيقية</h3><p class="mae-help">يمكنك رفع ملف المبيعات، المشتريات، البنك، الخزينة، الأستاذ، العملاء والموردين. يمكنك البدء بملف واحد ثم إضافة الباقي لاحقًا.</p><button class="mae-btn primary" id="obNext">التالي</button>`;
+   if(step===3)body.innerHTML=`<h3>التخصيص والتعلم</h3><p class="mae-help">عند تصحيح تصنيف أو اختيار "ليست مشكلة"، يمكن للأداة حفظ القرار محليًا واقتراح قواعد شخصية لاحقًا. لا تغيّر هذه الذاكرة المعايير المحاسبية الأساسية.</p><button class="mae-btn primary" id="obNext">التالي</button>`;
+   if(step===4)body.innerHTML=`<h3>أنت جاهز</h3><p class="mae-help">ارفع ملفاتك ثم راجع ربط الأعمدة وشغّل محرك الرقابة. راجع كل استثناء قبل اتخاذ أي إجراء محاسبي؛ وإذا احتجت المساعدة افتح دليل الاستخدام من القائمة.</p><button class="mae-btn primary" id="obFinish">ابدأ الآن</button>`;
+   $("#obNext")?.addEventListener("click",()=>{step++;show()});$("#obFinish")?.addEventListener("click",()=>{localStorage.setItem("mae_onboarded","1");$("#maeOnboarding").hidden=true});
+ };show();
+}
+
+root.addEventListener("click",async e=>{
+ const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.page){$$(".mae-nav button").forEach(x=>x.classList.toggle("active",x===b));$$(".mae-page").forEach(x=>x.classList.toggle("active",x.id==="maePage-"+b.dataset.page));return}
+ if(b.dataset.pageGo){const p=b.dataset.pageGo;const nb=$(`.mae-nav button[data-page="${p}"]`);nb?.click();return}
+ const a=b.dataset.action;
+ if(a==="backup")backup();
+ if(a==="restore")$("#maeRestoreFile").click();
+ if(a==="wipe")wipe();
+ if(a==="analyze")runAnalysis();
+ if(a==="cashCalc")cashCalc();
+ if(a==="bankAuto")bankAuto();
+ if(a==="newRule")newRule();
+ if(a==="saveRule")saveRule();
+ if(a==="closeModal")$("#ruleModal").classList.remove("open");
+ if(a==="resetMemory"){state.memory=clone(defaultState.memory);state.decisions=[];save();render();toast("تمت إعادة ضبط الذاكرة.");}
+ if(a==="closeReport")renderClose();
+ const fp=b.dataset.filePreview;if(fp){const f=state.files.find(x=>x.id===fp);if(f)renderPreview(f)}
+ const fd=b.dataset.fileDelete;if(fd){state.files=state.files.filter(x=>x.id!==fd);save();render();toast("تم حذف الملف من التخزين المحلي.");}
+ const rs=b.dataset.resolve;if(rs){const [id,d]=rs.split("|");resolveIssue(id,d)}
+ const rd=b.dataset.ruleDelete;if(rd){state.rules=state.rules.filter(x=>x.id!==rd);save();render();toast("تم حذف القاعدة.");}
+});
+$("#pickFiles").addEventListener("click",()=>$("#maeFiles").click());
+$("#maeFiles").addEventListener("change",e=>handleFiles(e.target.files));
+$("#maeRestoreFile").addEventListener("change",e=>{if(e.target.files[0])restore(e.target.files[0])});
+["dragenter","dragover"].forEach(ev=>$("#dropzone").addEventListener(ev,e=>{e.preventDefault();$("#dropzone").classList.add("drag")}));
+["dragleave","drop"].forEach(ev=>$("#dropzone").addEventListener(ev,e=>{e.preventDefault();$("#dropzone").classList.remove("drag")}));
+$("#dropzone").addEventListener("drop",e=>handleFiles(e.dataTransfer.files));
+async function handleFiles(files){
+ const arr=[...files];if(!arr.length)return;
+ try{
+  toast("جاري قراءة الملفات محليًا...");
+  for(const file of arr){
+   if(state.files.some(f=>f.name===file.name&&f.size===file.size)){continue}
+   const parsed=await parseFile(file);
+   parsed.sheets.forEach(s=>{s.classification=state.classifications[parsed.id+"|"+s.name]||s.classification});
+   state.files.push(parsed);
+  }
+  await save();render();toast("تم استيراد الملفات بنجاح.");
+ }catch(e){console.error(e);toast("حدث خطأ أثناء قراءة الملف: "+e.message)}
+}
+root.addEventListener("change",e=>{
+ const t=e.target;
+ if(t.matches("[data-class]")){const [fid,sn]=t.dataset.class.split("|");const f=state.files.find(x=>x.id===fid),s=f?.sheets.find(x=>x.name===sn);if(s){s.classification=t.value;state.classifications[t.dataset.class]=t.value;save();render()}}
+ if(t.matches("[data-map]")){const parts=t.dataset.map.split("|"),field=parts.pop(),key=parts.join("|");state.mappings[key]??={};state.mappings[key][field]=t.value;state.memory.columnMappings[key]=state.mappings[key];save()}
+ if(t.matches("[data-check]")){renderClose()}
+});
+$("#learnEnabled").addEventListener("change",e=>{state.settings.learnEnabled=e.target.checked;save()});
+$("#suggestRules").addEventListener("change",e=>{state.settings.suggestRules=e.target.checked;save()});
+$("#ignoreResolved").addEventListener("change",e=>{state.settings.ignoreResolved=e.target.checked;save()});
+
+(async()=>{
+ const saved=await idbGet();if(saved)state={...clone(defaultState),...saved,settings:{...defaultState.settings,...saved.settings},memory:{...clone(defaultState.memory),...saved.memory}};
+ $("#learnEnabled").checked=state.settings.learnEnabled;$("#suggestRules").checked=state.settings.suggestRules;$("#ignoreResolved").checked=state.settings.ignoreResolved;
+ render();onboarding();
+})();
+})();
+</script>
+<script>lucide.createIcons();</script>
+</body>
+</html>
