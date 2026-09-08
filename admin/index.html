@@ -508,6 +508,31 @@
       </label>
       <button class="btn btn-primary" id="publishToolBtn" type="button">نشر الأداة</button>
       <div class="gen-result" id="toolGenResult"></div>
+
+      <div class="builder-card" style="margin-top:30px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;">
+          <h3 style="margin:0;">إحصائيات استخدام الأدوات</h3>
+          <button class="btn btn-outline" id="refreshToolStatsBtn" type="button" style="padding:7px 12px; font-size:12px;">تحديث</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="num" id="toolStatTotal">0</div><div class="lbl">إجمالي الاستخدامات</div></div>
+          <div class="stat-card"><div class="num" id="toolStatToday">0</div><div class="lbl">اليوم</div></div>
+          <div class="stat-card"><div class="num" id="toolStatWeek">0</div><div class="lbl">آخر ٧ أيام</div></div>
+          <div class="stat-card"><div class="num" id="toolStatUsers">0</div><div class="lbl">مستخدمون مسجلون</div></div>
+          <div class="stat-card"><div class="num" id="toolStatAnonymous">0</div><div class="lbl">زوار بدون حساب</div></div>
+        </div>
+        <div style="font-size:11.5px; color:var(--muted); margin-top:10px;">الإحصائيات تسجل فتح صفحة الأداة. لا يتم جمع IP أو تحديد البلد لأن هذه البيانات غير موجودة في نظام التتبع الحالي.</div>
+      </div>
+
+      <div class="builder-card">
+        <h3>الاستخدام خلال آخر ١٤ يوم</h3>
+        <div id="toolUsageDailyChart" class="daily-chart" aria-label="استخدام الأدوات خلال آخر 14 يوم"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>الأدوات الأكثر استخدامًا</h3>
+        <div id="toolUsageBreakdownList"><div class="empty-state">اضغط تحديث لعرض الإحصائيات</div></div>
+      </div>
     </div>
 
     <div id="feedbackPanel" style="display:none;">
@@ -673,6 +698,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
   document.getElementById('publishToolBtn').addEventListener('click', publishTool);
+  document.getElementById('refreshToolStatsBtn').addEventListener('click', loadToolUsageStats);
   document.getElementById('addQuestionBtn').addEventListener('click', () => addQuestionBlock());
   document.getElementById('parseImportBtn').addEventListener('click', handleImportParse);
   document.getElementById('importDropzone').addEventListener('click', () => document.getElementById('importFileInput').click());
@@ -866,6 +892,7 @@ function switchTab(tab){
   if(tab === 'subscribers') loadSubscriberStats();
   if(tab === 'analytics') loadAnalytics();
   if(tab === 'templates') loadTemplateStats();
+  if(tab === 'tools') loadToolUsageStats();
   if(tab === 'feedback') loadFeedback();
   if(tab === 'battlebank') loadBattleBankStats();
   if(tab === 'battleresults') loadBattleResults();
@@ -1132,6 +1159,54 @@ async function loadAnalytics(){
       <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); width:60px; text-align:left;">${p.views} مشاهدة</div>
     </div>
   `).join('') : '<div class="empty-state">لسه مفيش زيارات مسجلة</div>';
+}
+
+// ==================== Tool usage analytics ====================
+async function loadToolUsageStats(){
+  const list = document.getElementById('toolUsageBreakdownList');
+  const chart = document.getElementById('toolUsageDailyChart');
+  if(!list || !chart) return;
+  list.innerHTML = '<div class="empty-state">جارِ تحميل الإحصائيات...</div>';
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_tool_usage_stats`, {
+      method: 'POST',
+      headers: supabaseHeaders(),
+      body: JSON.stringify({ p_passphrase: passphrase })
+    });
+    if(!res.ok) throw new Error('تعذّر تحميل إحصائيات الأدوات');
+    const stats = await res.json();
+    document.getElementById('toolStatTotal').textContent = stats.total || 0;
+    document.getElementById('toolStatToday').textContent = stats.today || 0;
+    document.getElementById('toolStatWeek').textContent = stats.last7 || 0;
+    document.getElementById('toolStatUsers').textContent = stats.unique_users || 0;
+    document.getElementById('toolStatAnonymous').textContent = stats.anonymous || 0;
+
+    const daily = stats.daily || [];
+    const maxDaily = Math.max(1, ...daily.map(d => Number(d.uses) || 0));
+    chart.innerHTML = daily.map(d => {
+      const uses = Number(d.uses) || 0;
+      const h = Math.round((uses / maxDaily) * 100);
+      const dayLabel = new Date(d.day).toLocaleDateString('ar-EG', { day:'numeric', month:'numeric' });
+      return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+        <div style="font-size:10px; color:var(--muted);">${uses || ''}</div>
+        <div style="width:100%; height:${Math.max(h,3)}px; background:var(--emerald); border-radius:3px 3px 0 0; opacity:${uses ? 1 : 0.25};"></div>
+        <div style="font-size:9px; color:var(--muted); font-family:var(--mono);">${dayLabel}</div>
+      </div>`;
+    }).join('');
+
+    const tools = stats.by_tool || [];
+    const maxUses = Math.max(1, ...tools.map(t => Number(t.uses) || 0));
+    list.innerHTML = tools.length ? tools.map(t => `
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:11px;">
+        <div style="width:150px; min-width:0; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(t.tool_title || t.tool_slug)}">${escapeHtml(t.tool_title || t.tool_slug)}</div>
+        <div style="flex:1; background:var(--bg); border-radius:5px; overflow:hidden; height:18px;"><div style="width:${Math.round((Number(t.uses || 0)/maxUses)*100)}%; height:100%; background:var(--gold);"></div></div>
+        <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); width:95px; text-align:left;">${Number(t.uses || 0)} استخدام</div>
+      </div>`).join('') : '<div class="empty-state">لسه مفيش استخدامات مسجلة</div>';
+  }catch(err){
+    console.error('Error loading tool usage stats:', err);
+    list.innerHTML = '<div class="empty-state">تعذّر تحميل إحصائيات الأدوات حاليًا</div>';
+    chart.innerHTML = '';
+  }
 }
 
 // ==================== Import from file/text ====================
