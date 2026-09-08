@@ -58,6 +58,7 @@ returns uuid language plpgsql security definer set search_path = public, extensi
 as $$
 declare v_id uuid;
 begin
+  if auth.uid() is null then raise exception 'login_required'; end if;
   if p_score is null or p_score < 0 or p_score > 1000000 then raise exception 'invalid score'; end if;
   if p_correct_count is null or p_correct_count < 0 or p_total_questions is null or p_total_questions < 0 or p_correct_count > p_total_questions then raise exception 'invalid question counts'; end if;
   if p_hearts_spent is null or p_hearts_spent < 0 or p_hearts_spent > 20 then raise exception 'invalid hearts'; end if;
@@ -66,6 +67,26 @@ begin
   values(auth.uid(), left(nullif(btrim(p_session_id),''),120), p_score,p_correct_count,p_total_questions,p_hearts_spent,p_reward_points,nullif(left(btrim(coalesce(p_category,'')),80),''))
   returning id into v_id;
   return v_id;
+end;
+$$;
+
+create or replace function public.get_accounting_game_stats(p_passphrase text default null)
+returns jsonb language plpgsql security definer set search_path = public, extensions
+as $$
+declare result jsonb;
+begin
+  if not public.admin_authorized(p_passphrase) then raise exception 'invalid admin session'; end if;
+  select jsonb_build_object(
+    'total_attempts', count(*)::integer,
+    'unique_players', count(distinct user_id)::integer,
+    'today_attempts', count(*) filter (where created_at >= current_date)::integer,
+    'week_attempts', count(*) filter (where created_at >= current_date - interval '6 days')::integer,
+    'avg_score', coalesce(round(avg(score)::numeric,1),0),
+    'avg_accuracy', coalesce(round(avg(case when total_questions > 0 then correct_count::numeric * 100 / total_questions else 0 end),1),0),
+    'completed_rounds', count(*) filter (where correct_count = total_questions and total_questions > 0)::integer
+  ) into result
+  from public.accounting_game_attempts;
+  return result;
 end;
 $$;
 
@@ -108,11 +129,13 @@ $$;
 
 revoke all on function public.get_accounting_game_questions(integer,text,text) from public;
 revoke all on function public.save_accounting_game_attempt(text,integer,integer,integer,integer,integer,text) from public;
+revoke all on function public.get_accounting_game_stats(text) from public;
 revoke all on function public.get_accounting_game_bank(text) from public;
 revoke all on function public.insert_accounting_game_questions_bulk(text,jsonb) from public;
 revoke all on function public.delete_accounting_game_question(text,uuid) from public;
 grant execute on function public.get_accounting_game_questions(integer,text,text) to anon, authenticated;
 grant execute on function public.save_accounting_game_attempt(text,integer,integer,integer,integer,integer,text) to anon, authenticated;
+grant execute on function public.get_accounting_game_stats(text) to anon, authenticated;
 grant execute on function public.get_accounting_game_bank(text) to anon, authenticated;
 grant execute on function public.insert_accounting_game_questions_bulk(text,jsonb) to anon, authenticated;
 grant execute on function public.delete_accounting_game_question(text,uuid) to anon, authenticated;
@@ -143,4 +166,3 @@ grant execute on function public.delete_accounting_game_question(text,uuid) to a
 
 -- Admin functions are intentionally callable only after admin_authorized() passes.
 -- Public game functions expose active questions only and never expose draft/paused entries.
-
