@@ -23,6 +23,20 @@
     return button;
   }
 
+  function removeButton(button) {
+    if (button) button.remove();
+  }
+
+  async function alreadyEnabled() {
+    if (Notification.permission !== 'granted') return false;
+    try {
+      const registration = await navigator.serviceWorker.getRegistration('/sw.js');
+      return !!(registration && await registration.pushManager.getSubscription());
+    } catch (error) {
+      return false;
+    }
+  }
+
   async function log(action, subscription) {
     const response = await fetch('/api/subscription-log', {
       method: 'POST',
@@ -49,6 +63,7 @@
       await log('subscribe', subscription.toJSON());
       button.textContent = 'الإشعارات مفعلة';
       button.dataset.enabled = 'true';
+      setTimeout(() => removeButton(button), 250);
     } catch (error) {
       console.warn('Notifications are unavailable:', error);
       button.textContent = original;
@@ -58,7 +73,10 @@
 
   window.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('notifyBellBtn')) return;
-    const button = getButton();
-    button.addEventListener('click', () => enable(button));
+    alreadyEnabled().then(enabled => {
+      if (enabled) return;
+      const button = getButton();
+      button.addEventListener('click', () => enable(button));
+    });
   });
 })();
