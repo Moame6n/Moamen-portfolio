@@ -15,7 +15,7 @@
 <script src="/assets/theme.js"></script>
 <script src="/assets/supabase-config.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/assets/recommendations.js"></script>
 <style>
   body{ padding:0; }
   .page-hero{ padding:50px 0 10px; }
@@ -63,6 +63,21 @@
   .pulse-ring span{ font-size:30px; }
   .wait-text{ font-size:15px; color:var(--text-soft); margin-bottom:8px; }
   .wait-count{ font-family:var(--mono); font-size:13px; color:var(--muted); }
+  .private-divider{ display:flex; align-items:center; gap:10px; margin:18px 0 14px; color:var(--muted); font-size:12px; }
+  .private-divider::before,.private-divider::after{ content:''; flex:1; height:1px; background:var(--border-soft); }
+  .private-join-box{ margin-top:18px; padding-top:18px; border-top:1px solid var(--border-soft); }
+  .private-join-box label{ display:block; color:var(--text-soft); font-size:12.5px; font-weight:700; margin-bottom:7px; }
+  .private-join-row{ display:flex; gap:8px; }
+  .private-join-row input{ flex:1; min-width:0; text-transform:uppercase; letter-spacing:1px; }
+  .private-join-row .btn{ flex:0 0 auto; padding-inline:16px; }
+  .private-hint{ color:var(--muted); font-size:12px; line-height:1.7; margin-top:8px; }
+  .private-lobby{ margin-top:18px; padding-top:18px; border-top:1px solid var(--border-soft); }
+  .private-lobby-title{ color:var(--gold); font-weight:700; font-size:13px; margin-bottom:9px; }
+  .private-link-row{ display:flex; gap:7px; }
+  .private-link-row input{ flex:1; min-width:0; direction:ltr; text-align:left; font-family:var(--mono); font-size:11px; }
+  .private-link-row .btn{ flex:0 0 auto; padding-inline:13px; }
+  .private-lobby-actions{ display:flex; gap:8px; margin-top:10px; }
+  .private-lobby-actions .btn{ flex:1; justify-content:center; }
 
   /* battle */
   .vs-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
@@ -76,10 +91,18 @@
   .pdot.on-me{ background:var(--emerald); }
   .pdot.on-opp{ background:var(--red); }
   .score-line{ font-family:var(--mono); font-size:12px; color:var(--text-soft); }
+  .progress-track{ height:5px; margin:8px 8px 0; border-radius:99px; background:var(--border-soft); overflow:hidden; }
+  .progress-fill{ height:100%; width:0; border-radius:inherit; transition:width .2s ease-out; }
+  .progress-fill.me{ background:var(--emerald); }
+  .progress-fill.opp{ background:var(--red); }
+  .progress-caption{ display:flex; justify-content:space-between; margin:9px 2px 0; color:var(--muted); font-size:10.5px; }
 
   .timer-box{ text-align:center; margin:14px 0 20px; }
+  .timer-label{ color:var(--muted); font-size:11px; margin-bottom:2px; }
   .timer-num{ font-family:var(--mono); font-size:30px; font-weight:700; color:var(--emerald); }
   .timer-num.low{ color:var(--red); }
+  .timer-track{ height:4px; max-width:250px; margin:7px auto 0; border-radius:99px; background:var(--border-soft); overflow:hidden; }
+  .timer-fill{ height:100%; width:100%; background:var(--emerald); transition:width 1s linear, background .2s ease; }
 
   .qnum{ font-family:var(--mono); font-size:12.5px; color:var(--gold); margin-bottom:8px; }
   .qtext{ font-size:16px; font-weight:700; margin-bottom:18px; line-height:1.7; }
@@ -101,6 +124,16 @@
   .compare-col .num{ font-family:var(--mono); font-size:26px; font-weight:700; }
   .compare-col .lbl{ font-size:12px; color:var(--text-soft); margin-top:4px; }
   .bot-note{ font-size:11.5px; color:var(--gold); margin-top:14px; }
+  .rating-result{ margin:18px 0 4px; padding:12px 14px; border:1px solid var(--border-soft); border-radius:10px; background:var(--surface-2); display:none; }
+  .rating-result .rating-main{ display:flex; align-items:center; justify-content:center; gap:9px; font-weight:700; }
+  .rating-result .rating-rank{ color:var(--gold); }
+  .rating-result .rating-delta{ font-family:var(--mono); color:var(--emerald); }
+  .rating-result .rating-meta{ margin-top:5px; font-size:11px; color:var(--muted); }
+  .result-summary{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin:18px 0 4px; }
+  .result-stat{ padding:10px 8px; border:1px solid var(--border-soft); border-radius:8px; background:var(--surface-2); }
+  .result-stat .num{ display:block; font-family:var(--mono); font-size:15px; font-weight:700; color:var(--text); }
+  .result-stat .lbl{ display:block; margin-top:3px; color:var(--muted); font-size:10.5px; }
+  .performance-note{ color:var(--text-soft); font-size:12px; line-height:1.7; margin-top:12px; }
 
   .btn-row{ display:flex; gap:10px; margin-top:20px; }
   .btn-row .btn{ flex:1; justify-content:center; }
@@ -114,6 +147,59 @@
     color:var(--text-soft); text-decoration:none; font-size:13px;
   }
   .explore-links a:hover{ border-color:var(--emerald); color:var(--emerald); }
+
+  /* Visual battle arena: layout-only layer; existing IDs and game logic remain unchanged. */
+  .battle-arena{ max-width:1180px; margin:0 auto; }
+  .battle-layout{ display:grid; grid-template-columns:minmax(190px,.72fr) minmax(0,1.55fr) minmax(220px,.82fr); grid-template-areas:'guide main leaderboard'; gap:16px; align-items:start; }
+  .battle-guide{ grid-area:guide; background:linear-gradient(160deg,var(--surface),var(--surface-2)); border:1px solid var(--border-soft); border-radius:var(--radius); padding:18px; }
+  .battle-guide-title{ display:flex; align-items:center; justify-content:space-between; gap:8px; color:var(--text); font-size:14px; font-weight:800; margin-bottom:14px; }
+  .battle-guide-title::after{ content:'LIVE'; font:700 9px var(--mono); letter-spacing:1px; color:var(--emerald); border:1px solid rgba(61,220,151,.35); border-radius:99px; padding:3px 7px; }
+  .guide-stat{ display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid var(--border-soft); }
+  .guide-stat:last-of-type{ border-bottom:0; }
+  .guide-icon{ width:28px; height:28px; display:grid; place-items:center; border-radius:8px; background:rgba(61,220,151,.1); color:var(--emerald); font-size:14px; }
+  .guide-stat strong{ display:block; color:var(--text); font-size:12px; }
+  .guide-stat span{ display:block; color:var(--muted); font-size:10.5px; margin-top:2px; }
+  .guide-note{ margin-top:14px; padding:10px; border-radius:9px; background:rgba(224,177,92,.08); color:var(--gold); font-size:11px; line-height:1.7; }
+  .battle-layout .bcard{ grid-area:main; max-width:none; min-width:0; margin:0; padding:26px; box-shadow:0 16px 42px rgba(0,0,0,.16); }
+  .battle-layout .lb-wrap{ grid-area:leaderboard; max-width:none; margin:0; }
+  .battle-layout .lb-title{ justify-content:space-between; padding:0 3px; }
+  .battle-layout .lb-title::after{ content:'TOP 10'; font:700 9px var(--mono); letter-spacing:1px; color:var(--gold); }
+  .battle-layout .lb-list{ max-height:410px; padding:0; }
+  .battle-layout .lb-row{ padding:11px 10px; }
+  .battle-layout #battleScreen .qtext{ padding:18px 20px; margin:14px 0 16px; border:1px solid var(--border-soft); border-radius:12px; background:linear-gradient(145deg,var(--surface-2),var(--bg)); font-size:17px; }
+  .battle-layout #battleScreen .opt-btn{ min-height:52px; padding:14px 17px; transition:transform .18s ease,border-color .18s ease,background .18s ease; }
+  .battle-layout #battleScreen .opt-btn:hover{ transform:translateY(-1px); }
+  .battle-layout #entryScreen{ max-width:440px; margin:0 auto; }
+  .battle-layout #resultScreen{ max-width:600px; margin:0 auto; }
+  .battle-layout .result-badge{ font-size:26px; }
+  .page-hero .eyebrow{ display:inline-flex; align-items:center; gap:7px; padding:5px 10px; border:1px solid rgba(61,220,151,.25); border-radius:99px; color:var(--emerald); background:rgba(61,220,151,.06); font:700 10px var(--mono); letter-spacing:.3px; }
+  @media (max-width:980px){
+    .battle-layout{ grid-template-columns:minmax(0,1fr) minmax(205px,.62fr); grid-template-areas:'main leaderboard' 'guide guide'; }
+    .battle-layout .lb-list{ max-height:360px; }
+    .battle-guide{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px 18px; align-items:start; }
+    .battle-guide-title,.guide-note{ grid-column:1/-1; }
+    .guide-stat{ border-bottom:0; padding:4px 0; }
+  }
+  @media (max-width:680px){
+    .page-hero{ padding:34px 0 6px; }
+    .page-hero h1{ font-size:23px; }
+    .page-hero p{ font-size:13px; }
+    .wrap{ padding:14px 0 44px; }
+    .battle-layout{ display:flex; flex-direction:column; gap:12px; }
+    .battle-layout .bcard{ width:100%; padding:18px 14px; order:1; }
+    .battle-layout .lb-wrap{ width:100%; order:2; }
+    .battle-guide{ width:100%; order:3; display:block; padding:15px; }
+    .battle-guide-title{ margin-bottom:8px; }
+    .guide-stat{ padding:9px 0; }
+    .guide-note{ margin-top:10px; }
+    .battle-layout .lb-list{ max-height:280px; }
+    .battle-layout .vs-row{ gap:4px; }
+    .battle-layout .vs-side .name{ font-size:12px; }
+    .battle-layout #battleScreen .qtext{ padding:14px; font-size:15px; }
+    .battle-layout #battleScreen .opt-btn{ min-height:50px; font-size:13px; }
+    .battle-layout .timer-num{ font-size:27px; }
+    .btn-row{ flex-direction:column; }
+  }
 </style>
 </head>
 <body>
@@ -145,6 +231,7 @@
     <nav id="mainNav">
       <a href="/#home">الرئيسية</a>
       <a href="/tools-exams.html">الأدوات والاختبارات</a>
+      <a href="/daily-challenge.html">التحدي اليومي</a>
       <a href="/#contact">تواصل معي</a>
     </nav>
     </div>
@@ -161,7 +248,8 @@
 </section>
 
 <div class="wrap">
-  <div class="container">
+  <div class="container battle-arena">
+    <div class="battle-layout">
     <div class="lb-wrap">
       <div class="lb-title">🏆 لوحة صدارة المحاربين</div>
       <div class="lb-list" id="battleLbList">
@@ -190,6 +278,16 @@
         </div>
         <div id="entryErr" style="display:none; color:var(--red); font-size:12.5px; margin-bottom:12px;"></div>
         <button class="btn btn-primary" id="startBattleBtn" style="width:100%; justify-content:center;">ابدأ التحدي</button>
+        <div class="private-divider"><span>أو</span></div>
+        <button class="btn btn-outline" id="createPrivateBtn" style="width:100%; justify-content:center;">إنشاء تحدي خاص مع صديق</button>
+        <div class="private-join-box">
+          <label for="privateInviteInput">عندك رابط تحدي من صديق؟</label>
+          <div class="private-join-row">
+            <input type="text" id="privateInviteInput" placeholder="اكتب كود الدعوة" maxlength="8" autocomplete="off">
+            <button class="btn btn-outline" id="joinPrivateBtn" type="button">انضم</button>
+          </div>
+          <div class="private-hint" id="privateInviteHint"></div>
+        </div>
       </div>
 
       <!-- WAITING -->
@@ -197,6 +295,18 @@
         <div class="pulse-ring"><span>🔍</span></div>
         <div class="wait-text" id="waitText">بندوّر على خصم...</div>
         <div class="wait-count" id="waitCount"></div>
+        <div class="private-lobby" id="privateLobby" style="display:none;">
+          <div class="private-lobby-title">التحدي الخاص جاهز</div>
+          <div class="private-link-row">
+            <input type="text" id="privateInviteLink" readonly aria-label="رابط التحدي الخاص">
+            <button class="btn btn-outline" id="copyPrivateLinkBtn" type="button">نسخ</button>
+          </div>
+          <div class="private-lobby-actions">
+            <button class="btn btn-primary" id="sharePrivateLinkBtn" type="button">مشاركة الرابط</button>
+            <button class="btn btn-outline" id="cancelPrivateBtn" type="button">إلغاء</button>
+          </div>
+          <div class="private-hint" id="privateLobbyStatus">ابعت الرابط لصديقك، وأول ما يدخل هنبدأ المباراة.</div>
+        </div>
       </div>
 
       <!-- BATTLE -->
@@ -206,15 +316,18 @@
             <div class="name" id="meName">أنت</div>
             <div class="progress-dots" id="meDots"></div>
             <div class="score-line" id="meScore">0/10 صح</div>
+            <div class="progress-track"><div class="progress-fill me" id="meProgressFill"></div></div>
           </div>
           <div class="vs-mid">VS</div>
           <div class="vs-side opp">
             <div class="name" id="oppName">الخصم</div>
             <div class="progress-dots" id="oppDots"></div>
             <div class="score-line" id="oppScore">0/10 صح</div>
+            <div class="progress-track"><div class="progress-fill opp" id="oppProgressFill"></div></div>
           </div>
         </div>
-        <div class="timer-box"><span class="timer-num" id="timerNum">00:00</span></div>
+        <div class="progress-caption"><span>تقدمك</span><span id="progressCaption">الخصم: 0%</span></div>
+        <div class="timer-box"><div class="timer-label">الوقت المتبقي</div><span class="timer-num" id="timerNum">03:00</span><div class="timer-track"><div class="timer-fill" id="timerFill"></div></div></div>
         <div class="qnum" id="qNum">السؤال 1 من 10</div>
         <div class="qtext" id="qText">--</div>
         <div id="optsWrap"></div>
@@ -228,13 +341,32 @@
           <div class="compare-col"><div class="num" id="resOppScore" style="color:var(--red);">0</div><div class="lbl">إجابات الخصم</div></div>
           <div class="compare-col"><div class="num" id="resTime" style="color:var(--gold);">0s</div><div class="lbl">وقتك</div></div>
         </div>
-        <div class="bot-note" id="botNote" style="display:none;">كانت دي مواجهة ضد خصم افتراضي 🤖</div>
-        <div class="btn-row">
+        <div class="result-summary">
+          <div class="result-stat"><span class="num" id="resAccuracy">0%</span><span class="lbl">دقتك</span></div>
+          <div class="result-stat"><span class="num" id="resOppAccuracy">0%</span><span class="lbl">دقة الخصم</span></div>
+          <div class="result-stat"><span class="num" id="resMargin">0</span><span class="lbl">فارق الإجابات</span></div>
+          <div class="result-stat"><span class="num" id="resAvgTime">0s</span><span class="lbl">متوسط السؤال</span></div>
+        </div>
+        <div class="performance-note" id="performanceNote"></div>
+        <div class="bot-note" id="botNote" style="display:none;">كانت دي مواجهة ضد خصم افتراضي — لا تؤثر على التصنيف 🤖</div>
+        <div class="rating-result" id="ratingResult">
+          <div class="rating-main"><span class="rating-rank" id="ratingRank">Bronze</span><span id="ratingPoints">1000 نقطة</span><span class="rating-delta" id="ratingDelta"></span></div>
+          <div class="rating-meta" id="ratingMeta"></div>
+        </div>
+        <div id="nextStep" style="max-width:520px;margin:0 auto;"></div><div class="btn-row">
           <button class="btn btn-primary" id="rematchBtn">تحدي تاني</button>
           <a href="/tools-exams.html" class="btn btn-outline" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">رجوع للموقع</a>
         </div>
       </div>
 
+    </div>
+    <aside class="battle-guide" aria-label="معلومات الجولة">
+      <div class="battle-guide-title">إحصائيات الجولة</div>
+      <div class="guide-stat"><div class="guide-icon">⚡</div><div><strong>مواجهة مباشرة</strong><span>ضد لاعب أو خصم افتراضي</span></div></div>
+      <div class="guide-stat"><div class="guide-icon">◷</div><div><strong>10 أسئلة</strong><span>3 دقائق لكل جولة</span></div></div>
+      <div class="guide-stat"><div class="guide-icon">🎯</div><div><strong>الأسرع يفوز</strong><span>الدقة ثم سرعة الإجابة</span></div></div>
+      <div class="guide-note">سجّل دخولك لحفظ نتائجك وتحديث تصنيفك داخل حسابك.</div>
+    </aside>
     </div>
   </div>
 </div>
@@ -284,7 +416,7 @@ async function loadBattleLeaderboard(){
     }
     const medalClass = i => i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
     listEl.innerHTML = data.map((p, i) => {
-      const badge = badgeForWins(p.wins);
+      const badge = p.rank_name ? { label: p.rank_name, bg: 'rgba(224,177,92,0.15)', color: 'var(--gold)' } : badgeForWins(p.wins);
       return `
         <div class="lb-row ${medalClass(i)}">
           <div class="lb-rank">${i+1}</div>
@@ -327,6 +459,8 @@ let matchId = null;
 let opponentName = '';
 let isBot = false;
 let waitTimeout = null, waitInterval = null;
+let privatePollInterval = null;
+let privateMode = false, privateRole = '', privateInviteCode = '', privateStarted = false, privateStarting = false;
 let matchStartTime = null, myFinishTime = null;
 let myFinished = false, oppFinished = false, resultShown = false;
 let timerInterval = null, timeLeft = 180;
@@ -338,8 +472,238 @@ function showScreen(id){
 }
 
 document.getElementById('startBattleBtn').addEventListener('click', startMatchmaking);
+document.getElementById('createPrivateBtn').addEventListener('click', createPrivateMatch);
+document.getElementById('joinPrivateBtn').addEventListener('click', joinPrivateMatch);
+document.getElementById('privateInviteInput').addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, 8);
+});
+document.getElementById('copyPrivateLinkBtn').addEventListener('click', copyPrivateLink);
+document.getElementById('sharePrivateLinkBtn').addEventListener('click', sharePrivateLink);
+document.getElementById('cancelPrivateBtn').addEventListener('click', cancelPrivateMatch);
+
+function privateRpc(name, params){
+  return sb.rpc(name, params).then(({ data, error }) => {
+    if(error) throw error;
+    return data;
+  });
+}
+
+function setPrivateHint(text, color){
+  const el = document.getElementById('privateInviteHint');
+  el.textContent = text || '';
+  el.style.color = color || 'var(--muted)';
+}
+
+function setPrivateLobbyStatus(text, color){
+  const el = document.getElementById('privateLobbyStatus');
+  el.textContent = text || '';
+  el.style.color = color || 'var(--muted)';
+}
+
+function clearPrivatePolling(){
+  if(privatePollInterval){ clearInterval(privatePollInterval); privatePollInterval = null; }
+}
+
+function resetPrivateUi(){
+  clearPrivatePolling();
+  document.getElementById('privateLobby').style.display = 'none';
+  document.getElementById('privateInviteLink').value = '';
+  document.getElementById('privateInviteInput').value = '';
+  document.getElementById('privateInviteHint').textContent = '';
+  privateMode = false; privateRole = ''; privateInviteCode = ''; privateStarted = false; privateStarting = false;
+}
+
+function privateLinkFor(code){
+  return `${location.origin}${location.pathname}?match=${encodeURIComponent(code)}`;
+}
+
+async function copyPrivateLink(){
+  const link = document.getElementById('privateInviteLink').value;
+  if(!link) return;
+  try{
+    await navigator.clipboard.writeText(link);
+    setPrivateLobbyStatus('اتنسخ الرابط — ابعته لصديقك دلوقتي.', 'var(--emerald)');
+  }catch(e){
+    const input = document.getElementById('privateInviteLink');
+    input.select();
+    document.execCommand('copy');
+    setPrivateLobbyStatus('اتنسخ الرابط — ابعته لصديقك دلوقتي.', 'var(--emerald)');
+  }
+}
+
+async function sharePrivateLink(){
+  const link = document.getElementById('privateInviteLink').value;
+  if(!link) return;
+  const shareData = { title: 'تحدي خاص', text: `${myName} دعاك لمباراة محاسبة خاصة`, url: link };
+  try{
+    if(navigator.share) await navigator.share(shareData);
+    else { await navigator.clipboard.writeText(link); setPrivateLobbyStatus('الرابط اتنسخ — ابعته لصديقك.', 'var(--emerald)'); }
+  }catch(e){ if(e.name !== 'AbortError') setPrivateLobbyStatus('انسخ الرابط يدويًا وابعته لصديقك.', 'var(--gold)'); }
+}
+
+async function createPrivateMatch(){
+  const name = document.getElementById('battleName').value.trim();
+  if(!name){ setPrivateHint('اكتب اسمك الأول عشان ننشئ التحدي.', 'var(--red)'); return; }
+  setPrivateHint('جارِ إنشاء رابط التحدي...', 'var(--gold)');
+  myName = name;
+  myCategory = document.getElementById('battleCategory').value;
+  isBot = false; privateMode = true; privateRole = 'host'; privateStarted = false; privateStarting = false;
+  try{
+    const data = await privateRpc('create_private_battle', { p_host_name: myName, p_category: myCategory });
+    matchId = data.match_id;
+    privateInviteCode = data.invite_code;
+    document.getElementById('privateInviteLink').value = privateLinkFor(privateInviteCode);
+    document.getElementById('privateLobby').style.display = 'block';
+    showScreen('waitScreen');
+    document.getElementById('waitText').textContent = 'مستني صديقك يدخل التحدي...';
+    document.getElementById('waitCount').textContent = `كود الدعوة: ${privateInviteCode}`;
+    setPrivateLobbyStatus('ابعت الرابط لصديقك، وأول ما يدخل هنبدأ المباراة.', 'var(--muted)');
+    await subscribePrivateChannel();
+    startPrivatePolling();
+  }catch(e){
+    privateMode = false; privateRole = '';
+    setPrivateHint('حصلت مشكلة في إنشاء التحدي. جرّب مرة تانية.', 'var(--red)');
+  }
+}
+
+async function joinPrivateMatch(){
+  const name = document.getElementById('battleName').value.trim();
+  const code = document.getElementById('privateInviteInput').value.trim().toUpperCase();
+  if(!name){ setPrivateHint('اكتب اسمك الأول عشان تنضم.', 'var(--red)'); return; }
+  if(!/^[A-Z0-9]{8}$/.test(code)){ setPrivateHint('اكتب كود دعوة صحيح من 8 حروف/أرقام.', 'var(--red)'); return; }
+  setPrivateHint('جارِ الانضمام للتحدي...', 'var(--gold)');
+  myName = name; privateInviteCode = code; privateMode = true; privateRole = 'guest'; isBot = false; privateStarted = false; privateStarting = false;
+  try{
+    const data = await privateRpc('join_private_battle', { p_invite_code: code, p_guest_name: myName });
+    matchId = data.match_id;
+    opponentName = data.host_name;
+    myCategory = data.category || document.getElementById('battleCategory').value;
+    const categorySelect = document.getElementById('battleCategory');
+    if([...categorySelect.options].some(o => o.value === myCategory)) categorySelect.value = myCategory;
+    document.getElementById('privateLobby').style.display = 'block';
+    document.getElementById('privateInviteLink').value = privateLinkFor(code);
+    showScreen('waitScreen');
+    document.getElementById('waitText').textContent = 'دخلت التحدي — مستني صاحبك يبدأ...';
+    document.getElementById('waitCount').textContent = `التخصص: ${myCategory}`;
+    setPrivateLobbyStatus('تم الانضمام بنجاح. المباراة هتبدأ أول ما صاحبك يجهز.', 'var(--emerald)');
+    await subscribePrivateChannel();
+    await checkPrivateState();
+    startPrivatePolling();
+    if(matchChannel) matchChannel.send({ type:'broadcast', event:'private_guest_joined', payload:{ name: myName } });
+  }catch(e){
+    privateMode = false; privateRole = '';
+    setPrivateHint(e.message && e.message.includes('already has a guest') ? 'التحدي ده اتاخد بالفعل من لاعب تاني.' : 'الرابط غير صالح أو انتهت صلاحيته.', 'var(--red)');
+  }
+}
+
+async function initializePrivateInvite(){
+  const code = new URL(location.href).searchParams.get('match');
+  if(!code) return;
+  const normalized = code.trim().toUpperCase();
+  document.getElementById('privateInviteInput').value = normalized;
+  try{
+    const data = await privateRpc('get_private_battle', { p_invite_code: normalized });
+    if(!data){ setPrivateHint('الرابط غير موجود أو انتهت صلاحيته.', 'var(--red)'); return; }
+    if(data.status === 'active' && data.questions && data.questions.length === 10){
+      setPrivateHint('المباراة بدأت بالفعل. اكتب اسمك وانضم لها.', 'var(--gold)');
+    }else{
+      setPrivateHint(`دعوة من ${data.host_name} — التخصص: ${data.category}. اكتب اسمك واضغط انضم.`, 'var(--gold)');
+    }
+  }catch(e){ setPrivateHint('تعذّر قراءة رابط التحدي حاليًا.', 'var(--red)'); }
+}
+
+async function subscribePrivateChannel(){
+  if(matchChannel) await matchChannel.unsubscribe();
+  matchChannel = sb.channel('battle-' + matchId, { config: { presence: { key: myName } } });
+  matchChannel.on('broadcast', { event: 'private_started' }, payload => {
+    const data = payload.payload || {};
+    if(!privateStarted && Array.isArray(data.questions) && data.questions.length === 10){
+      questions = data.questions;
+      opponentName = data.hostName || opponentName || 'صديقك';
+      privateStarted = true;
+      privateStarting = false;
+      clearPrivatePolling();
+      startBattle();
+    }
+  });
+  matchChannel.on('broadcast', { event: 'progress' }, payload => {
+    if(payload.payload.name !== myName) updateOpponentProgress(payload.payload.index, payload.payload.correct);
+  });
+  matchChannel.on('broadcast', { event: 'finished' }, payload => {
+    if(payload.payload.name !== myName){
+      oppFinished = true; oppCorrect = payload.payload.correct; checkForResult(payload.payload.time);
+    }
+  });
+  matchChannel.on('presence', { event: 'leave' }, ({ leftPresences }) => {
+    if(privateStarted && !myFinished && !resultShown && leftPresences.some(p => p.key !== myName)) declareForfeit();
+  });
+  await new Promise((resolve, reject) => {
+    matchChannel.subscribe(status => {
+      if(status === 'SUBSCRIBED') resolve();
+      if(status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') reject(new Error(status));
+    });
+  });
+  await matchChannel.track({ name: myName });
+}
+
+function startPrivatePolling(){
+  clearPrivatePolling();
+  privatePollInterval = setInterval(checkPrivateState, 2200);
+}
+
+async function checkPrivateState(){
+  if(!privateInviteCode || privateStarted) return;
+  try{
+    const data = await privateRpc('get_private_battle', { p_invite_code: privateInviteCode });
+    if(!data) return;
+    if(privateRole === 'host' && data.status === 'ready') await startPrivateBattleAsHost(data);
+    if(data.status === 'active' && data.questions && data.questions.length === 10 && !privateStarted){
+      questions = data.questions;
+      opponentName = privateRole === 'host' ? (data.guest_name || 'صديقك') : (data.host_name || 'صديقك');
+      privateStarted = true;
+      clearPrivatePolling();
+      startBattle();
+    }
+  }catch(e){}
+}
+
+async function startPrivateBattleAsHost(match){
+  if(privateStarting || privateStarted) return;
+  privateStarting = true;
+  try{
+    const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions_for_mode`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ p_category: myCategory, p_mode: 'private', p_count: 10 })
+    });
+    const generatedQuestions = await qRes.json();
+    const data = await privateRpc('start_private_battle', { p_invite_code: privateInviteCode, p_questions: generatedQuestions });
+    questions = data.questions || generatedQuestions;
+    opponentName = match.guest_name || 'صديقك';
+    privateStarted = true;
+    clearPrivatePolling();
+    if(matchChannel) matchChannel.send({ type:'broadcast', event:'private_started', payload:{ questions, hostName: myName } });
+    startBattle();
+  }catch(e){
+    privateStarting = false;
+    setPrivateLobbyStatus('تعذّر بدء المباراة. هنحاول تلقائيًا مرة تانية.', 'var(--red)');
+  }
+}
+
+async function cancelPrivateMatch(){
+  clearPrivatePolling();
+  if(privateInviteCode){ await privateRpc('finish_private_battle', { p_invite_code: privateInviteCode }).catch(()=>{}); }
+  if(matchChannel){ await matchChannel.unsubscribe(); matchChannel = null; }
+  if(history.replaceState) history.replaceState({}, document.title, location.pathname);
+  matchId = null; opponentName = '';
+  resetPrivateUi();
+  showScreen('entryScreen');
+}
+
+initializePrivateInvite();
 
 async function startMatchmaking(){
+  resetPrivateUi();
   const name = document.getElementById('battleName').value.trim();
   const errEl = document.getElementById('entryErr');
   if(!name){
@@ -412,10 +776,10 @@ async function fallbackToBot(){
   }).catch(()=>{});
 
   opponentName = 'خصم افتراضي';
-  const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions`, {
+  const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions_for_mode`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
-    body: JSON.stringify({ p_category: myCategory, p_count: 10 })
+    body: JSON.stringify({ p_category: myCategory, p_mode: 'bot', p_count: 10 })
   });
   questions = await qRes.json();
 
@@ -476,20 +840,32 @@ function startBattle(){
   document.getElementById('meName').textContent = myName;
   document.getElementById('oppName').textContent = opponentName || 'الخصم';
   buildDots('meDots'); buildDots('oppDots');
-  currentQ = 0; myCorrect = 0; oppCorrect = 0; myAnswers = [];
+  currentQ = 0; myCorrect = 0; oppCorrect = 0; oppProgress = 0; myAnswers = [];
   myFinished = false; oppFinished = false; resultShown = false;
   matchStartTime = Date.now();
+  myFinishTime = null;
+  clearInterval(timerInterval);
   timeLeft = 180;
+  updateTimerDisplay();
   timerInterval = setInterval(() => {
     timeLeft--;
-    const mm = String(Math.floor(Math.max(timeLeft,0)/60)).padStart(2,'0');
-    const ss = String(Math.max(timeLeft,0)%60).padStart(2,'0');
-    const el = document.getElementById('timerNum');
-    el.textContent = `${mm}:${ss}`;
-    el.classList.toggle('low', timeLeft <= 10);
+    updateTimerDisplay();
     if(timeLeft <= 0){ clearInterval(timerInterval); finishBattle(); }
   }, 1000);
   renderQuestion();
+}
+
+function updateTimerDisplay(){
+  const remaining = Math.max(timeLeft, 0);
+  const mm = String(Math.floor(remaining / 60)).padStart(2,'0');
+  const ss = String(remaining % 60).padStart(2,'0');
+  const el = document.getElementById('timerNum');
+  const fill = document.getElementById('timerFill');
+  if(!el || !fill) return;
+  el.textContent = `${mm}:${ss}`;
+  el.classList.toggle('low', remaining <= 10);
+  fill.style.width = `${Math.max(0, Math.min(100, remaining / 180 * 100))}%`;
+  fill.style.background = remaining <= 10 ? 'var(--red)' : 'var(--emerald)';
 }
 
 function buildDots(id){
@@ -527,6 +903,8 @@ function updateSelfProgress(index, correct){
   const dots = document.querySelectorAll('#meDots .pdot');
   dots.forEach((d,i) => d.classList.toggle('on-me', i < index));
   document.getElementById('meScore').textContent = `${correct}/${questions.length} صح`;
+  document.getElementById('meProgressFill').style.width = `${Math.min(100, index / questions.length * 100)}%`;
+  document.getElementById('progressCaption').textContent = `الخصم: ${Math.round(oppProgress / questions.length * 100)}%`;
   if(index >= questions.length){ myFinished = true; myFinishTime = ((Date.now()-matchStartTime)/1000).toFixed(1); finishBattle(); }
 }
 
@@ -534,6 +912,8 @@ function updateOpponentProgress(index, correct){
   const dots = document.querySelectorAll('#oppDots .pdot');
   dots.forEach((d,i) => d.classList.toggle('on-opp', i < index));
   document.getElementById('oppScore').textContent = `${correct}/${questions.length} صح`;
+  document.getElementById('oppProgressFill').style.width = `${Math.min(100, index / questions.length * 100)}%`;
+  document.getElementById('progressCaption').textContent = `الخصم: ${Math.round(index / questions.length * 100)}%`;
   oppProgress = index; oppCorrect = correct;
 }
 
@@ -581,7 +961,19 @@ async function showResult(oppTime, forfeit){
   document.getElementById('resMyScore').textContent = myCorrect;
   document.getElementById('resOppScore').textContent = oppCorrect;
   document.getElementById('resTime').textContent = myTime + 's';
+  const totalQuestions = Math.max(questions.length, 1);
+  const myAccuracy = Math.round(myCorrect / totalQuestions * 100);
+  const oppAccuracy = Math.round(oppCorrect / totalQuestions * 100);
+  document.getElementById('resAccuracy').textContent = `${myAccuracy}%`;
+  document.getElementById('resOppAccuracy').textContent = `${oppAccuracy}%`;
+  document.getElementById('resMargin').textContent = `${myCorrect - oppCorrect > 0 ? '+' : ''}${myCorrect - oppCorrect}`;
+  document.getElementById('resAvgTime').textContent = `${(parseFloat(myTime) / totalQuestions).toFixed(1)}s`;
+  document.getElementById('performanceNote').textContent = myCorrect === oppCorrect
+    ? `تعادل في الإجابات — الحسم كان بالسرعة: ${parseFloat(myTime) <= parseFloat(oppTime || myTime) ? 'كنت الأسرع.' : 'الخصم كان الأسرع.'}`
+    : `أجبت ${myAccuracy}% من الأسئلة بشكل صحيح، بفارق ${Math.abs(myCorrect - oppCorrect)} إجابة عن الخصم.`;
   document.getElementById('botNote').style.display = isBot ? 'block' : 'none';
+  SiteRecommendations.show('nextStep', iWon ? {title:'حافظ على الفوز بتحدي اليوم',body:'نتيجتك اتحفظت والتحدي اليومي بيديك نقاط ومكافأة إضافية.',label:'تحدي اليوم',href:'/daily-challenge.html'} : {title:'خلّي الجولة الجاية لصالحك',body:'راجع أداءك وشوف إحصائياتك قبل ما تبدأ تحدي جديد.',label:'فتح حسابي',href:'/profile.html'});
+  document.getElementById('ratingResult').style.display = 'none';
 
   try{
     const { error: saveError } = await sb.rpc('save_battle_result', {
@@ -596,8 +988,20 @@ async function showResult(oppTime, forfeit){
       p_category: myCategory
     });
     if(saveError) console.warn('Battle result was not saved:', saveError.message);
+    if(!saveError && !isBot){
+      const { data: rating } = await sb.rpc('get_my_battle_rating');
+      if(rating && Number.isFinite(Number(rating.rating_points))){
+        document.getElementById('ratingRank').textContent = rating.rank_name || 'Bronze';
+        document.getElementById('ratingPoints').textContent = `${rating.rating_points} نقطة`;
+        document.getElementById('ratingDelta').textContent = '';
+        document.getElementById('ratingMeta').textContent = `مباريات: ${rating.matches_played} — سلسلة الانتصارات: ${rating.win_streak}`;
+        document.getElementById('ratingResult').style.display = 'block';
+      }
+    }
   }catch(e){}
 
+  if(privateMode && privateInviteCode) await privateRpc('finish_private_battle', { p_invite_code: privateInviteCode }).catch(()=>{});
+  clearPrivatePolling();
   if(matchChannel){ matchChannel.unsubscribe(); matchChannel = null; }
   loadBattleLeaderboard();
 }
@@ -622,6 +1026,8 @@ function simulateBot(){
 
 document.getElementById('rematchBtn').addEventListener('click', () => {
   questions = []; matchId = null; opponentName = ''; isBot = false;
+  if(history.replaceState) history.replaceState({}, document.title, location.pathname);
+  resetPrivateUi();
   document.getElementById('entryErr').style.display = 'none';
   showScreen('entryScreen');
 });

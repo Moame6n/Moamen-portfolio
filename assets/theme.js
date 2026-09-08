@@ -19,6 +19,21 @@ function toggleTheme(){
   }
 }
 
+// Google Analytics 4 — loaded once for public pages through the shared theme.
+// Admin traffic is excluded so internal visits do not pollute visitor reports.
+(function(){
+  if(window.location.pathname.startsWith('/admin')) return;
+  const measurementId = 'G-CM7NSQ16XT';
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', measurementId, { send_page_view: true });
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+  document.head.appendChild(script);
+})();
+
 // Silent page-view logging for the admin analytics tab. Fails silently if
 // Supabase config isn't loaded yet or the request fails — never blocks the page.
 //

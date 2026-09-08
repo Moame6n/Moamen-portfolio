@@ -216,3 +216,28 @@ footer.site-footer a{ color:var(--emerald); text-decoration:none; margin:0 8px; 
 /* Safety net: form controls don't always inherit body color across browsers */
 input, textarea, select{ color:var(--text); }
 input::placeholder, textarea::placeholder{ color:var(--muted); opacity:1; }
+
+/* Responsive product polish — shared across the site */
+body{overflow-x:hidden;}
+.site-nav .container{min-height:64px;}
+.site-nav nav a{white-space:nowrap;}
+.account-dropdown{right:0;left:auto;}
+.btn:focus-visible,.theme-toggle:focus-visible,.notify-bell-btn:focus-visible,.account-avatar-btn:focus-visible,.navtoggle:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+.card,.site-nav,.account-dropdown{box-shadow:0 12px 34px -26px rgba(0,0,0,.75);}
+@media (max-width:820px){
+  .site-nav .container{padding:12px 16px;}
+  .site-nav .brand{font-size:18px;}
+  .site-nav nav{padding:18px 16px;box-shadow:0 18px 30px -24px rgba(0,0,0,.8);}
+  .container{padding-left:16px;padding-right:16px;}
+  section{padding:52px 0;}
+}
+@media (max-width:560px){
+  .site-nav .container{gap:10px;}
+  .site-nav .brand-group{min-width:0;}
+  .site-nav .brand{font-size:16px;gap:6px;}
+  .site-nav .brand .dot{width:7px;height:7px;}
+  .theme-toggle,.notify-bell-btn{width:32px;height:32px;}
+  .navtoggle{font-size:22px;}
+  .btn{min-height:44px;padding:11px 17px;}
+  .section-title{font-size:27px;}
+}

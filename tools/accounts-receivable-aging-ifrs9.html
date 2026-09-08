@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محلل أعمار الديون والتحصيل وفق IFRS 9 | مؤمن أحمد</title>
+<meta name="description" content="تحليل أعمار أرصدة العملاء وتقدير خسائر الائتمان المتوقعة وفق إطار IFRS 9.">
+<meta name="icon" content="wallet-cards">
+<link rel="canonical" href="https://moamen-portfolio-pi.vercel.app/tools/accounts-receivable-aging-ifrs9.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="محلل أعمار الديون والتحصيل وفق IFRS 9 | مؤمن أحمد">
+<meta property="og:description" content="تحليل أعمار أرصدة العملاء وتقدير خسائر الائتمان المتوقعة وفق إطار IFRS 9.">
+<meta property="og:url" content="https://moamen-portfolio-pi.vercel.app/tools/accounts-receivable-aging-ifrs9.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0E13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script src="/assets/theme.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/supabase-config.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  body{ padding:0; }
+  .page-hero{ padding:50px 0 10px; }
+  .page-hero .back{ display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12.5px; color:var(--emerald); text-decoration:none; margin-bottom:18px; }
+  .page-hero .back svg{ width:14px; height:14px; }
+  .page-hero h1{ font-size:30px; margin-bottom:10px; }
+  .page-hero p{ color:var(--text-soft); font-size:15px; max-width:640px; line-height:1.85; }
+  .wrap{ padding:20px 0 70px; }
+  .explore-more{ max-width:640px; margin:20px auto 10px; padding:0 24px; }
+  .explore-more h3{ font-size:15px; color:var(--text-soft); margin-bottom:12px; text-align:center; }
+  .explore-links{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .explore-links a{
+    display:inline-flex; align-items:center; gap:6px; padding:10px 16px;
+    background:var(--surface); border:1px solid var(--border-soft); border-radius:9px;
+    color:var(--text-soft); text-decoration:none; font-size:13px; transition:.15s;
+  }
+  .explore-links a:hover{ border-color:var(--emerald); color:var(--emerald); }
+/* TOOL_CSS_START */
+.aging-tool{--a-bg:#071713;--a-card:#101d22;--a-card2:#14252a;--a-line:#284047;--a-text:#eef7f3;--a-soft:#9fb5b0;--a-green:#3ddc97;--a-gold:#e2b85c;--a-red:#f08383;color:var(--a-text);font-family:var(--sans);}
+    .aging-hero{background:linear-gradient(135deg,#102e32,#123b35);border:1px solid #2d6255;border-radius:18px;padding:24px;margin-bottom:18px;position:relative;overflow:hidden}
+    .aging-hero:after{content:'IFRS 9';position:absolute;left:24px;top:26px;border:1px solid var(--a-gold);color:var(--a-gold);border-radius:12px;padding:8px 10px;font-family:var(--mono);font-weight:700;font-size:12px}
+    .aging-kicker{color:var(--a-gold);font:700 11px var(--mono);letter-spacing:.4px}.aging-hero h2{margin:8px 0 6px;font-size:clamp(21px,3vw,30px)}.aging-hero p{margin:0;color:#c8d9d4;line-height:1.9;font-size:13px;max-width:760px}
+    .aging-grid{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:16px;align-items:start}.aging-card{background:var(--a-card);border:1px solid var(--a-line);border-radius:16px;overflow:hidden}.aging-head{padding:15px 17px;border-bottom:1px solid var(--a-line);font-weight:700}.aging-body{padding:16px}.aging-label{display:block;color:var(--a-soft);font-size:12px;margin-bottom:6px}.aging-input,.aging-select{width:100%;box-sizing:border-box;background:#0b171b;color:var(--a-text);border:1px solid #355058;border-radius:9px;padding:10px 11px;font:13px var(--sans);outline:0}.aging-input:focus,.aging-select:focus{border-color:var(--a-green);box-shadow:0 0 0 3px #3ddc9722}.aging-field{margin-bottom:12px}.aging-two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.aging-btn{border:0;border-radius:9px;padding:11px 13px;cursor:pointer;font:700 13px var(--sans);transition:transform .16s,opacity .16s}.aging-btn:active{transform:scale(.97)}.aging-primary{background:var(--a-green);color:#071713}.aging-secondary{background:#1c3035;color:var(--a-text);border:1px solid var(--a-line)}.aging-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.aging-note{background:#17292b;border-right:3px solid var(--a-gold);border-radius:9px;padding:11px;font-size:11px;line-height:1.9;color:#c8d9d4;margin-top:13px}.aging-note b{color:var(--a-gold)}.aging-error{display:none;color:#ffb0b0;background:#351f25;border:1px solid #74414a;border-radius:8px;padding:9px;font-size:12px;line-height:1.7;margin-top:10px}.aging-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:15px 17px;border-bottom:1px solid var(--a-line)}.aging-stat{background:var(--a-card2);border:1px solid var(--a-line);border-radius:10px;padding:10px}.aging-stat small{display:block;color:var(--a-soft);font-size:10px;margin-bottom:5px}.aging-stat strong{font:700 17px var(--mono);color:var(--a-green)}.aging-table-title{display:flex;justify-content:space-between;align-items:center;padding:15px 17px;border-bottom:1px solid var(--a-line)}.aging-tag{color:var(--a-gold);font:700 11px var(--mono)}.aging-scroll{overflow:auto}.aging-table{width:100%;min-width:780px;border-collapse:collapse}.aging-table th{background:#17353b;color:#dff8ee;font-size:11px;padding:10px;white-space:nowrap}.aging-table td{border-bottom:1px solid #23373d;padding:10px 8px;font-size:11px;text-align:center;white-space:nowrap}.aging-table tr:last-child td{border-bottom:0}.aging-bucket{display:inline-block;border-radius:20px;padding:4px 8px;font-size:10px;font-weight:700}.aging-current{background:#163e35;color:#80f0bb}.aging-low{background:#263c36;color:#d8ed90}.aging-mid{background:#4a3b24;color:#ffd57d}.aging-high{background:#4b2c28;color:#ffae83}.aging-severe{background:#4d252d;color:#ff9ea9}.aging-empty{padding:32px;text-align:center;color:var(--a-soft);font-size:13px}.aging-legend{display:flex;flex-wrap:wrap;gap:8px;padding:0 17px 14px}.aging-legend span{font-size:10px;color:var(--a-soft)}.aging-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:4px}.aging-footnote{padding:15px 17px;color:var(--a-soft);font-size:11px;line-height:1.9;border-top:1px solid var(--a-line)}.aging-footnote b{color:var(--a-text)}
+    @media(max-width:900px){.aging-grid{grid-template-columns:1fr}.aging-summary{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:520px){.aging-hero{padding:18px}.aging-hero:after{position:static;display:inline-block;margin-top:12px}.aging-two{grid-template-columns:1fr}.aging-summary{grid-template-columns:1fr 1fr}.aging-body{padding:13px}.aging-actions{grid-template-columns:1fr}.aging-table{min-width:700px}}
+    @media print{.aging-tool{color:#111}.aging-card{border:1px solid #bbb;box-shadow:none}.aging-tool .aging-card:first-child{display:none}.aging-hero{background:#fff;border:1px solid #999}.aging-hero:after{color:#111;border-color:#777}.aging-hero p,.aging-footnote,.aging-label,.aging-stat small{color:#333}.aging-table th{background:#eee;color:#111}}
+/* TOOL_CSS_END */
+</style>
+<script src="/assets/recommendations.js"></script>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <div class="brand-group">
+    <div class="brand"><span class="dot"></span>مؤمن <span>أحمد</span></div>
+      <div class="account-widget">
+        <button class="account-avatar-btn" id="accountAvatarBtn" title="حسابي">
+          <img id="navAvatarImg" class="nav-avatar-img" src="" alt="">
+          <span id="navAvatarInitial" class="nav-avatar-initial"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+        </button>
+        <div class="account-dropdown" id="accountDropdown">
+          <div class="account-dropdown-name" id="accountDropdownName">--</div>
+          <a href="/profile.html">حسابي والإعدادات</a>
+          <button id="navLogoutBtn" type="button">تسجيل خروج</button>
+        </div>
+      </div>    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+    <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button class="notify-bell-btn" id="notifyBellBtn" title="فعّل الإشعارات">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="navtoggle" onclick="document.getElementById('mainNav').classList.toggle('open')">☰</button>
+    <nav id="mainNav">
+      <a href="/#home">الرئيسية</a>
+      <a href="/tools-exams.html">الأدوات والاختبارات</a>
+      <a href="/battle.html">تحدي مباشر</a>
+      <a href="/daily-challenge.html">التحدي اليومي</a>
+      <a href="/#contact">تواصل معي</a>
+    </nav>
+    </div>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <a href="/tools-exams.html" class="back"><i data-lucide="arrow-right"></i> رجوع للأدوات والاختبارات</a>
+    <div class="eyebrow">أداة</div>
+    <h1 id="toolPageTitle">محلل أعمار الديون والتحصيل وفق IFRS 9</h1>
+    <p id="toolPageDesc">تحليل أعمار أرصدة العملاء وتقدير خسائر الائتمان المتوقعة وفق إطار IFRS 9.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="container">
+<!-- TOOL_BODY_START -->
+<div class="aging-tool">
+  <section class="aging-hero">
+    <div class="aging-kicker">RECEIVABLES MANAGEMENT • IFRS 9</div>
+    <h2>محلل أعمار الديون والتحصيل</h2>
+    <p>حلل أرصدة العملاء حسب مدة التأخر، وقدّر التعرض الائتماني الأولي باستخدام مصفوفة مبسطة لخسائر الائتمان المتوقعة. الأداة إدارية مساعدة ولا تستبدل الحكم المهني أو سياسة المنشأة.</p>
+  </section>
+
+  <div class="aging-grid">
+    <section class="aging-card">
+      <div class="aging-head">إضافة رصيد عميل</div>
+      <div class="aging-body">
+        <div class="aging-field"><label class="aging-label">اسم العميل</label><input class="aging-input" id="agingCustomer" placeholder="مثال: شركة النور"></div>
+        <div class="aging-two">
+          <div class="aging-field"><label class="aging-label">رقم الفاتورة</label><input class="aging-input" id="agingInvoice" placeholder="INV-001"></div>
+          <div class="aging-field"><label class="aging-label">تاريخ الاستحقاق</label><input class="aging-input" id="agingDue" type="date"></div>
+        </div>
+        <div class="aging-two">
+          <div class="aging-field"><label class="aging-label">قيمة الفاتورة</label><input class="aging-input" id="agingAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
+          <div class="aging-field"><label class="aging-label">المبلغ المسدد</label><input class="aging-input" id="agingPaid" type="number" min="0" step="0.01" value="0"></div>
+        </div>
+        <div class="aging-field"><label class="aging-label">عملة التقرير</label><select class="aging-select" id="agingCurrency"><option>جنيه مصري</option><option>ريال سعودي</option><option>درهم إماراتي</option><option>دولار أمريكي</option><option>أخرى</option></select></div>
+        <button class="aging-btn aging-primary" id="agingAdd">إضافة إلى التقرير</button>
+        <div class="aging-error" id="agingError"></div>
+        <div class="aging-note"><b>ملاحظة IFRS 9:</b> مصفوفة الخسائر المبسطة تستخدم نسبًا إرشادية قابلة للتعديل، ويجب اعتمادها بعد تحليل الخبرة التاريخية والمعلومات الحالية والتوقعات المستقبلية.</div>
+        <div class="aging-actions"><button class="aging-btn aging-secondary" id="agingClear">مسح الكل</button><button class="aging-btn aging-secondary" id="agingPrint">طباعة التقرير</button></div>
+      </div>
+    </section>
+
+    <section class="aging-card">
+      <div class="aging-table-title"><strong>تقرير أعمار الديون</strong><span class="aging-tag">IFRS 9 • ECL MATRIX</span></div>
+      <div class="aging-summary">
+        <div class="aging-stat"><small>إجمالي الرصيد المتبقي</small><strong id="agingTotal">0.00</strong></div>
+        <div class="aging-stat"><small>المتأخر أكثر من 90 يومًا</small><strong id="agingSevereTotal">0.00</strong></div>
+        <div class="aging-stat"><small>خسائر ائتمان متوقعة إرشادية</small><strong id="agingEclTotal">0.00</strong></div>
+        <div class="aging-stat"><small>عدد الفواتير</small><strong id="agingCount">0</strong></div>
+      </div>
+      <div class="aging-legend"><span><i class="aging-current"></i>غير متأخر</span><span><i class="aging-low"></i>1–30</span><span><i class="aging-mid"></i>31–60</span><span><i class="aging-high"></i>61–90</span><span><i class="aging-severe"></i>أكثر من 90</span></div>
+      <div class="aging-scroll"><table class="aging-table"><thead><tr><th>العميل</th><th>الفاتورة</th><th>الاستحقاق</th><th>الرصيد</th><th>أيام التأخر</th><th>الفئة</th><th>نسبة ECL</th><th>الخسارة الإرشادية</th></tr></thead><tbody id="agingRows"><tr><td colspan="8" class="aging-empty">أضف أول فاتورة لبدء التقرير</td></tr></tbody></table></div>
+      <div class="aging-footnote"><b>المنهج:</b> التقرير يصنف الرصيد المتبقي وفق أيام التأخر. النسب الإرشادية الحالية: 0% لغير المتأخر، 1% لـ1–30، 3% لـ31–60، 10% لـ61–90، و25% لأكثر من 90 يومًا. وفق IFRS 9 يجب على المنشأة معايرة المصفوفة ببياناتها التاريخية والمعلومات المستقبلية المناسبة.</div>
+    </section>
+  </div>
+</div>
+<!-- TOOL_BODY_END -->
+  </div>
+</div>
+
+<div class="explore-more">
+  <h3>استكشف المزيد</h3>
+  <div class="explore-links">
+    <a href="/tools-exams.html#exams-section">اختبارات مجانية</a>
+    <a href="/tools-exams.html#tools-section">كل الأدوات</a>
+    <a href="/tools-exams.html#templates-section">قوالب مجانية</a>
+    <a href="/#services">خدماتي</a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div style="margin-bottom:10px;">
+      <a href="https://wa.me/201154960694" target="_blank">واتساب</a>
+      <a href="https://www.linkedin.com/in/moamen-ahmed-900921223" target="_blank">LinkedIn</a>
+      <a href="https://www.facebook.com/acc.mo.men.ahmed.mohamed" target="_blank">Facebook</a>
+    </div>
+    جميع الحقوق محفوظة © 2026 مؤمن أحمد
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+// TOOL_JS_START
+(() => {
+  const $ = id => document.getElementById(id);
+  const rows = [];
+  const rates = { current: 0, low: 0.01, mid: 0.03, high: 0.10, severe: 0.25 };
+  const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+  const money = n => new Intl.NumberFormat('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  const dateText = value => new Intl.DateTimeFormat('ar-EG').format(new Date(value + 'T00:00:00'));
+  function classify(days){
+    if(days <= 0) return ['غير متأخر','current'];
+    if(days <= 30) return ['1–30 يوم','low'];
+    if(days <= 60) return ['31–60 يوم','mid'];
+    if(days <= 90) return ['61–90 يوم','high'];
+    return ['أكثر من 90 يوم','severe'];
+  }
+  function showError(text){ $('agingError').textContent = text; $('agingError').style.display = text ? 'block' : 'none'; }
+  function render(){
+    const currency = $('agingCurrency').value;
+    const total = rows.reduce((s,r) => s+r.balance, 0);
+    const severe = rows.filter(r => r.key === 'severe').reduce((s,r) => s+r.balance, 0);
+    const ecl = rows.reduce((s,r) => s+r.ecl, 0);
+    $('agingTotal').textContent = money(total) + ' ' + currency;
+    $('agingSevereTotal').textContent = money(severe) + ' ' + currency;
+    $('agingEclTotal').textContent = money(ecl) + ' ' + currency;
+    $('agingCount').textContent = rows.length;
+    $('agingRows').innerHTML = rows.length ? rows.map(r => `<tr><td>${escapeHtml(r.customer)}</td><td>${escapeHtml(r.invoice || '—')}</td><td>${dateText(r.due)}</td><td>${money(r.balance)}</td><td>${r.days > 0 ? r.days : 0}</td><td><span class="aging-bucket aging-${r.key}">${r.label}</span></td><td>${(r.rate*100).toFixed(1)}%</td><td>${money(r.ecl)}</td></tr>`).join('') : '<tr><td colspan="8" class="aging-empty">أضف أول فاتورة لبدء التقرير</td></tr>';
+  }
+  function escapeHtml(value){ return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  $('agingAdd').addEventListener('click', () => {
+    showError('');
+    const customer = $('agingCustomer').value.trim(), invoice = $('agingInvoice').value.trim(), due = $('agingDue').value, amount = Number($('agingAmount').value), paid = Number($('agingPaid').value || 0);
+    if(!customer || !due || !Number.isFinite(amount) || amount <= 0) return showError('أدخل اسم العميل وتاريخ الاستحقاق وقيمة فاتورة صحيحة.');
+    if(!Number.isFinite(paid) || paid < 0 || paid > amount) return showError('المبلغ المسدد يجب أن يكون بين صفر وقيمة الفاتورة.');
+    const dueDate = new Date(due + 'T00:00:00'); dueDate.setHours(0,0,0,0);
+    const days = Math.floor((today() - dueDate) / 86400000);
+    const [label,key] = classify(days), balance = amount - paid, rate = rates[key];
+    rows.push({customer, invoice, due, balance, days, label, key, rate, ecl: balance * rate});
+    $('agingCustomer').value=''; $('agingInvoice').value=''; $('agingAmount').value=''; $('agingPaid').value='0'; $('agingDue').value=''; render();
+  });
+  $('agingClear').addEventListener('click', () => { rows.length=0; render(); });
+  $('agingPrint').addEventListener('click', () => window.print());
+  $('agingCurrency').addEventListener('change', render);
+  render();
+})();
+// TOOL_JS_END
+</script>
+<script src="/assets/notifications.js" defer></script>
+</body>
+</html>
