@@ -310,6 +310,7 @@
       <button class="dash-tab" id="tabTools" type="button">الأدوات</button>
       <button class="dash-tab" id="tabFeedback" type="button">آراء المستخدمين</button>
       <button class="dash-tab" id="tabBattleBank" type="button">بنك أسئلة التحدي</button>
+      <button class="dash-tab" id="tabAccountingGameBank" type="button">🧾 بنك لعبة القيود</button>
       <button class="dash-tab" id="tabBattleResults" type="button">سجل المباريات</button>
       <button class="dash-tab" id="tabSubscribers" type="button">📬 إحصائيات المشتركين</button>
     </div>
@@ -700,6 +701,25 @@
       <div class="gen-result" id="battlePublishResult"></div>
     </div>
 
+    <div id="accountingGameBankPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>🧾 بنك لعبة القيود المحاسبية</h3>
+        <p style="font-size:12.5px; color:var(--text-soft); line-height:1.9; margin:0 0 14px;">هذا البنك مستقل تمامًا عن بنك المباريات والاختبارات. كل سؤال يحتوي على سند مالي، حساب مدين، حساب دائن، اختيارات مشتتة، وشرح تعليمي.</p>
+        <div id="accountingGameBankStats" class="stats-row"></div>
+      </div>
+      <div class="builder-card">
+        <h3>إضافة أسئلة بصيغة JSON</h3>
+        <pre style="background:var(--bg); border:1px solid var(--border-soft); border-radius:8px; padding:12px 14px; font-size:12px; color:var(--text-soft); overflow-x:auto; margin:0 0 12px; line-height:1.9; font-family:var(--mono);">[{"scenario":"اشترت المنشأة بضاعة نقدًا","debit_account":"المشتريات","credit_account":"الصندوق","options":["المشتريات","الصندوق","المبيعات","العملاء"],"explanation":"المشتريات مدينة والصندوق دائن","category":"محاسبة مالية","difficulty":"easy","status":"active"}]</pre>
+        <textarea id="accountingGameJsonInput" placeholder="الصق مصفوفة الأسئلة هنا..." style="width:100%; min-height:170px; resize:vertical; direction:ltr; text-align:left; font-family:var(--mono); font-size:12px; line-height:1.6; padding:14px; border:1px solid var(--border-soft); border-radius:10px; background:var(--bg); color:var(--text);"></textarea>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;"><button class="btn btn-outline" id="accountingGamePreviewBtn" type="button">معاينة JSON</button><button class="btn btn-primary" id="accountingGamePublishBtn" type="button">إضافة للبنك</button></div>
+        <div class="gen-result" id="accountingGameBankResult"></div>
+      </div>
+      <div class="builder-card">
+        <h3>الأسئلة الحالية</h3>
+        <div id="accountingGameQuestionsList"><div class="empty-state">جارِ التحميل...</div></div>
+      </div>
+    </div>
+
 
     <div id="subscribersPanel" style="display:none;">
       <div class="stats-row">
@@ -773,10 +793,13 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tabTools').addEventListener('click', () => switchTab('tools'));
   document.getElementById('tabFeedback').addEventListener('click', () => switchTab('feedback'));
   document.getElementById('tabBattleBank').addEventListener('click', () => switchTab('battlebank'));
+  document.getElementById('tabAccountingGameBank').addEventListener('click', () => switchTab('accountinggamebank'));
   document.getElementById('tabBattleResults').addEventListener('click', () => switchTab('battleresults'));
   document.getElementById('tabSubscribers').addEventListener('click', () => switchTab('subscribers'));
   document.getElementById('battleParseBtn').addEventListener('click', handleBattleImportParse);
   document.getElementById('publishBattleBtn').addEventListener('click', publishBattleQuestions);
+  document.getElementById('accountingGamePreviewBtn').addEventListener('click', previewAccountingGameQuestions);
+  document.getElementById('accountingGamePublishBtn').addEventListener('click', publishAccountingGameQuestions);
   document.getElementById('battleImportDropzone').addEventListener('click', () => document.getElementById('battleImportFileInput').click());
   document.getElementById('battleImportFileInput').addEventListener('change', (e) => handleBattleImportFile(e.target.files[0]));
   document.getElementById('battleImportDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('battleImportDropzone').classList.add('drag'); });
@@ -984,6 +1007,7 @@ function switchTab(tab){
   document.getElementById('tabTools').classList.toggle('active', tab === 'tools');
   document.getElementById('tabFeedback').classList.toggle('active', tab === 'feedback');
   document.getElementById('tabBattleBank').classList.toggle('active', tab === 'battlebank');
+  document.getElementById('tabAccountingGameBank').classList.toggle('active', tab === 'accountinggamebank');
   document.getElementById('tabBattleResults').classList.toggle('active', tab === 'battleresults');
   document.getElementById('tabSubscribers').classList.toggle('active', tab === 'subscribers');
   document.getElementById('resultsPanel').style.display = tab === 'results' ? 'block' : 'none';
@@ -993,6 +1017,7 @@ function switchTab(tab){
   document.getElementById('toolsPanel').style.display = tab === 'tools' ? 'block' : 'none';
   document.getElementById('feedbackPanel').style.display = tab === 'feedback' ? 'block' : 'none';
   document.getElementById('battleBankPanel').style.display = tab === 'battlebank' ? 'block' : 'none';
+  document.getElementById('accountingGameBankPanel').style.display = tab === 'accountinggamebank' ? 'block' : 'none';
   document.getElementById('battleResultsPanel').style.display = tab === 'battleresults' ? 'block' : 'none';
   document.getElementById('subscribersPanel').style.display = tab === 'subscribers' ? 'block' : 'none';
   if(tab === 'subscribers') loadSubscriberStats();
@@ -1001,6 +1026,7 @@ function switchTab(tab){
   if(tab === 'tools') loadToolUsageStats();
   if(tab === 'feedback') loadFeedback();
   if(tab === 'battlebank') loadBattleBankStats();
+  if(tab === 'accountinggamebank') loadAccountingGameBank();
   if(tab === 'battleresults') loadBattleResults();
 }
 
@@ -1947,6 +1973,53 @@ async function loadBattleBankStats(){
     }).join('');
     return `<div style="padding:9px 0; border-bottom:1px solid var(--border-soft);"><div style="font-size:13px; font-weight:700;">${cat}</div><div>${rows || '<span style="color:var(--muted);font-size:11px;">لا توجد أسئلة مفعّلة</span>'}</div></div>`;
   }).join('');
+}
+
+let accountingGameBankQuestions = [];
+
+async function loadAccountingGameBank(){
+  const list = document.getElementById('accountingGameQuestionsList');
+  const stats = document.getElementById('accountingGameBankStats');
+  list.innerHTML = '<div class="empty-state">جارِ تحميل بنك لعبة القيود...</div>';
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_accounting_game_bank`, { method:'POST', headers:supabaseHeaders(), body:JSON.stringify({p_passphrase:passphrase}) });
+  if(!res.ok){ list.innerHTML = '<div class="gen-result error">تعذر تحميل بنك لعبة القيود.</div>'; return; }
+  accountingGameBankQuestions = await res.json();
+  const active = accountingGameBankQuestions.filter(q => q.status === 'active').length;
+  const draft = accountingGameBankQuestions.filter(q => q.status === 'draft').length;
+  const paused = accountingGameBankQuestions.filter(q => q.status === 'paused').length;
+  stats.innerHTML = [['الإجمالي',accountingGameBankQuestions.length],['مفعّل',active],['مسودة',draft],['موقوف',paused]].map(([label,n]) => `<div class="stat-card"><div class="num">${n}</div><div class="lbl">${label}</div></div>`).join('');
+  list.innerHTML = accountingGameBankQuestions.length ? accountingGameBankQuestions.map((q,i) => `<div style="border:1px solid var(--border-soft);border-radius:10px;padding:12px;margin-bottom:8px;background:var(--surface-2);"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;"><b style="font-size:13px;line-height:1.7;">${i+1}. ${escapeHtml(q.scenario)}</b><button class="btn btn-outline" style="padding:5px 9px;font-size:11px;" type="button" onclick="deleteAccountingGameQuestion('${q.id}')">حذف</button></div><div style="font-size:11px;color:var(--text-soft);margin-top:6px;">مدين: <span style="color:var(--emerald);">${escapeHtml(q.debit_account)}</span> — دائن: <span style="color:var(--gold);">${escapeHtml(q.credit_account)}</span> — ${escapeHtml(q.category)} — ${escapeHtml(q.status)}</div></div>`).join('') : '<div class="empty-state">لا توجد أسئلة بعد.</div>';
+}
+
+function parseAccountingGameJson(){
+  const raw = document.getElementById('accountingGameJsonInput').value.trim();
+  if(!raw) throw new Error('الصق مصفوفة JSON أولًا.');
+  const data = JSON.parse(raw);
+  if(!Array.isArray(data) || !data.length || data.length > 500) throw new Error('يجب أن تكون JSON مصفوفة من 1 إلى 500 سؤال.');
+  data.forEach((q,i) => { if(!q.scenario || !q.debit_account || !q.credit_account || !Array.isArray(q.options) || q.options.length < 2) throw new Error(`السؤال رقم ${i+1} ناقص أو خياراته غير صحيحة.`); });
+  return data.map(q => ({scenario:String(q.scenario).slice(0,500),debit_account:String(q.debit_account).slice(0,120),credit_account:String(q.credit_account).slice(0,120),options:q.options.map(String).slice(0,12),explanation:String(q.explanation||''),category:String(q.category||'محاسبة مالية'),difficulty:['easy','medium','hard'].includes(q.difficulty)?q.difficulty:'easy',status:['active','draft','paused'].includes(q.status)?q.status:'active'}));
+}
+
+function previewAccountingGameQuestions(){
+  const out = document.getElementById('accountingGameBankResult');
+  try{ const qs=parseAccountingGameJson(); out.className='gen-result success'; out.innerHTML=`تمت قراءة ${qs.length} سؤالًا ✓ — أول سؤال: ${escapeHtml(qs[0].scenario)}`; out.style.display='block'; }
+  catch(e){ out.className='gen-result error'; out.textContent=e.message; out.style.display='block'; }
+}
+
+async function publishAccountingGameQuestions(){
+  const btn=document.getElementById('accountingGamePublishBtn'), out=document.getElementById('accountingGameBankResult');
+  try{
+    const questions=parseAccountingGameJson(); btn.disabled=true; btn.textContent='جارِ الإضافة...';
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/insert_accounting_game_questions_bulk`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_questions:questions})});
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||`فشلت الإضافة (${res.status})`)}
+    out.className='gen-result success';out.textContent=`تمت إضافة ${await res.json()} سؤال لبنك لعبة القيود ✓`;out.style.display='block';document.getElementById('accountingGameJsonInput').value='';loadAccountingGameBank();
+  }catch(e){out.className='gen-result error';out.textContent=e.message;out.style.display='block'}finally{btn.disabled=false;btn.textContent='إضافة للبنك'}
+}
+
+async function deleteAccountingGameQuestion(id){
+  if(!confirm('حذف السؤال من بنك لعبة القيود؟')) return;
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/delete_accounting_game_question`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_id:id})});
+  if(!res.ok){alert('تعذر حذف السؤال.');return;} loadAccountingGameBank();
 }
 
 async function loadBattleResults(){
