@@ -37,8 +37,10 @@ function toggleTheme(){
 // Silent page-view logging for the admin analytics tab. Fails silently if
 // Supabase config isn't loaded yet or the request fails — never blocks the page.
 //
-// Mirrors how Google Analytics defines these:
-// - client_id: a permanent random ID stored in this browser — identifies a "User"
+// Mirrors the shape of Google Analytics identifiers, but the first-party
+// dashboard must not call them confirmed people:
+// - client_id: a permanent random ID stored in this browser — identifies an
+//   identifiable browser/device instance, not a verified human user
 // - session_id: reused while the visitor stays active; a NEW one is generated
 //   only after 30 minutes of inactivity — identifies a "Session" (a "visit")
 // Neither ID contains any personal info, just a random string.

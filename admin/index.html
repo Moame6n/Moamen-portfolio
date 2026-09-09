@@ -435,7 +435,7 @@
 
       <div class="stats-row">
         <div class="stat-card"><div class="num" id="statSessions">0</div><div class="lbl">الزيارات (Sessions)</div></div>
-        <div class="stat-card"><div class="num" id="statUsers">0</div><div class="lbl">الزوار الفريدون (Users)</div></div>
+        <div class="stat-card"><div class="num" id="statUsers">0</div><div class="lbl">معرّفات متصفح فريدة</div></div>
         <div class="stat-card"><div class="num" id="statPageviews">0</div><div class="lbl">مشاهدات الصفحة (Pageviews)</div></div>
         <div class="stat-card"><div class="num" id="statPerSession">0</div><div class="lbl">صفحات لكل زيارة</div></div>
       </div>
@@ -443,6 +443,7 @@
         <div class="stat-card"><div class="num" id="statSessionsToday">0</div><div class="lbl">زيارات اليوم</div></div>
         <div class="stat-card"><div class="num" id="statSessions7d">0</div><div class="lbl">زيارات آخر ٧ أيام</div></div>
       </div>
+      <div style="font-size:11.5px; color:var(--muted); margin:10px 0 18px; line-height:1.8;">المعرّف الفريد هو معرّف مجهّل للمتصفح/الجهاز، وليس عدد أشخاص مؤكدًا. الجلسة تعني زيارة متصلة من معرّف جلسة، وقد تختلف عن Google Analytics.</div>
 
       <div class="builder-card">
         <h3>الزيارات آخر ١٤ يوم</h3>
@@ -603,10 +604,10 @@
           <div class="stat-card"><div class="num" id="toolStatTotal">0</div><div class="lbl">إجمالي الاستخدامات</div></div>
           <div class="stat-card"><div class="num" id="toolStatToday">0</div><div class="lbl">اليوم</div></div>
           <div class="stat-card"><div class="num" id="toolStatWeek">0</div><div class="lbl">آخر ٧ أيام</div></div>
-          <div class="stat-card"><div class="num" id="toolStatUsers">0</div><div class="lbl">مستخدمون مسجلون</div></div>
-          <div class="stat-card"><div class="num" id="toolStatAnonymous">0</div><div class="lbl">زوار بدون حساب</div></div>
+          <div class="stat-card"><div class="num" id="toolStatUsers">0</div><div class="lbl">حسابات استخدمت الأدوات</div></div>
+          <div class="stat-card"><div class="num" id="toolStatAnonymous">0</div><div class="lbl">استخدامات بدون حساب</div></div>
         </div>
-        <div style="font-size:11.5px; color:var(--muted); margin-top:10px;">كل أداة داخل <code style="color:var(--gold);">/tools/</code> تُربط تلقائيًا عند فتح صفحتها. لا يتم جمع IP أو تحديد البلد.</div>
+        <div style="font-size:11.5px; color:var(--muted); margin-top:10px; line-height:1.8;">كل أداة داخل <code style="color:var(--gold);">/tools/</code> تُسجّل استخدامًا عند فتح صفحتها. الحسابات المسجلة محسوبة كمعرّفات مستخدمين فريدة، أما الاستخدامات بدون حساب فهي عدد عمليات فتح فقط وليست عدد زوار فريدين. لا يتم جمع IP أو تحديد البلد.</div>
       </div>
 
       <div class="builder-card">
@@ -708,7 +709,7 @@
         <div id="accountingGameBankStats" class="stats-row"></div>
         <div class="stats-row" id="accountingGameUsageStats"></div>
         <div class="stats-row" id="accountingGameVisitorStats"></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:8px;">إحصائيات الزوار تقيس فتح صفحة اللعبة عبر جلسة/معرّف مجهّل، ولا تجمع عنوان IP أو الموقع الجغرافي.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.8;">الإحصائيات تقيس فتح صفحة اللعبة ومُعرّفات المتصفح/الجلسة المجهّلة. «المعرّفات الفريدة» ليست عدد أشخاص مؤكدًا، و«الجلسات» ليست بالضرورة مستخدمين مختلفين. لا تجمع الصفحة عنوان IP أو الموقع الجغرافي.</div>
       </div>
       <div class="builder-card">
         <h3>استيراد مجموعة أسئلة</h3>
