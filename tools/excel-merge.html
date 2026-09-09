@@ -300,6 +300,7 @@ mergeBtn.addEventListener('click', () => {
   });
 
   renderResults();
+  if(window.trackToolCompletion) trackToolCompletion('merge_completed',{files:loadedFiles.length,rows:mergedRows.length,columns:mergedColumns.length-1});
 });
 
 function renderResults(){
@@ -336,6 +337,7 @@ downloadBtn.addEventListener('click', () => {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'الملف الموحد');
   XLSX.writeFile(wb, 'ملف-مدموج.xlsx');
+  if(window.trackToolCompletion) trackToolCompletion('download_completed',{rows:mergedRows.length});
 });
 
 resetBtn.addEventListener('click', () => {

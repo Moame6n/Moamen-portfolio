@@ -569,7 +569,7 @@ function runAnalysis(){
  let all=[...detectDuplicates(),...detectJournal(),...detectMissingFields(),...detectNegativeCash(),...detectDataQuality(),...reconcilePairs()];
  const seen=new Set(),fresh=[];all.forEach(i=>{if(i&&!seen.has(i.fp)){seen.add(i.fp);fresh.push(i)}});
  state.issues=fresh;
- state.lastRun=new Date().toISOString();save();render();toast(`اكتمل الفحص: ${fresh.length} استثناء`);
+ state.lastRun=new Date().toISOString();save();render();toast(`اكتمل الفحص: ${fresh.length} استثناء`); if(window.trackToolCompletion) trackToolCompletion('analysis_completed',{files:state.files.length,issues:fresh.length});
 }
 function renderIssues(){
  const box=$("#issuesBox"), list=state.issues.filter(i=>i.status==="open");

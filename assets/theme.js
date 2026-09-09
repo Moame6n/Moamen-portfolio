@@ -115,6 +115,39 @@ async function getCurrentUserId(){
   }catch(e){ return null; }
 }
 
+// Real tool analytics: meaningful interactions and completed operations.
+// Page opens remain in tool_usage; this channel records what users actually do.
+let _toolUserIdPromise = null;
+function trackToolEvent(action, eventType='interaction', metadata={}){
+  try{
+    const path = window.location.pathname;
+    if(!path.startsWith('/tools/') || path.endsWith('_BASE.html')) return;
+    if(!['interaction','completion'].includes(eventType)) return;
+    const cleanAction = String(action || '').trim().slice(0,120);
+    if(!cleanAction || typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') return;
+    if(!_toolUserIdPromise) _toolUserIdPromise = getCurrentUserId();
+    _toolUserIdPromise.then(uid => {
+      const payload = {
+        tool_slug: path.split('/').pop().replace('.html','').slice(0,160),
+        event_type: eventType,
+        action: cleanAction,
+        user_id: uid || null,
+        client_id: typeof getClientId === 'function' ? getClientId() : null,
+        session_id: typeof getSessionId === 'function' ? getSessionId() : null,
+        metadata: metadata && typeof metadata === 'object' ? metadata : {}
+      };
+      fetch(`${SUPABASE_URL}/rest/v1/tool_events`, {
+        method:'POST', keepalive:true,
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':`Bearer ${SUPABASE_ANON_KEY}`,'Prefer':'return=minimal'},
+        body:JSON.stringify(payload)
+      }).catch(()=>{});
+    });
+  }catch(e){}
+}
+function trackToolCompletion(action, metadata={}){ trackToolEvent(action,'completion',metadata); }
+window.trackToolEvent = trackToolEvent;
+window.trackToolCompletion = trackToolCompletion;
+
 // Auto-log tool usage for any real tool page (not the reserved _BASE.html
 // scaffold) — every current and future tool gets this for free, no per-tool
 // code needed.
@@ -140,6 +173,20 @@ async function getCurrentUserId(){
   }
   if(document.readyState === 'complete'){ logToolUsage(); }
   else { window.addEventListener('load', logToolUsage); }
+
+  // Capture only meaningful controls, not every click or navigation link.
+  document.addEventListener('click', e => {
+    const el = e.target.closest('button,[data-tool-action]');
+    if(!el || el.closest('nav,.site-nav,.site-footer')) return;
+    const label = el.dataset.toolAction || el.getAttribute('aria-label') || el.textContent.trim().replace(/\s+/g,' ').slice(0,80);
+    if(label) trackToolEvent(label,'interaction',{control:el.id || el.tagName.toLowerCase()});
+  }, {passive:true});
+  document.addEventListener('change', e => {
+    const el = e.target;
+    if(!el.matches('input,select,textarea')) return;
+    const action = el.type === 'file' ? 'file_selected' : 'input_changed';
+    trackToolEvent(action,'interaction',{field:el.id || el.name || el.tagName.toLowerCase()});
+  }, {passive:true});
 })();
 
 // Fills in the small circular account widget in the header (if present on

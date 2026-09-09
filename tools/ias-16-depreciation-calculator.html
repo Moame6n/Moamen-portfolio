@@ -187,6 +187,7 @@ function calc(){
  $('dep').textContent=fmt(amount);$('first').textContent=fmt(out[0]?.[3]||0);$('final').textContent=fmt(book);$('meth').textContent=label;$('caption').textContent='جدول الإهلاك — '+($('asset').value||'الأصل');$('tag').textContent='IAS 16';
  $('rows').innerHTML=out.map(r=>'<tr><td>'+r[0]+'</td><td>'+fmt(r[1])+'</td><td>'+r[2]+'</td><td>'+fmt(r[3])+'</td><td>'+fmt(r[4])+'</td><td>'+fmt(r[5])+'</td></tr>').join('');
  $('formula').innerHTML=formula;
+ if(window.trackToolCompletion) trackToolCompletion('calculation_completed',{method:m,life,amount});
 }
 calc();
 

@@ -206,6 +206,7 @@ lucide.createIcons();
     const days = Math.floor((today() - dueDate) / 86400000);
     const [label,key] = classify(days), balance = amount - paid, rate = rates[key];
     rows.push({customer, invoice, due, balance, days, label, key, rate, ecl: balance * rate});
+    if(window.trackToolCompletion) trackToolCompletion('invoice_added',{rows:rows.length,amount:balance});
     $('agingCustomer').value=''; $('agingInvoice').value=''; $('agingAmount').value=''; $('agingPaid').value='0'; $('agingDue').value=''; render();
   });
   $('agingClear').addEventListener('click', () => { rows.length=0; render(); });
