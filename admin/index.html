@@ -191,6 +191,88 @@
   @media (prefers-reduced-motion:reduce){
     .topbar button:not(.theme-toggle), .login-box button, .stat-card, .dash-tab{ transition:none; }
   }
+  /* Dashboard polish and mobile-first responsive layout. */
+  *, *::before, *::after{ box-sizing:border-box; }
+  html{ overflow-x:hidden; }
+  body{ background:var(--bg); overflow-x:hidden; }
+  .topbar{ box-shadow:0 8px 24px rgba(0,0,0,.12); }
+  .topbar .container{ max-width:1100px; width:100%; padding-left:24px; padding-right:24px; }
+  .topbar h1{ letter-spacing:-.2px; }
+  .topbar .container > div:last-child{ display:flex; align-items:center; gap:12px; }
+  .wrap{ width:100%; }
+  .builder-card, .stat-card, .login-box{ box-shadow:0 10px 28px rgba(0,0,0,.08); }
+  .builder-card h3{ display:flex; align-items:center; gap:8px; }
+  .dash-tabs{ gap:6px; padding:6px; background:var(--surface); border:1px solid var(--border-soft); border-radius:12px; }
+  .dash-tab{ margin:0; border-radius:8px; transition:background .2s,color .2s,border-color .2s; }
+  .dash-tab:hover{ color:var(--emerald); background:var(--surface-2); }
+  .dash-tab.active{ background:rgba(61,220,151,.10); border-color:var(--emerald); }
+  .toolbar select:focus, .toolbar input:focus, .field-row input:focus, .field-row textarea:focus, .login-box input:focus{ outline:2px solid rgba(61,220,151,.28); outline-offset:1px; border-color:var(--emerald); }
+  .table-scroll{ border:1px solid var(--border-soft); }
+  .table-scroll table{ border:0; }
+
+  @media (max-width:760px){
+    .topbar .container{ padding-left:16px; padding-right:16px; }
+    .topbar .container > div:last-child{ flex-wrap:wrap; justify-content:flex-end; }
+    .stats-row{ gap:10px; }
+    .stat-card{ padding:15px 10px; border-radius:10px; }
+    .stat-card .num{ font-size:23px; }
+    .builder-card{ border-radius:12px; }
+    .toolbar{ display:grid; grid-template-columns:1fr; gap:9px; align-items:stretch; }
+    .toolbar select, .toolbar input, .toolbar button{ width:100%; min-width:0; }
+    .fb-item-head{ gap:8px; flex-wrap:wrap; }
+  }
+
+  @media (max-width:640px){
+    .login-box{ width:calc(100% - 28px); margin:34px auto; padding:25px 18px; border-radius:14px; }
+    .login-box h2{ font-size:20px; }
+    .topbar{ padding:13px 0; }
+    .topbar .container{ align-items:stretch; gap:12px; }
+    .topbar h1{ font-size:18px; }
+    .topbar .container > div:last-child{ width:100%; justify-content:space-between; gap:8px; }
+    .topbar button:not(.theme-toggle){ padding:8px 12px; }
+    .wrap{ padding:18px 12px 42px; }
+    .dash-tabs{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:7px; margin-bottom:18px; padding:7px; overflow:visible; }
+    .dash-tab{ width:100%; min-height:43px; padding:9px 5px; font-size:12.5px; white-space:normal; line-height:1.35; }
+    .builder-card{ padding:15px 13px; margin-bottom:14px; }
+    .builder-card h3{ font-size:15px; line-height:1.5; }
+    .field-row input, .field-row textarea{ font-size:16px; }
+    .field-row-2{ gap:0; }
+    .q-block{ padding:13px 11px; }
+    .opt-row{ gap:7px; }
+    .opt-row input[type="text"]{ min-width:0; font-size:16px; }
+    .empty-state{ padding:42px 14px; }
+    .sub-item{ gap:8px; padding:11px 3px; }
+    .sub-item-info{ min-width:0; }
+    .sub-item-email{ overflow-wrap:anywhere; font-size:10.5px; }
+    .sub-item-badge{ padding:3px 7px; }
+    .table-scroll{ margin-left:-3px; margin-right:-3px; }
+    .table-scroll table{ min-width:620px; }
+  }
+
+  @media (max-width:380px){
+    .stats-row{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .dash-tabs{ grid-template-columns:1fr 1fr; }
+    .dash-tab{ font-size:11.5px; }
+    .topbar h1{ font-size:16px; }
+  }
+
+  /* Tool analytics uses the same stat-card language as the rest of the dashboard. */
+  .tool-stats-grid{ grid-template-columns:repeat(5, minmax(0,1fr)); }
+  .tool-stats-grid .stat-card{ min-width:0; }
+  .tool-usage-chart{ display:flex; align-items:flex-end; gap:5px; height:150px; padding:16px 8px 8px; border:1px solid var(--border-soft); border-radius:var(--radius); background:var(--surface); overflow:hidden; }
+  .tool-usage-chart > div{ min-width:0; }
+  .tool-breakdown{ display:grid; gap:12px; }
+  .tool-breakdown-row{ display:grid; grid-template-columns:minmax(120px,180px) minmax(0,1fr) 104px; align-items:center; gap:12px; }
+  .tool-breakdown-bar{ height:18px; background:var(--bg); border:1px solid var(--border-soft); border-radius:999px; overflow:hidden; }
+  .tool-breakdown-fill{ height:100%; background:var(--gold); border-radius:inherit; }
+  @media (max-width:900px){ .tool-stats-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
+  @media (max-width:640px){
+    .tool-stats-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .tool-usage-chart{ height:132px; gap:3px; padding-left:3px; padding-right:3px; }
+    .tool-breakdown-row{ grid-template-columns:minmax(92px,1fr) minmax(90px,1.5fr) 78px; gap:7px; }
+    .tool-breakdown-row > div:first-child{ font-size:11.5px !important; }
+    .tool-breakdown-row > div:last-child{ width:auto !important; font-size:10.5px !important; }
+  }
 </style>
 </head>
 <body>
@@ -228,6 +310,7 @@
       <button class="dash-tab" id="tabTools" type="button">الأدوات</button>
       <button class="dash-tab" id="tabFeedback" type="button">آراء المستخدمين</button>
       <button class="dash-tab" id="tabBattleBank" type="button">بنك أسئلة التحدي</button>
+      <button class="dash-tab" id="tabAccountingGameBank" type="button">🧾 بنك لعبة القيود</button>
       <button class="dash-tab" id="tabBattleResults" type="button">سجل المباريات</button>
       <button class="dash-tab" id="tabSubscribers" type="button">📬 إحصائيات المشتركين</button>
     </div>
@@ -271,9 +354,7 @@
           </div>
         </div>
         <div class="field-row">
-          <label>مفتاح إرسال الإشعارات (مرة واحدة بس)</label>
-          <input type="password" id="notifySecret" placeholder="القيمة اللي حطيتها في NOTIFY_SECRET على Vercel">
-          <div class="hint">بيُستخدم مؤقتًا أثناء الجلسة، ومطلوب عشان تقدر ترسل إشعار عند أي نشر جديد.</div>
+          <div class="hint" style="color:var(--emerald);">إرسال الإشعارات أصبح مرتبطًا بجلسة الإدارة الآمنة — لا تحتاج لإدخال Secret يدويًا.</div>
         </div>
         <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-top:6px;">
           <input type="checkbox" id="notifyOnPublishExam" checked style="width:16px; height:16px;">
@@ -494,12 +575,16 @@
       </div>
 
       <div class="builder-card">
-        <h3>3. ملف الأداة المبني على القالب</h3>
+        <h3>3. ملف الأداة أو كود HTML</h3>
         <div class="dropzone" id="toolDropzone" style="padding:26px 20px;">
-          <div style="font-weight:700; font-size:14px; margin-bottom:4px;" id="toolFileLabel">اسحب ملف الأداة النهائي هنا، أو دوس للاختيار</div>
-          <div style="font-size:12px; color:var(--muted);">لازم يكون مبني من نسخة قالب الأداة اللي فيه علامات الاستخراج</div>
-          <input type="file" id="toolFileInput" accept=".html" style="display:none;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px;" id="toolFileLabel">ارفع ملف HTML، أو دوس للاختيار</div>
+          <div style="font-size:12px; color:var(--muted);">استخدم الملف أو مربع الكود بالأسفل — لا تستخدم الاثنين معًا</div>
+          <input type="file" id="toolFileInput" accept=".html,text/html" style="display:none;">
         </div>
+        <div style="display:flex; align-items:center; gap:10px; margin:16px 0 10px; color:var(--text-soft); font-size:12px;"><span style="height:1px; flex:1; background:var(--border-soft);"></span><b>أو الصق الكود مباشرة</b><span style="height:1px; flex:1; background:var(--border-soft);"></span></div>
+        <textarea id="toolCodeInput" maxlength="800000" spellcheck="false" placeholder="الصق كود HTML هنا...
+يفضل أن يحتوي على TOOL_CSS_START و TOOL_BODY_START و TOOL_JS_START للحَقن الأدق." style="width:100%; min-height:230px; resize:vertical; direction:ltr; text-align:left; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:12px; line-height:1.6; padding:14px; border:1px solid var(--border-soft); border-radius:10px; background:var(--bg); color:var(--text);"></textarea>
+        <div style="font-size:11px; color:var(--muted); margin-top:7px;">الحد الأقصى 800KB. النظام سيستخدم نفس التحقق والقالب الموحد الموجودين في رفع الملف.</div>
       </div>
 
       <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-soft); cursor:pointer; margin-bottom:12px;">
@@ -508,6 +593,31 @@
       </label>
       <button class="btn btn-primary" id="publishToolBtn" type="button">نشر الأداة</button>
       <div class="gen-result" id="toolGenResult"></div>
+
+      <div class="builder-card" style="margin-top:30px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;">
+          <h3 style="margin:0;">إحصائيات استخدام الأدوات</h3>
+          <button class="btn btn-outline" id="refreshToolStatsBtn" type="button" style="padding:7px 12px; font-size:12px;">تحديث</button>
+        </div>
+        <div class="stats-row tool-stats-grid">
+          <div class="stat-card"><div class="num" id="toolStatTotal">0</div><div class="lbl">إجمالي الاستخدامات</div></div>
+          <div class="stat-card"><div class="num" id="toolStatToday">0</div><div class="lbl">اليوم</div></div>
+          <div class="stat-card"><div class="num" id="toolStatWeek">0</div><div class="lbl">آخر ٧ أيام</div></div>
+          <div class="stat-card"><div class="num" id="toolStatUsers">0</div><div class="lbl">مستخدمون مسجلون</div></div>
+          <div class="stat-card"><div class="num" id="toolStatAnonymous">0</div><div class="lbl">زوار بدون حساب</div></div>
+        </div>
+        <div style="font-size:11.5px; color:var(--muted); margin-top:10px;">كل أداة داخل <code style="color:var(--gold);">/tools/</code> تُربط تلقائيًا عند فتح صفحتها. لا يتم جمع IP أو تحديد البلد.</div>
+      </div>
+
+      <div class="builder-card">
+        <h3>الاستخدام خلال آخر ١٤ يوم</h3>
+        <div id="toolUsageDailyChart" class="tool-usage-chart" aria-label="استخدام الأدوات خلال آخر 14 يوم"></div>
+      </div>
+
+      <div class="builder-card">
+        <h3>الأدوات الأكثر استخدامًا</h3>
+        <div id="toolUsageBreakdownList" class="tool-breakdown"><div class="empty-state">اضغط تحديث لعرض الإحصائيات</div></div>
+      </div>
     </div>
 
     <div id="feedbackPanel" style="display:none;">
@@ -537,6 +647,26 @@
           <option value="تحليل مالي">تحليل مالي</option>
         </select>
         <div class="hint" style="margin-top:8px;">"مختلط" مش تخصص بيتخزّن — ده وضع اختيار بيسحب عشوائي من كل التخصصات وقت التحدي نفسه.</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;">
+          <label style="font-size:12px; color:var(--text-soft);">الصعوبة
+            <select id="battleDifficultySelect" style="width:100%; margin-top:5px; padding:9px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text);">
+              <option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">صعب</option>
+            </select>
+          </label>
+          <label style="font-size:12px; color:var(--text-soft);">الحالة
+            <select id="battleStatusSelect" style="width:100%; margin-top:5px; padding:9px; border:1px solid var(--border-soft); border-radius:8px; background:var(--bg); color:var(--text);">
+              <option value="active" selected>معتمد ويستخدم</option><option value="draft">مسودة</option><option value="paused">موقوف مؤقتًا</option>
+            </select>
+          </label>
+        </div>
+        <div style="margin-top:14px; font-size:12px; color:var(--text-soft);">وجهات الأسئلة (يمكن اختيار أكثر من وجهة)</div>
+        <div id="battleModesPicker" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;">
+          <label><input type="checkbox" value="battle" checked> المباريات</label>
+          <label><input type="checkbox" value="private" checked> تحدي صديق</label>
+          <label><input type="checkbox" value="bot" checked> الخصم الافتراضي</label>
+          <label><input type="checkbox" value="daily"> التحدي اليومي</label>
+          <label><input type="checkbox" value="tournament"> البطولات مستقبلًا</label>
+        </div>
       </div>
 
       <div class="builder-card">
@@ -569,6 +699,31 @@
 
       <button class="btn btn-primary" id="publishBattleBtn" type="button" style="display:none;">إضافة الأسئلة دي لبنك التحدي</button>
       <div class="gen-result" id="battlePublishResult"></div>
+    </div>
+
+    <div id="accountingGameBankPanel" style="display:none;">
+      <div class="builder-card">
+        <h3>🧾 بنك لعبة القيود المحاسبية</h3>
+        <p style="font-size:12.5px; color:var(--text-soft); line-height:1.9; margin:0 0 14px;">هذا البنك مستقل تمامًا عن بنك المباريات والاختبارات. كل سؤال يحتوي على سند مالي، حساب مدين، حساب دائن، اختيارات مشتتة، وشرح تعليمي.</p>
+        <div id="accountingGameBankStats" class="stats-row"></div>
+        <div class="stats-row" id="accountingGameUsageStats"></div>
+      </div>
+      <div class="builder-card">
+        <h3>إضافة سؤال جديد</h3>
+        <div class="field-row"><label>السند أو الحدث المالي</label><textarea id="gameScenarioInput" placeholder="مثال: دفعت المنشأة مصروف كهرباء نقدًا بقيمة 1,500 جنيه." style="min-height:80px;"></textarea></div>
+        <div class="field-row-2"><div class="field-row"><label>الحساب المدين الصحيح</label><input id="gameDebitInput" placeholder="مصروف الكهرباء"></div><div class="field-row"><label>الحساب الدائن الصحيح</label><input id="gameCreditInput" placeholder="الصندوق"></div></div>
+        <div class="field-row-2"><div class="field-row"><label>اختيار مشتت 1</label><input id="gameOption1Input" placeholder="مصروف الكهرباء"></div><div class="field-row"><label>اختيار مشتت 2</label><input id="gameOption2Input" placeholder="الصندوق"></div></div>
+        <div class="field-row-2"><div class="field-row"><label>اختيار مشتت 3</label><input id="gameOption3Input" placeholder="الإيرادات"></div><div class="field-row"><label>اختيار مشتت 4</label><input id="gameOption4Input" placeholder="العملاء"></div></div>
+        <div class="field-row"><label>الشرح التعليمي</label><textarea id="gameExplanationInput" placeholder="اشرح لماذا الحساب المدين مدين والدائن دائن."></textarea></div>
+        <div class="field-row-2"><div class="field-row"><label>التصنيف</label><select id="gameCategoryInput"><option>محاسبة مالية</option><option>مصروفات</option><option>خزينة وبنوك</option><option>أصول وإهلاك</option><option>حقوق ملكية</option></select></div><div class="field-row"><label>الصعوبة</label><select id="gameDifficultyInput"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">صعب</option></select></div></div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;"><button class="btn btn-outline" id="addAccountingGameQuestionBtn" type="button">+ إضافة السؤال للقائمة</button><button class="btn btn-primary" id="publishAccountingGameQuestionsBtn" type="button">نشر الأسئلة الجاهزة</button></div>
+        <div class="gen-result" id="accountingGameBankResult"></div>
+        <div id="accountingGameDraftList" style="margin-top:14px;"></div>
+      </div>
+      <div class="builder-card">
+        <h3>الأسئلة الحالية</h3>
+        <div id="accountingGameQuestionsList"><div class="empty-state">جارِ التحميل...</div></div>
+      </div>
     </div>
 
 
@@ -644,10 +799,13 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tabTools').addEventListener('click', () => switchTab('tools'));
   document.getElementById('tabFeedback').addEventListener('click', () => switchTab('feedback'));
   document.getElementById('tabBattleBank').addEventListener('click', () => switchTab('battlebank'));
+  document.getElementById('tabAccountingGameBank').addEventListener('click', () => switchTab('accountinggamebank'));
   document.getElementById('tabBattleResults').addEventListener('click', () => switchTab('battleresults'));
   document.getElementById('tabSubscribers').addEventListener('click', () => switchTab('subscribers'));
   document.getElementById('battleParseBtn').addEventListener('click', handleBattleImportParse);
   document.getElementById('publishBattleBtn').addEventListener('click', publishBattleQuestions);
+  document.getElementById('addAccountingGameQuestionBtn').addEventListener('click', addAccountingGameQuestion);
+  document.getElementById('publishAccountingGameQuestionsBtn').addEventListener('click', publishAccountingGameQuestions);
   document.getElementById('battleImportDropzone').addEventListener('click', () => document.getElementById('battleImportFileInput').click());
   document.getElementById('battleImportFileInput').addEventListener('change', (e) => handleBattleImportFile(e.target.files[0]));
   document.getElementById('battleImportDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('battleImportDropzone').classList.add('drag'); });
@@ -661,6 +819,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('toolDropzone').addEventListener('click', () => document.getElementById('toolFileInput').click());
   document.getElementById('toolFileInput').addEventListener('change', (e) => {
     if(e.target.files[0]) document.getElementById('toolFileLabel').textContent = '✓ ' + e.target.files[0].name;
+    document.getElementById('toolCodeInput').value = '';
   });
   document.getElementById('toolDropzone').addEventListener('dragover', (e) => { e.preventDefault(); document.getElementById('toolDropzone').classList.add('drag'); });
   document.getElementById('toolDropzone').addEventListener('dragleave', () => document.getElementById('toolDropzone').classList.remove('drag'));
@@ -670,9 +829,11 @@ window.addEventListener('DOMContentLoaded', () => {
     if(e.dataTransfer.files[0]){
       document.getElementById('toolFileInput').files = e.dataTransfer.files;
       document.getElementById('toolFileLabel').textContent = '✓ ' + e.dataTransfer.files[0].name;
+      document.getElementById('toolCodeInput').value = '';
     }
   });
   document.getElementById('publishToolBtn').addEventListener('click', publishTool);
+  document.getElementById('refreshToolStatsBtn').addEventListener('click', loadToolUsageStats);
   document.getElementById('addQuestionBtn').addEventListener('click', () => addQuestionBlock());
   document.getElementById('parseImportBtn').addEventListener('click', handleImportParse);
   document.getElementById('importDropzone').addEventListener('click', () => document.getElementById('importFileInput').click());
@@ -688,7 +849,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('newExamTitle').addEventListener('input', autoSlug);
   // Secrets are intentionally kept only in the current page memory.
   // Never persist GitHub or notification credentials in localStorage/sessionStorage.
-  ['ghToken', 'ghTokenTpl', 'ghTokenTool', 'notifySecret'].forEach((id) => {
+  ['ghToken', 'ghTokenTpl', 'ghTokenTool'].forEach((id) => {
     const field = document.getElementById(id);
     if (field) field.autocomplete = 'off';
   });
@@ -852,6 +1013,7 @@ function switchTab(tab){
   document.getElementById('tabTools').classList.toggle('active', tab === 'tools');
   document.getElementById('tabFeedback').classList.toggle('active', tab === 'feedback');
   document.getElementById('tabBattleBank').classList.toggle('active', tab === 'battlebank');
+  document.getElementById('tabAccountingGameBank').classList.toggle('active', tab === 'accountinggamebank');
   document.getElementById('tabBattleResults').classList.toggle('active', tab === 'battleresults');
   document.getElementById('tabSubscribers').classList.toggle('active', tab === 'subscribers');
   document.getElementById('resultsPanel').style.display = tab === 'results' ? 'block' : 'none';
@@ -861,13 +1023,16 @@ function switchTab(tab){
   document.getElementById('toolsPanel').style.display = tab === 'tools' ? 'block' : 'none';
   document.getElementById('feedbackPanel').style.display = tab === 'feedback' ? 'block' : 'none';
   document.getElementById('battleBankPanel').style.display = tab === 'battlebank' ? 'block' : 'none';
+  document.getElementById('accountingGameBankPanel').style.display = tab === 'accountinggamebank' ? 'block' : 'none';
   document.getElementById('battleResultsPanel').style.display = tab === 'battleresults' ? 'block' : 'none';
   document.getElementById('subscribersPanel').style.display = tab === 'subscribers' ? 'block' : 'none';
   if(tab === 'subscribers') loadSubscriberStats();
   if(tab === 'analytics') loadAnalytics();
   if(tab === 'templates') loadTemplateStats();
+  if(tab === 'tools') loadToolUsageStats();
   if(tab === 'feedback') loadFeedback();
   if(tab === 'battlebank') loadBattleBankStats();
+  if(tab === 'accountinggamebank') loadAccountingGameBank();
   if(tab === 'battleresults') loadBattleResults();
 }
 
@@ -973,18 +1138,13 @@ function utf8ToBase64(str){
   return btoa(unescape(encodeURIComponent(str)));
 }
 
-function getNotificationSecret(){
-  return (document.getElementById('notifySecret')?.value || '').trim();
-}
-
 async function sendPushNotification(title, body, url){
-  const secret = getNotificationSecret();
-  if(!secret) return;
+  if(!adminAccessToken) return;
   try{
     await fetch('/api/send-notification', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-notify-secret': secret },
-      body: JSON.stringify({ title: String(title).slice(0, 120), body: String(body).slice(0, 500), url })
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminAccessToken}` },
+      body: JSON.stringify({ title: String(title).slice(0, 120), body: String(body).slice(0, 500), url, tag: 'moamen-publish-update' })
     });
   }catch(e){ console.warn('Notification delivery failed:', e); }
 }
@@ -1132,6 +1292,54 @@ async function loadAnalytics(){
       <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); width:60px; text-align:left;">${p.views} مشاهدة</div>
     </div>
   `).join('') : '<div class="empty-state">لسه مفيش زيارات مسجلة</div>';
+}
+
+// ==================== Tool usage analytics ====================
+async function loadToolUsageStats(){
+  const list = document.getElementById('toolUsageBreakdownList');
+  const chart = document.getElementById('toolUsageDailyChart');
+  if(!list || !chart) return;
+  list.innerHTML = '<div class="empty-state">جارِ تحميل الإحصائيات...</div>';
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_tool_usage_stats`, {
+      method: 'POST',
+      headers: supabaseHeaders(),
+      body: JSON.stringify({ p_passphrase: passphrase })
+    });
+    if(!res.ok) throw new Error('تعذّر تحميل إحصائيات الأدوات');
+    const stats = await res.json();
+    document.getElementById('toolStatTotal').textContent = stats.total || 0;
+    document.getElementById('toolStatToday').textContent = stats.today || 0;
+    document.getElementById('toolStatWeek').textContent = stats.last7 || 0;
+    document.getElementById('toolStatUsers').textContent = stats.unique_users || 0;
+    document.getElementById('toolStatAnonymous').textContent = stats.anonymous || 0;
+
+    const daily = stats.daily || [];
+    const maxDaily = Math.max(1, ...daily.map(d => Number(d.uses) || 0));
+    chart.innerHTML = daily.map(d => {
+      const uses = Number(d.uses) || 0;
+      const h = Math.round((uses / maxDaily) * 100);
+      const dayLabel = new Date(d.day).toLocaleDateString('ar-EG', { day:'numeric', month:'numeric' });
+      return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+        <div style="font-size:10px; color:var(--muted);">${uses || ''}</div>
+        <div style="width:100%; height:${Math.max(h,3)}px; background:var(--emerald); border-radius:3px 3px 0 0; opacity:${uses ? 1 : 0.25};"></div>
+        <div style="font-size:9px; color:var(--muted); font-family:var(--mono);">${dayLabel}</div>
+      </div>`;
+    }).join('');
+
+    const tools = stats.by_tool || [];
+    const maxUses = Math.max(1, ...tools.map(t => Number(t.uses) || 0));
+    list.innerHTML = tools.length ? tools.map(t => `
+      <div class="tool-breakdown-row">
+        <div style="min-width:0; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(t.tool_title || t.tool_slug)}">${escapeHtml(t.tool_title || t.tool_slug)}</div>
+        <div class="tool-breakdown-bar"><div class="tool-breakdown-fill" style="width:${Math.round((Number(t.uses || 0)/maxUses)*100)}%;"></div></div>
+        <div style="font-family:var(--mono); font-size:12px; color:var(--text-soft); text-align:left;">${Number(t.uses || 0)} استخدام</div>
+      </div>`).join('') : '<div class="empty-state">لسه مفيش استخدامات مسجلة</div>';
+  }catch(err){
+    console.error('Error loading tool usage stats:', err);
+    list.innerHTML = '<div class="empty-state">تعذّر تحميل إحصائيات الأدوات حاليًا</div>';
+    chart.innerHTML = '';
+  }
 }
 
 // ==================== Import from file/text ====================
@@ -1486,19 +1694,23 @@ async function publishTool(){
   const desc = document.getElementById('toolDescInput').value.trim();
   const icon = document.getElementById('toolIconInput').value.trim();
   const file = document.getElementById('toolFileInput').files[0];
+  const pastedCode = document.getElementById('toolCodeInput').value.trim();
 
   if(!token) return showToolError('من فضلك حط GitHub Token الأول.');
   if(!title || !slug || !desc) return showToolError('من فضلك املأ العنوان والـ slug والوصف.');
   if(title.includes('\\') || title.includes('\'') || title.length > 160 || desc.length > 500) return showToolError('العنوان أو الوصف أطول من الحد المسموح.');
   if(!/^[a-z0-9][a-z0-9-]{0,70}$/.test(slug)) return showToolError('الـ slug لازم يكون حروف إنجليزي صغيرة وأرقام وشرطات بس.');
-  if(!file) return showToolError('من فضلك ارفع ملف الأداة المبني على القالب.');
+  if(!file && !pastedCode) return showToolError('من فضلك ارفع ملف HTML أو الصق كود الأداة.');
+  if(file && pastedCode) return showToolError('اختار طريقة واحدة فقط: الملف أو الكود الملصوق.');
+  if(file && file.size > 800000) return showToolError('ملف الأداة أكبر من الحد المسموح (800KB).');
+  if(pastedCode.length > 800000) return showToolError('كود الأداة أكبر من الحد المسموح (800KB).');
 
   const btn = document.getElementById('publishToolBtn');
   btn.disabled = true;
   btn.textContent = 'جارِ النشر...';
 
   try{
-    const uploadedText = await file.text();
+    const uploadedText = file ? await file.text() : pastedCode;
 
     let extractedCss = extractBetween(uploadedText, '/* TOOL_CSS_START */', '/* TOOL_CSS_END */');
     let extractedBody = extractBetween(uploadedText, '<!-- TOOL_BODY_START -->', '<!-- TOOL_BODY_END -->');
@@ -1667,7 +1879,11 @@ function handleBattleImportParse(){
   }
 
   const category = document.getElementById('battleCategorySelect').value;
-  parsedBattleQuestions = parsed.map(q => ({ category, question: q.q, options: q.o, correct_index: q.c }));
+  const difficulty = document.getElementById('battleDifficultySelect').value;
+  const status = document.getElementById('battleStatusSelect').value;
+  const allowed_modes = [...document.querySelectorAll('#battleModesPicker input:checked')].map(input => input.value);
+  if(!allowed_modes.length){ showBattleImportError('اختار وجهة واحدة على الأقل للسؤال.'); return; }
+  parsedBattleQuestions = parsed.map(q => ({ category, question: q.q, options: q.o, correct_index: q.c, difficulty, status, allowed_modes }));
 
   document.getElementById('battleQuestionsPreview').innerHTML = parsedBattleQuestions.map((q, i) => `
     <div class="q-block" style="cursor:default;">
@@ -1678,7 +1894,7 @@ function handleBattleImportParse(){
 
   document.getElementById('publishBattleBtn').style.display = 'inline-flex';
 
-  let msg = `تم تحليل ${parsed.length} سؤال بنجاح ✓ (تخصص: ${category})`;
+  let msg = `تم تحليل ${parsed.length} سؤال بنجاح ✓ (تخصص: ${category} — ${difficulty} — ${status})`;
   if(failed.length) msg += `<br>تعذّر قراءة ${failed.length} سؤال (رقم ${failed.join('، ')}).`;
   resultEl.className = failed.length ? 'gen-result' : 'gen-result success';
   if(failed.length){
@@ -1751,22 +1967,45 @@ async function loadBattleBankStats(){
   const stats = await res.json();
 
   const allCategories = ['محاسبة مالية','محاسبة تكاليف','مراجعة','محاسبة إدارية','تحليل مالي'];
+  const modeLabels = { battle:'مباريات', private:'صديق', bot:'بوت', daily:'يومي', tournament:'بطولات' };
   const countMap = {};
-  stats.forEach(s => { countMap[s.category] = s.total; });
-
+  stats.forEach(s => { countMap[`${s.category}|${s.mode}|${s.status}`] = (countMap[`${s.category}|${s.mode}|${s.status}`] || 0) + Number(s.total || 0); });
   statsEl.innerHTML = allCategories.map(cat => {
-    const count = countMap[cat] || 0;
-    const ready = count >= 10;
-    return `
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border-soft);">
-        <span style="font-size:13px;">${cat}</span>
-        <span style="font-family:var(--mono); font-size:12.5px; color:${ready ? 'var(--emerald)' : 'var(--gold)'};">
-          ${count} سؤال ${ready ? '✓ جاهز' : '(محتاج 10 على الأقل)'}
-        </span>
-      </div>
-    `;
+    const rows = Object.keys(modeLabels).map(mode => {
+      const active = countMap[`${cat}|${mode}|active`] || 0;
+      const draft = countMap[`${cat}|${mode}|draft`] || 0;
+      if(!active && !draft) return '';
+      return `<span style="display:inline-block; margin:3px 0 3px 8px; font-family:var(--mono); font-size:11px; color:${active >= 10 ? 'var(--emerald)' : 'var(--gold)'};">${modeLabels[mode]}: ${active}${draft ? ` (+${draft} مسودة)` : ''}</span>`;
+    }).join('');
+    return `<div style="padding:9px 0; border-bottom:1px solid var(--border-soft);"><div style="font-size:13px; font-weight:700;">${cat}</div><div>${rows || '<span style="color:var(--muted);font-size:11px;">لا توجد أسئلة مفعّلة</span>'}</div></div>`;
   }).join('');
 }
+
+let accountingGameBankQuestions = [], accountingGameDraftQuestions = [];
+
+function gameField(id){ return document.getElementById(id).value.trim(); }
+function addAccountingGameQuestion(){
+  const scenario=gameField('gameScenarioInput'), debit=gameField('gameDebitInput'), credit=gameField('gameCreditInput');
+  const options=['gameOption1Input','gameOption2Input','gameOption3Input','gameOption4Input'].map(gameField).filter(Boolean);
+  const out=document.getElementById('accountingGameBankResult');
+  if(!scenario||!debit||!credit||options.length<4){out.className='gen-result error';out.textContent='اكتب السند والمدين والدائن وأربع اختيارات كاملة.';out.style.display='block';return}
+  if(!options.includes(debit)||!options.includes(credit)){out.className='gen-result error';out.textContent='المدين والدائن لازم يكونوا ضمن الاختيارات الأربعة.';out.style.display='block';return}
+  accountingGameDraftQuestions.push({scenario,debit_account:debit,credit_account:credit,options,explanation:gameField('gameExplanationInput'),category:gameField('gameCategoryInput')||'محاسبة مالية',difficulty:gameField('gameDifficultyInput')||'easy',status:'active'});
+  renderAccountingGameDrafts();
+  ['gameScenarioInput','gameDebitInput','gameCreditInput','gameOption1Input','gameOption2Input','gameOption3Input','gameOption4Input','gameExplanationInput'].forEach(id=>document.getElementById(id).value='');
+  out.className='gen-result success';out.textContent='تمت إضافة السؤال للقائمة. يمكنك إضافة أسئلة أخرى قبل النشر.';out.style.display='block';
+}
+function renderAccountingGameDrafts(){document.getElementById('accountingGameDraftList').innerHTML=accountingGameDraftQuestions.map((q,i)=>`<div style="padding:10px;border:1px solid var(--border-soft);border-radius:9px;margin-top:7px;font-size:12px;"><b>${i+1}. ${escapeHtml(q.scenario)}</b><span style="color:var(--muted);"> — مدين: ${escapeHtml(q.debit_account)} · دائن: ${escapeHtml(q.credit_account)}</span></div>`).join('')}
+async function loadAccountingGameBank(){
+  const list=document.getElementById('accountingGameQuestionsList'),stats=document.getElementById('accountingGameBankStats'),usage=document.getElementById('accountingGameUsageStats');list.innerHTML='<div class="empty-state">جارِ تحميل بنك لعبة القيود...</div>';
+  const [bankRes,statsRes]=await Promise.all([fetch(`${SUPABASE_URL}/rest/v1/rpc/get_accounting_game_bank`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase})}),fetch(`${SUPABASE_URL}/rest/v1/rpc/get_accounting_game_stats`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase})})]);
+  if(!bankRes.ok){list.innerHTML='<div class="gen-result error">تعذر تحميل بنك لعبة القيود.</div>';return}
+  accountingGameBankQuestions=await bankRes.json();const active=accountingGameBankQuestions.filter(q=>q.status==='active').length,draft=accountingGameBankQuestions.filter(q=>q.status==='draft').length,paused=accountingGameBankQuestions.filter(q=>q.status==='paused').length;stats.innerHTML=[['الإجمالي',accountingGameBankQuestions.length],['مفعّل',active],['مسودة',draft],['موقوف',paused]].map(([label,n])=>`<div class="stat-card"><div class="num">${n}</div><div class="lbl">${label}</div></div>`).join('');
+  if(statsRes.ok){const s=await statsRes.json();usage.innerHTML=[['دخلوا وحلوا',s.total_attempts||0],['لاعبون فريدون',s.unique_players||0],['اليوم',s.today_attempts||0],['آخر 7 أيام',s.week_attempts||0],['متوسط الدقة',`${s.avg_accuracy||0}%`],['جولات مكتملة',s.completed_rounds||0]].map(([label,n])=>`<div class="stat-card"><div class="num">${n}</div><div class="lbl">${label}</div></div>`).join('')}
+  list.innerHTML=accountingGameBankQuestions.length?accountingGameBankQuestions.map((q,i)=>`<div style="border:1px solid var(--border-soft);border-radius:10px;padding:12px;margin-bottom:8px;background:var(--surface-2);"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;"><b style="font-size:13px;line-height:1.7;">${i+1}. ${escapeHtml(q.scenario)}</b><button class="btn btn-outline" style="padding:5px 9px;font-size:11px;" type="button" onclick="deleteAccountingGameQuestion('${q.id}')">حذف</button></div><div style="font-size:11px;color:var(--text-soft);margin-top:6px;">مدين: <span style="color:var(--emerald);">${escapeHtml(q.debit_account)}</span> — دائن: <span style="color:var(--gold);">${escapeHtml(q.credit_account)}</span> — ${escapeHtml(q.category)} — ${escapeHtml(q.status)}</div></div>`).join(''):'<div class="empty-state">لا توجد أسئلة بعد.</div>';
+}
+async function publishAccountingGameQuestions(){const btn=document.getElementById('publishAccountingGameQuestionsBtn'),out=document.getElementById('accountingGameBankResult');if(!accountingGameDraftQuestions.length){out.className='gen-result error';out.textContent='أضف سؤالًا واحدًا على الأقل للقائمة أولًا.';out.style.display='block';return}btn.disabled=true;btn.textContent='جارِ النشر...';try{const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/insert_accounting_game_questions_bulk`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_questions:accountingGameDraftQuestions})});if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||`فشل النشر (${res.status})`)}out.className='gen-result success';out.textContent=`تم نشر ${await res.json()} سؤال بنجاح ✓`;out.style.display='block';accountingGameDraftQuestions=[];renderAccountingGameDrafts();loadAccountingGameBank()}catch(e){out.className='gen-result error';out.textContent=e.message;out.style.display='block'}finally{btn.disabled=false;btn.textContent='نشر الأسئلة الجاهزة'}}
+async function deleteAccountingGameQuestion(id){if(!confirm('حذف السؤال من بنك لعبة القيود؟'))return;const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/delete_accounting_game_question`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_id:id})});if(!res.ok){alert('تعذر حذف السؤال.');return}loadAccountingGameBank()}
 
 async function loadBattleResults(){
   const histEl = document.getElementById('battleHistoryList');
