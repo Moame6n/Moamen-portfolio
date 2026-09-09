@@ -36,3 +36,11 @@ comment on function public.get_accounting_game_visitor_stats(text) is
   'Admin-only anonymous visitor counters for the Accounting Journal Game page.';
 
 -- The function returns aggregate counters only, never visitor identifiers.
+
+-- The hardening migration revokes public execution from admin RPCs. These
+-- grants allow an authenticated admin session to reach the functions, while
+-- each function still enforces admin_authorized() internally.
+grant execute on function public.get_accounting_game_bank(text) to authenticated;
+grant execute on function public.get_accounting_game_stats(text) to authenticated;
+grant execute on function public.insert_accounting_game_questions_bulk(text, jsonb) to authenticated;
+grant execute on function public.delete_accounting_game_question(text, uuid) to authenticated;
