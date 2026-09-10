@@ -707,7 +707,7 @@
     <div id="accountingGameBankPanel" style="display:none;">
       <div class="builder-card">
         <h3>🧾 بنك لعبة القيود المحاسبية</h3>
-        <p style="font-size:12.5px; color:var(--text-soft); line-height:1.9; margin:0 0 14px;">هذا البنك مستقل تمامًا عن بنك المباريات والاختبارات. كل سؤال يحتوي على سند مالي، حساب مدين، حساب دائن، اختيارات مشتتة، وشرح تعليمي.</p>
+        <p style="font-size:12.5px; color:var(--text-soft); line-height:1.9; margin:0 0 14px;">هذا البنك مستقل تمامًا عن بنك المباريات والاختبارات. يدعم الآن القيد البسيط والقيد المركب؛ اكتب الحسابات المتعددة مفصولة بعلامة <code>|</code> عند الاستيراد.</p>
         <div id="accountingGameBankStats" class="stats-row"></div>
         <div class="stats-row" id="accountingGameUsageStats"></div>
         <div class="stats-row" id="accountingGameVisitorStats"></div>
@@ -730,7 +730,8 @@
       <div class="builder-card">
         <h3>إضافة سؤال يدويًا</h3>
         <div class="field-row"><label>السند أو الحدث المالي</label><textarea id="gameScenarioInput" placeholder="مثال: دفعت المنشأة مصروف كهرباء نقدًا بقيمة 1,500 جنيه." style="min-height:80px;"></textarea></div>
-        <div class="field-row-2"><div class="field-row"><label>الحساب المدين الصحيح</label><input id="gameDebitInput" placeholder="مصروف الكهرباء"></div><div class="field-row"><label>الحساب الدائن الصحيح</label><input id="gameCreditInput" placeholder="الصندوق"></div></div>
+        <div class="field-row-2"><div class="field-row"><label>نوع القيد</label><select id="gameEntryTypeInput"><option value="simple">بسيط</option><option value="compound">مركب</option></select></div><div class="field-row"><label>الحسابات المدينة الصحيحة</label><input id="gameDebitInput" placeholder="مصروف الكهرباء أو حساب1|حساب2"></div></div>
+        <div class="field-row"><label>الحسابات الدائنة الصحيحة</label><input id="gameCreditInput" placeholder="الصندوق أو حساب1|حساب2"></div>
         <div class="field-row-2"><div class="field-row"><label>اختيار مشتت 1</label><input id="gameOption1Input" placeholder="مصروف الكهرباء"></div><div class="field-row"><label>اختيار مشتت 2</label><input id="gameOption2Input" placeholder="الصندوق"></div></div>
         <div class="field-row-2"><div class="field-row"><label>اختيار مشتت 3</label><input id="gameOption3Input" placeholder="الإيرادات"></div><div class="field-row"><label>اختيار مشتت 4</label><input id="gameOption4Input" placeholder="العملاء"></div></div>
         <div class="field-row"><label>الشرح التعليمي</label><textarea id="gameExplanationInput" placeholder="اشرح لماذا الحساب المدين مدين والدائن دائن."></textarea></div>
@@ -2042,11 +2043,11 @@ function parseAccountingGameText(text){
   blocks.forEach((raw,idx)=>{
     const b=raw.map(x=>x.trim()).filter(Boolean); if(!b.length)return;
     const scenario=b[0].replace(starts,'').trim(); const options=[];
-    b.forEach(line=>{const m=line.match(option); if(m&&options.length<4)options.push(m[2].trim())});
-    const debit=read(b,['المدين','مدين','debit']); const credit=read(b,['الدائن','دائن','credit']);
+    b.forEach(line=>{const m=line.match(option); if(m&&options.length<12)options.push(m[2].trim())});
+    const debit=read(b,['المدين','مدين','debit']); const credit=read(b,['الدائن','دائن','credit']); const debitParts=debit.split('|').map(x=>x.trim()).filter(Boolean); const creditParts=credit.split('|').map(x=>x.trim()).filter(Boolean);
     const explanation=read(b,['الشرح','تفسير','explanation']); const category=read(b,['التصنيف','التخصص','category'])||'محاسبة مالية';
     const rawDiff=read(b,['الصعوبة','difficulty']).toLowerCase(); const difficulty=rawDiff.includes('صعب')||rawDiff==='hard'?'hard':rawDiff.includes('متوسط')||rawDiff==='medium'?'medium':'easy';
-    if(scenario.length>=5&&debit&&credit&&options.length===4&&options.includes(debit)&&options.includes(credit)) parsed.push({scenario,debit_account:debit,credit_account:credit,options,explanation,category,difficulty,status:'active'}); else failed.push(idx+1);
+    if(scenario.length>=5&&debitParts.length&&creditParts.length&&options.length>=4&&[...debitParts,...creditParts].every(x=>options.includes(x))) parsed.push({scenario,debit_account:debit,credit_account:credit,options,entry_type:debitParts.length>1||creditParts.length>1?'compound':'simple',explanation,category,difficulty,status:'active'}); else failed.push(idx+1);
   });
   return {parsed,failed};
 }
@@ -2060,14 +2061,15 @@ function parseAccountingGameImport(){
 }
 async function publishAccountingGameImport(){ if(!accountingGameDraftQuestions.length){showAccountingGameImportMessage('حلل المجموعة أولًا.','error');return} await publishAccountingGameQuestions(); document.getElementById('publishAccountingGameImportBtn').style.display='none'; }
 function addAccountingGameQuestion(){
-  const scenario=gameField('gameScenarioInput'), debit=gameField('gameDebitInput'), credit=gameField('gameCreditInput');
+  const scenario=gameField('gameScenarioInput'), debit=gameField('gameDebitInput'), credit=gameField('gameCreditInput'), entry_type=gameField('gameEntryTypeInput')||'simple';
   const options=['gameOption1Input','gameOption2Input','gameOption3Input','gameOption4Input'].map(gameField).filter(Boolean);
   const out=document.getElementById('accountingGameBankResult');
   if(!scenario||!debit||!credit||options.length<4){out.className='gen-result error';out.textContent='اكتب السند والمدين والدائن وأربع اختيارات كاملة.';out.style.display='block';return}
-  if(!options.includes(debit)||!options.includes(credit)){out.className='gen-result error';out.textContent='المدين والدائن لازم يكونوا ضمن الاختيارات الأربعة.';out.style.display='block';return}
-  accountingGameDraftQuestions.push({scenario,debit_account:debit,credit_account:credit,options,explanation:gameField('gameExplanationInput'),category:gameField('gameCategoryInput')||'محاسبة مالية',difficulty:gameField('gameDifficultyInput')||'easy',status:'active'});
+  const debitParts=debit.split('|').map(x=>x.trim()).filter(Boolean),creditParts=credit.split('|').map(x=>x.trim()).filter(Boolean);
+  if(![...debitParts,...creditParts].every(x=>options.includes(x))){out.className='gen-result error';out.textContent='كل الحسابات المدينة والدائنة لازم تكون ضمن الاختيارات.';out.style.display='block';return}
+  accountingGameDraftQuestions.push({scenario,debit_account:debit,credit_account:credit,entry_type,debit_lines:debitParts,credit_lines:creditParts,options,explanation:gameField('gameExplanationInput'),category:gameField('gameCategoryInput')||'محاسبة مالية',difficulty:gameField('gameDifficultyInput')||'easy',status:'active'});
   renderAccountingGameDrafts();
-  ['gameScenarioInput','gameDebitInput','gameCreditInput','gameOption1Input','gameOption2Input','gameOption3Input','gameOption4Input','gameExplanationInput'].forEach(id=>document.getElementById(id).value='');
+  ['gameScenarioInput','gameDebitInput','gameCreditInput','gameOption1Input','gameOption2Input','gameOption3Input','gameOption4Input','gameExplanationInput'].forEach(id=>document.getElementById(id).value=''); document.getElementById('gameEntryTypeInput').value='simple';
   out.className='gen-result success';out.textContent='تمت إضافة السؤال للقائمة. يمكنك إضافة أسئلة أخرى قبل النشر.';out.style.display='block';
 }
 function renderAccountingGameDrafts(){document.getElementById('accountingGameDraftList').innerHTML=accountingGameDraftQuestions.map((q,i)=>`<div style="padding:10px;border:1px solid var(--border-soft);border-radius:9px;margin-top:7px;font-size:12px;"><b>${i+1}. ${escapeHtml(q.scenario)}</b><span style="color:var(--muted);"> — مدين: ${escapeHtml(q.debit_account)} · دائن: ${escapeHtml(q.credit_account)}</span></div>`).join('')}
@@ -2080,7 +2082,7 @@ async function loadAccountingGameBank(){
   const visitorEl=document.getElementById('accountingGameVisitorStats');
   if(visitorRes.ok){const v=await visitorRes.json();visitorEl.innerHTML=[['فتح الصفحة',v.total_views||0],['زوار فريدون',v.unique_visitors||0],['اليوم',v.today_views||0],['آخر 7 أيام',v.week_views||0],['جلسات اليوم',v.today_sessions||0],['جلسات الأسبوع',v.week_sessions||0]].map(([label,n])=>`<div class="stat-card"><div class="num">${n}</div><div class="lbl">${label}</div></div>`).join('')}
   else visitorEl.innerHTML='<div class="gen-result" style="display:block;grid-column:1/-1;">إحصائيات الزوار تحتاج تطبيق Migration الخاصة بها على Supabase.</div>';
-  list.innerHTML=accountingGameBankQuestions.length?accountingGameBankQuestions.map((q,i)=>`<div style="border:1px solid var(--border-soft);border-radius:10px;padding:12px;margin-bottom:8px;background:var(--surface-2);"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;"><b style="font-size:13px;line-height:1.7;">${i+1}. ${escapeHtml(q.scenario)}</b><button class="btn btn-outline" style="padding:5px 9px;font-size:11px;" type="button" onclick="deleteAccountingGameQuestion('${q.id}')">حذف</button></div><div style="font-size:11px;color:var(--text-soft);margin-top:6px;">مدين: <span style="color:var(--emerald);">${escapeHtml(q.debit_account)}</span> — دائن: <span style="color:var(--gold);">${escapeHtml(q.credit_account)}</span> — ${escapeHtml(q.category)} — ${escapeHtml(q.status)}</div></div>`).join(''):'<div class="empty-state">لا توجد أسئلة بعد.</div>';
+  list.innerHTML=accountingGameBankQuestions.length?accountingGameBankQuestions.map((q,i)=>`<div style="border:1px solid var(--border-soft);border-radius:10px;padding:12px;margin-bottom:8px;background:var(--surface-2);"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;"><b style="font-size:13px;line-height:1.7;">${i+1}. ${escapeHtml(q.scenario)}</b><button class="btn btn-outline" style="padding:5px 9px;font-size:11px;" type="button" onclick="deleteAccountingGameQuestion('${q.id}')">حذف</button></div><div style="font-size:11px;color:var(--text-soft);margin-top:6px;"><b style="color:var(--gold);">${q.entry_type==='compound'?'قيد مركب':'قيد بسيط'}</b> · مدين: <span style="color:var(--emerald);">${escapeHtml(q.debit_account)}</span> — دائن: <span style="color:var(--gold);">${escapeHtml(q.credit_account)}</span> — ${escapeHtml(q.category)} — ${escapeHtml(q.status)}</div></div>`).join(''):'<div class="empty-state">لا توجد أسئلة بعد.</div>';
 }
 async function publishAccountingGameQuestions(){const btn=document.getElementById('publishAccountingGameQuestionsBtn'),out=document.getElementById('accountingGameBankResult');if(!accountingGameDraftQuestions.length){out.className='gen-result error';out.textContent='أضف سؤالًا واحدًا على الأقل للقائمة أولًا.';out.style.display='block';return}btn.disabled=true;btn.textContent='جارِ النشر...';try{const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/insert_accounting_game_questions_bulk`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_questions:accountingGameDraftQuestions})});if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||`فشل النشر (${res.status})`)}out.className='gen-result success';out.textContent=`تم نشر ${await res.json()} سؤال بنجاح ✓`;out.style.display='block';accountingGameDraftQuestions=[];renderAccountingGameDrafts();loadAccountingGameBank()}catch(e){out.className='gen-result error';out.textContent=e.message;out.style.display='block'}finally{btn.disabled=false;btn.textContent='نشر الأسئلة الجاهزة'}}
 async function deleteAccountingGameQuestion(id){if(!confirm('حذف السؤال من بنك لعبة القيود؟'))return;const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/delete_accounting_game_question`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_id:id})});if(!res.ok){alert('تعذر حذف السؤال.');return}loadAccountingGameBank()}
