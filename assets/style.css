@@ -1,56 +1,66 @@
 :root{
-  /* Ledger Terminal palette — dark, precise, half accounting-ledger / half code-editor */
-  --bg:#0A0E13;
-  --bg-alt:#0E1420;
-  --surface:#121926;
-  --surface-2:#161F2E;
-  --border:#232E40;
-  --border-soft:#1B2433;
-  --text:#E7ECF3;
-  --text-soft:#AEB9C9;
-  --muted:#7C8BA0;
-  --emerald:#3DDC97;
-  --emerald-dim:#1F5C46;
-  --gold:#E0B15C;
-  --gold-dim:#7A5C2A;
-  --red:#F0616D;
-  --on-emerald:#06140D;
+  /* Shared platform palette: midnight navy + teal/blue gradient + restrained gold */
+  --bg:#07111F;
+  --bg-alt:#0B1B2C;
+  --surface:#10263B;
+  --surface-2:#17344D;
+  --border:#2B4964;
+  --border-soft:#1D3A54;
+  --text:#F4F8FC;
+  --text-soft:#B9C9D9;
+  --muted:#8FA5B9;
+  --emerald:#35D6B0;
+  --emerald-dim:#1A776B;
+  --gold:#F2C66D;
+  --gold-dim:#866638;
+  --red:#FF6B78;
+  --on-emerald:#041A19;
   --on-gold:#241A05;
   --on-danger:#FFFFFF;
+  --primary-gradient:linear-gradient(135deg,#35D6B0 0%,#2B9CF4 100%);
+  --primary-gradient-soft:linear-gradient(135deg,rgba(53,214,176,.12),rgba(43,156,244,.10));
+  --gold-gradient:linear-gradient(135deg,#F2C66D 0%,#D99B3D 100%);
+  --home-glow:rgba(53,214,176,.14);
+  --home-gold:rgba(242,198,109,.10);
   --mono: 'JetBrains Mono', ui-monospace, monospace;
   --sans: 'Tajawal', sans-serif;
   --radius:14px;
-  --nav-bg-rgb: 10,14,19;
+  --nav-bg-rgb: 7,17,31;
 }
 
-/* Light "day" theme — same ledger-terminal identity, flipped for daylight reading */
+/* Shared light theme uses the same semantic colors and gradient direction. */
 :root[data-theme="light"]{
-  --bg:#F3F0E6;
-  --bg-alt:#EAE5D6;
+  --bg:#F4F8FC;
+  --bg-alt:#EAF2F8;
   --surface:#FFFFFF;
-  --surface-2:#F1EEE2;
-  --border:#DAD3BE;
-  --border-soft:#E4DFCE;
-  --text:#1A2238;
-  --text-soft:#4A5568;
-  --muted:#7A7364;
-  --emerald:#087F5B;
-  --emerald-dim:#B9EAD5;
-  --gold:#8A5A0A;
-  --nav-bg-rgb: 243,240,230;
-  --gold-dim:#F1DFB8;
-  --red:#C23B49;
+  --surface-2:#E7F0F7;
+  --border:#C8D9E7;
+  --border-soft:#DCE8F1;
+  --text:#102235;
+  --text-soft:#40566B;
+  --muted:#6B8195;
+  --emerald:#087F70;
+  --emerald-dim:#9CDDD1;
+  --gold:#9A6500;
+  --nav-bg-rgb: 244,248,252;
+  --gold-dim:#E6CA91;
+  --red:#C93E55;
   --on-emerald:#FFFFFF;
   --on-gold:#FFFFFF;
   --on-danger:#FFFFFF;
+  --primary-gradient:linear-gradient(135deg,#087F70 0%,#176FC1 100%);
+  --primary-gradient-soft:linear-gradient(135deg,rgba(8,127,112,.10),rgba(23,111,193,.08));
+  --gold-gradient:linear-gradient(135deg,#D39A28 0%,#9A6500 100%);
+  --home-glow:rgba(8,127,112,.12);
+  --home-gold:rgba(154,101,0,.08);
 }
 :root[data-theme="light"] body{
   background-image:
-    radial-gradient(circle at 18% 0%, rgba(29,154,108,0.06), transparent 45%),
-    radial-gradient(circle at 85% 15%, rgba(168,117,44,0.05), transparent 40%),
+    radial-gradient(circle at 18% 0%, rgba(8,127,112,0.07), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(23,111,193,0.06), transparent 40%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
 }
-:root[data-theme="light"] .btn-primary{ color:var(--on-emerald); }
+:root[data-theme="light"] .btn-primary{ color:#FFFFFF; }
 
 /* Theme toggle button */
 .theme-toggle{
@@ -87,8 +97,8 @@ body{
   color:var(--text);
   background:var(--bg);
   background-image:
-    radial-gradient(circle at 18% 0%, rgba(61,220,151,0.06), transparent 45%),
-    radial-gradient(circle at 85% 15%, rgba(224,177,92,0.05), transparent 40%),
+    radial-gradient(circle at 18% 0%, rgba(53,214,176,0.07), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(43,156,244,0.06), transparent 40%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
 }
 a{ color:inherit; }
@@ -178,10 +188,10 @@ section{ padding:72px 0; }
 }
 .btn:active{ transform:translateY(1px); }
 .btn svg{ width:16px; height:16px; }
-.btn-primary{ background:var(--emerald); color:var(--on-emerald); }
-.btn-primary:hover{ box-shadow:0 0 0 3px rgba(61,220,151,0.2); }
-.btn-gold{ background:var(--gold); color:var(--on-gold); }
-.btn-gold:hover{ box-shadow:0 0 0 3px rgba(224,177,92,0.2); }
+.btn-primary{ background:var(--primary-gradient); color:#FFFFFF; box-shadow:0 10px 24px rgba(43,156,244,.14); }
+.btn-primary:hover{ box-shadow:0 0 0 3px rgba(53,214,176,.20),0 14px 30px rgba(43,156,244,.18); }
+.btn-gold{ background:var(--gold-gradient); color:var(--on-gold); }
+.btn-gold:hover{ box-shadow:0 0 0 3px rgba(242,198,109,.20); }
 .btn-outline{ background:transparent; color:var(--text); border:1.5px solid var(--border); }
 .btn-outline:hover{ border-color:var(--emerald); color:var(--emerald); }
 
