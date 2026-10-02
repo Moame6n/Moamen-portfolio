@@ -273,6 +273,9 @@
     .tool-breakdown-row > div:first-child{ font-size:11.5px !important; }
     .tool-breakdown-row > div:last-child{ width:auto !important; font-size:10.5px !important; }
   }
+
+  .tournament-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.tournament-kpi{background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius);padding:15px}.tournament-kpi .num{font-size:24px;font-weight:900;color:var(--emerald)}.tournament-kpi .lbl{font-size:11.5px;color:var(--muted);margin-top:5px}.tournament-kpi .sub{font-size:10.5px;color:var(--text-soft);margin-top:7px}.tournament-chart{display:flex;align-items:flex-end;gap:4px;height:150px;padding:12px 4px 0;overflow-x:auto}.tournament-bar-wrap{height:100%;min-width:24px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}.tournament-bar{width:18px;min-height:3px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--emerald),#2b9cf4)}.tournament-bar-label{font:9px var(--mono);color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);max-height:38px}.tournament-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}.tournament-list{display:flex;flex-direction:column;gap:8px}.tournament-room{padding:11px 12px;border:1px solid var(--border-soft);border-radius:9px;background:var(--surface-2);font-size:12px}.tournament-room strong{color:var(--text)}.tournament-room .meta{color:var(--muted);font-size:11px;margin-top:5px}.tournament-status{display:inline-block;padding:3px 8px;border-radius:10px;font-size:10px;background:rgba(61,220,151,.12);color:var(--emerald)}.tournament-status.lobby{background:rgba(224,177,92,.12);color:var(--gold)}.tournament-status.completed{background:rgba(43,156,244,.12);color:#2b9cf4}.tournament-status.cancelled{background:rgba(240,97,109,.12);color:var(--red)}.analytics-note{font-size:11.5px;color:var(--muted);line-height:1.8;margin:8px 0 16px}.tournament-refresh-state{font-size:11px;color:var(--muted)}
+  @media(max-width:760px){.tournament-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.tournament-kpi{padding:12px 10px}.tournament-kpi .num{font-size:21px}.tournament-two-col{grid-template-columns:1fr;gap:12px}}
 </style>
 </head>
 <body>
@@ -313,6 +316,7 @@
       <button class="dash-tab" id="tabAccountingGameBank" type="button">🧾 بنك لعبة القيود</button>
       <button class="dash-tab" id="tabBattleResults" type="button">سجل المباريات</button>
       <button class="dash-tab" id="tabSubscribers" type="button">📬 إحصائيات المشتركين</button>
+      <button class="dash-tab" id="tabTournamentAnalytics" type="button">🏆 تحليلات كأس المحاسبة</button>
     </div>
 
     <div id="resultsPanel">
@@ -768,6 +772,36 @@
       </div>
     </div>
 
+
+    <div id="tournamentAnalyticsPanel" style="display:none;">
+      <div class="toolbar">
+        <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
+          <label for="tournamentAnalyticsRange" style="font-size:12px;color:var(--text-soft);">الفترة</label>
+          <select id="tournamentAnalyticsRange"><option value="7">آخر 7 أيام</option><option value="30" selected>آخر 30 يومًا</option><option value="90">آخر 90 يومًا</option></select>
+          <button class="btn btn-outline" id="refreshTournamentAnalyticsBtn" type="button">تحديث البيانات</button>
+        </div>
+        <span class="tournament-refresh-state" id="tournamentAnalyticsUpdated">لم يتم التحميل بعد</span>
+      </div>
+      <div class="analytics-note">الأرقام التالية تُقرأ من جداول البطولة نفسها عبر RPC إداري محمي بصلاحيات Supabase. لا توجد أرقام تجريبية أو تقديرات من الواجهة.</div>
+      <div class="tournament-kpi-grid">
+        <div class="tournament-kpi"><div class="num" id="taTotalTournaments">0</div><div class="lbl">إجمالي البطولات</div><div class="sub" id="taTournamentBreakdown">—</div></div>
+        <div class="tournament-kpi"><div class="num" id="taActiveTournaments">0</div><div class="lbl">بطولات نشطة الآن</div><div class="sub" id="taActivePlayers">0 لاعب متصل</div></div>
+        <div class="tournament-kpi"><div class="num" id="taCompletionRate">0%</div><div class="lbl">معدل اكتمال البطولة</div><div class="sub" id="taCompletedMatches">0 مباراة مكتملة</div></div>
+        <div class="tournament-kpi"><div class="num" id="taForfeits">0</div><div class="lbl">انسحابات مسجلة</div><div class="sub" id="taForfeitRate">—</div></div>
+        <div class="tournament-kpi"><div class="num" id="taTotalPlayers">0</div><div class="lbl">مشاركات اللاعبين</div><div class="sub" id="taLobbyTournaments">0 غرفة انتظار</div></div>
+        <div class="tournament-kpi"><div class="num" id="taAccuracy">0%</div><div class="lbl">دقة الإجابات</div><div class="sub" id="taAnswers">0 إجابة</div></div>
+        <div class="tournament-kpi"><div class="num" id="taAvgDuration">0:00</div><div class="lbl">متوسط زمن المباراة</div><div class="sub">من وقت الإنشاء حتى الحسم</div></div>
+        <div class="tournament-kpi"><div class="num" id="taTotalMatches">0</div><div class="lbl">إجمالي المباريات</div><div class="sub" id="taMatchCompletion">0% مكتملة</div></div>
+      </div>
+      <div class="builder-card"><h3>التفاعل اليومي</h3><div id="tournamentDailyChart" class="tournament-chart"></div><div style="font-size:11px;color:var(--muted);margin-top:8px;">الأعمدة تعرض عدد البطولات، والرقم أعلى العمود = الإجابات المسجلة في اليوم.</div></div>
+      <div class="tournament-two-col">
+        <div class="builder-card"><h3>الأداء حسب التخصص</h3><div class="table-scroll"><table><thead><tr><th>التخصص</th><th>بطولات</th><th>مكتملة</th><th>لاعبون</th><th>انسحاب</th></tr></thead><tbody id="tournamentCategoryBody"></tbody></table></div></div>
+        <div class="builder-card"><h3>الغرف النشطة الآن</h3><div id="tournamentActiveRooms" class="tournament-list"></div></div>
+      </div>
+      <div class="builder-card"><h3>آخر البطولات</h3><div class="table-scroll"><table><thead><tr><th>الكود</th><th>التخصص</th><th>الحالة</th><th>اللاعبون</th><th>المباريات</th><th>التاريخ</th></tr></thead><tbody id="tournamentRecentBody"></tbody></table></div></div>
+      <div class="gen-result error" id="tournamentAnalyticsError"></div>
+    </div>
+
     <div id="battleResultsPanel" style="display:none;">
       <div class="builder-card">
         <h3>سجل كل المباريات (فوز وخسارة)</h3>
@@ -825,6 +859,9 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tabAccountingGameBank').addEventListener('click', () => switchTab('accountinggamebank'));
   document.getElementById('tabBattleResults').addEventListener('click', () => switchTab('battleresults'));
   document.getElementById('tabSubscribers').addEventListener('click', () => switchTab('subscribers'));
+  document.getElementById('tabTournamentAnalytics').addEventListener('click', () => switchTab('tournamentanalytics'));
+  document.getElementById('refreshTournamentAnalyticsBtn').addEventListener('click', loadTournamentAnalytics);
+  document.getElementById('tournamentAnalyticsRange').addEventListener('change', loadTournamentAnalytics);
   document.getElementById('battleParseBtn').addEventListener('click', handleBattleImportParse);
   document.getElementById('publishBattleBtn').addEventListener('click', publishBattleQuestions);
   document.getElementById('addAccountingGameQuestionBtn').addEventListener('click', addAccountingGameQuestion);
@@ -1046,6 +1083,7 @@ function switchTab(tab){
   document.getElementById('tabAccountingGameBank').classList.toggle('active', tab === 'accountinggamebank');
   document.getElementById('tabBattleResults').classList.toggle('active', tab === 'battleresults');
   document.getElementById('tabSubscribers').classList.toggle('active', tab === 'subscribers');
+  document.getElementById('tabTournamentAnalytics').classList.toggle('active', tab === 'tournamentanalytics');
   document.getElementById('resultsPanel').style.display = tab === 'results' ? 'block' : 'none';
   document.getElementById('createPanel').style.display = tab === 'create' ? 'block' : 'none';
   document.getElementById('analyticsPanel').style.display = tab === 'analytics' ? 'block' : 'none';
@@ -1056,6 +1094,7 @@ function switchTab(tab){
   document.getElementById('accountingGameBankPanel').style.display = tab === 'accountinggamebank' ? 'block' : 'none';
   document.getElementById('battleResultsPanel').style.display = tab === 'battleresults' ? 'block' : 'none';
   document.getElementById('subscribersPanel').style.display = tab === 'subscribers' ? 'block' : 'none';
+  document.getElementById('tournamentAnalyticsPanel').style.display = tab === 'tournamentanalytics' ? 'block' : 'none';
   if(tab === 'subscribers') loadSubscriberStats();
   if(tab === 'analytics') loadAnalytics();
   if(tab === 'templates') loadTemplateStats();
@@ -1064,6 +1103,7 @@ function switchTab(tab){
   if(tab === 'battlebank') loadBattleBankStats();
   if(tab === 'accountinggamebank') loadAccountingGameBank();
   if(tab === 'battleresults') loadBattleResults();
+  if(tab === 'tournamentanalytics') loadTournamentAnalytics();
 }
 
 function autoSlug(){
@@ -2092,6 +2132,34 @@ async function loadAccountingGameBank(){
 async function publishAccountingGameQuestions(){const btn=document.getElementById('publishAccountingGameQuestionsBtn'),out=document.getElementById('accountingGameBankResult');if(!accountingGameDraftQuestions.length){out.className='gen-result error';out.textContent='أضف سؤالًا واحدًا على الأقل للقائمة أولًا.';out.style.display='block';return}btn.disabled=true;btn.textContent='جارِ الحفظ...';try{const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/insert_accounting_game_questions_bulk`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_questions:accountingGameDraftQuestions})});if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||`فشل الحفظ (${res.status})`)}out.className='gen-result success';out.textContent=`تم حفظ ${await res.json()} سؤالًا. الأسئلة الجديدة تظهر كمسودات حتى تعتمدها من القائمة ✓`;out.style.display='block';accountingGameDraftQuestions=[];renderAccountingGameDrafts();loadAccountingGameBank()}catch(e){out.className='gen-result error';out.textContent=e.message;out.style.display='block'}finally{btn.disabled=false;btn.textContent='حفظ الأسئلة للمراجعة'}}
 async function reviewAccountingGameQuestion(id, reviewStatus){const note=window.prompt(reviewStatus==='approved'?'ملاحظة اعتماد السؤال (اختياري):':'سبب إرجاع السؤال للمراجعة (اختياري):','');if(note===null)return;const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/review_accounting_game_question`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_id:id,p_review_status:reviewStatus,p_reviewer_note:note})});if(!res.ok){const e=await res.json().catch(()=>({}));alert(e.message||'تعذر تحديث حالة المراجعة.');return}loadAccountingGameBank()}
 async function deleteAccountingGameQuestion(id){if(!confirm('حذف السؤال من بنك لعبة القيود؟'))return;const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/delete_accounting_game_question`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_id:id})});if(!res.ok){alert('تعذر حذف السؤال.');return}loadAccountingGameBank()}
+
+
+function taNum(n){return new Intl.NumberFormat('ar-EG').format(Number(n)||0)}
+function taPct(n){return `${Number(n||0).toLocaleString('ar-EG',{maximumFractionDigits:1})}%`}
+function taDate(v){return v?new Date(v).toLocaleString('ar-EG',{dateStyle:'short',timeStyle:'short'}):'—'}
+function taDuration(seconds){seconds=Math.max(0,Math.round(Number(seconds)||0));return `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`}
+function taStatus(s){return ({lobby:'انتظار',active:'نشطة',completed:'مكتملة',cancelled:'ملغاة'}[s]||s||'—')}
+function renderTournamentAnalytics(d){
+  const o=d.overview||{};
+  document.getElementById('taTotalTournaments').textContent=taNum(o.total_tournaments);document.getElementById('taTournamentBreakdown').textContent=`${taNum(o.completed_tournaments)} مكتملة · ${taNum(o.lobby_tournaments)} انتظار`;
+  document.getElementById('taActiveTournaments').textContent=taNum(o.active_tournaments);document.getElementById('taActivePlayers').textContent=`${taNum(o.active_players)} لاعب متصل`;
+  document.getElementById('taCompletionRate').textContent=taPct(o.completion_rate);document.getElementById('taCompletedMatches').textContent=`${taNum(o.completed_matches)} من ${taNum(o.total_matches)} مباراة`;
+  document.getElementById('taForfeits').textContent=taNum(o.forfeits);document.getElementById('taForfeitRate').textContent=o.completed_matches?`${taPct(o.forfeits*100/o.completed_matches)} من المباريات`: 'لا توجد مباريات';
+  document.getElementById('taTotalPlayers').textContent=taNum(o.total_players);document.getElementById('taLobbyTournaments').textContent=`${taNum(o.lobby_tournaments)} غرفة انتظار`;
+  document.getElementById('taAccuracy').textContent=taPct(o.accuracy);document.getElementById('taAnswers').textContent=`${taNum(o.correct_answers)} صحيحة من ${taNum(o.total_answers)}`;
+  document.getElementById('taAvgDuration').textContent=taDuration(o.avg_match_duration_seconds);document.getElementById('taTotalMatches').textContent=taNum(o.total_matches);document.getElementById('taMatchCompletion').textContent=o.total_matches?`${taPct(o.completed_matches*100/o.total_matches)} مكتملة`:'0% مكتملة';
+  const daily=d.daily||[], max=Math.max(1,...daily.map(x=>Number(x.tournaments)||0));
+  document.getElementById('tournamentDailyChart').innerHTML=daily.map(x=>{const n=Number(x.tournaments)||0;return `<div class="tournament-bar-wrap" title="${x.day}: ${taNum(n)} بطولة · ${taNum(x.answers)} إجابة"><div style="font:9px var(--mono);color:var(--text-soft);">${taNum(x.answers)}</div><div class="tournament-bar" style="height:${Math.max(3,n/max*100)}%"></div><div class="tournament-bar-label">${x.day.slice(5)}</div></div>`}).join('')||'<div class="empty-state">لا توجد بيانات في الفترة المحددة</div>';
+  document.getElementById('tournamentCategoryBody').innerHTML=(d.categories||[]).map(x=>`<tr><td>${escapeHtml(x.category||'مختلط')}</td><td>${taNum(x.tournaments)}</td><td>${taNum(x.completed)}</td><td>${taNum(x.players)}</td><td>${taNum(x.forfeits)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty-state">لا توجد بيانات</td></tr>';
+  document.getElementById('tournamentActiveRooms').innerHTML=(d.active_rooms||[]).map(x=>`<div class="tournament-room"><strong>${escapeHtml(x.join_code)}</strong> · ${escapeHtml(x.category||'مختلط')} <span class="tournament-status">نشطة</span><div class="meta">${taNum(x.connected_players)} متصل من ${taNum(x.players)} · ${taNum(x.active_matches)} مباراة جارية · تنتهي ${taDate(x.expires_at)}</div></div>`).join('')||'<div class="empty-state">لا توجد غرف نشطة الآن</div>';
+  document.getElementById('tournamentRecentBody').innerHTML=(d.recent||[]).map(x=>`<tr><td><b style="font-family:var(--mono)">${escapeHtml(x.join_code)}</b></td><td>${escapeHtml(x.category||'مختلط')}</td><td><span class="tournament-status ${x.status}">${taStatus(x.status)}</span></td><td>${taNum(x.players)}</td><td>${taNum(x.completed_matches||0)}/${taNum(x.matches||0)}</td><td>${taDate(x.created_at)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty-state">لا توجد بطولات في الفترة المحددة</td></tr>';
+  document.getElementById('tournamentAnalyticsUpdated').textContent=`آخر تحديث: ${new Date().toLocaleTimeString('ar-EG')}`;
+}
+async function loadTournamentAnalytics(){
+  const err=document.getElementById('tournamentAnalyticsError');err.style.display='none';
+  const btn=document.getElementById('refreshTournamentAnalyticsBtn');btn.disabled=true;btn.textContent='جارِ التحميل...';
+  try{const days=Number(document.getElementById('tournamentAnalyticsRange').value)||30;const from=new Date(Date.now()-days*86400000).toISOString();const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_accounting_tournament_admin_analytics`,{method:'POST',headers:supabaseHeaders(),body:JSON.stringify({p_passphrase:passphrase,p_from:from,p_to:new Date().toISOString()})});if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||`تعذر تحميل التحليلات (${res.status})`)}renderTournamentAnalytics(await res.json())}catch(e){err.textContent=e.message||'تعذر تحميل تحليلات البطولة.';err.style.display='block'}finally{btn.disabled=false;btn.textContent='تحديث البيانات'}
+}
 
 async function loadBattleResults(){
   const histEl = document.getElementById('battleHistoryList');
