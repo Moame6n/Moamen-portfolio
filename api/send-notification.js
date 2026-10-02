@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
   if(!authorized) return res.status(401).json({ error: 'Unauthorized' });
 
   const { title, body, url, tag } = req.body || {};
-  if(typeof title !== 'string' || typeof body !== 'string' || title.length < 1 || title.length > 120 || body.length < 1 || body.length > 500){
+  if(typeof title !== 'string' || typeof body !== 'string' || title.trim().length < 1 || title.length > 120 || body.trim().length < 1 || body.length > 500){
     res.status(400).json({ error: 'title and body are required' });
     return;
   }
@@ -45,14 +45,14 @@ module.exports = async (req, res) => {
   );
 
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-  const { data: subs, error } = await supabase.from('push_subscriptions').select('*');
+  const { data: subs, error } = await supabase.from('push_subscriptions').select('*').eq('status', 'active');
 
   if(error){
     res.status(500).json({ error: error.message });
     return;
   }
 
-  const payload = JSON.stringify({ title, body, url: url || '/tools-exams.html', tag: tag || 'moamen-site-update' });
+  const payload = JSON.stringify({ title: title.trim(), body: body.trim(), url: url || '/tools-exams.html', tag: tag || 'moamen-site-update' });
   let sent = 0, failed = 0, removed = 0;
 
   await Promise.all((subs || []).map(async (sub) => {
