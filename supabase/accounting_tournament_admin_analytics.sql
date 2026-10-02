@@ -47,8 +47,8 @@ begin
 
   select coalesce(jsonb_agg(x order by x.category),'[]'::jsonb) into v_categories from (
     select t.category, count(*) as tournaments, count(*) filter (where t.status='completed') as completed,
-      coalesce((select count(*) from public.accounting_tournament_players p where p.tournament_id=t.id),0) as players,
-      coalesce((select count(*) from public.accounting_tournament_matches m where m.tournament_id=t.id and m.forfeit_player_id is not null),0) as forfeits
+      coalesce((select count(*) from public.accounting_tournament_players p join public.accounting_tournaments tp on tp.id=p.tournament_id where tp.category=t.category and tp.created_at >= v_from and tp.created_at < v_to),0) as players,
+      coalesce((select count(*) from public.accounting_tournament_matches m join public.accounting_tournaments tm on tm.id=m.tournament_id where tm.category=t.category and tm.created_at >= v_from and tm.created_at < v_to and m.forfeit_player_id is not null),0) as forfeits
     from public.accounting_tournaments t where t.created_at >= v_from and t.created_at < v_to group by t.category
   ) x;
 
