@@ -243,7 +243,7 @@
     <a href="/tools-exams.html" class="back">← رجوع للأدوات والاختبارات</a>
     <div class="eyebrow">⚔️ تحدي مباشر</div>
     <h1>واجه محاسب تاني لايف</h1>
-    <p>10 أسئلة، أسرع إجابات صح تكسب. لو محدش موجود دلوقتي، هتواجه خصم افتراضي قريب من مستواك.</p>
+    <p>10 أسئلة، أسرع إجابات صح تكسب. المباراة تبدأ عند وجود لاعبين حقيقيين، وتتم المزامنة لحظيًا بينهما.</p>
   </div>
 </section>
 
@@ -293,8 +293,10 @@
       <!-- WAITING -->
       <div id="waitScreen" class="wait-screen" style="display:none;">
         <div class="pulse-ring"><span>🔍</span></div>
-        <div class="wait-text" id="waitText">بندوّر على خصم...</div>
+        <div class="wait-text" id="waitText">بندوّر على لاعب تاني حقيقي...</div>
         <div class="wait-count" id="waitCount"></div>
+        <div style="margin-top:18px; color:var(--muted); font-size:12px; line-height:1.7;">المباراة لا تبدأ بلاعب واحد. أول ما يدخل لاعب ثانٍ في نفس التخصص تبدأ المواجهة تلقائيًا.</div>
+        <button class="btn btn-outline" id="cancelMatchmakingBtn" type="button" style="margin-top:16px;">إلغاء الانتظار</button>
         <div class="private-lobby" id="privateLobby" style="display:none;">
           <div class="private-lobby-title">التحدي الخاص جاهز</div>
           <div class="private-link-row">
@@ -348,7 +350,6 @@
           <div class="result-stat"><span class="num" id="resAvgTime">0s</span><span class="lbl">متوسط السؤال</span></div>
         </div>
         <div class="performance-note" id="performanceNote"></div>
-        <div class="bot-note" id="botNote" style="display:none;">كانت دي مواجهة ضد خصم افتراضي — لا تؤثر على التصنيف 🤖</div>
         <div class="rating-result" id="ratingResult">
           <div class="rating-main"><span class="rating-rank" id="ratingRank">Bronze</span><span id="ratingPoints">1000 نقطة</span><span class="rating-delta" id="ratingDelta"></span></div>
           <div class="rating-meta" id="ratingMeta"></div>
@@ -362,7 +363,7 @@
     </div>
     <aside class="battle-guide" aria-label="معلومات الجولة">
       <div class="battle-guide-title">إحصائيات الجولة</div>
-      <div class="guide-stat"><div class="guide-icon">⚡</div><div><strong>مواجهة مباشرة</strong><span>ضد لاعب أو خصم افتراضي</span></div></div>
+      <div class="guide-stat"><div class="guide-icon">⚡</div><div><strong>مواجهة مباشرة</strong><span>ضد لاعب حقيقي فقط</span></div></div>
       <div class="guide-stat"><div class="guide-icon">◷</div><div><strong>10 أسئلة</strong><span>3 دقائق لكل جولة</span></div></div>
       <div class="guide-stat"><div class="guide-icon">🎯</div><div><strong>الأسرع يفوز</strong><span>الدقة ثم سرعة الإجابة</span></div></div>
       <div class="guide-note">سجّل دخولك لحفظ نتائجك وتحديث تصنيفك داخل حسابك.</div>
@@ -457,12 +458,11 @@ let currentQ = 0;
 let matchChannel = null;
 let matchId = null;
 let opponentName = '';
-let isBot = false;
-let waitTimeout = null, waitInterval = null;
+let waitTimeout = null, waitInterval = null, queueRetryTimer = null, queueChannel = null, matchmakingActive = false;
 let privatePollInterval = null;
 let privateMode = false, privateRole = '', privateInviteCode = '', privateStarted = false, privateStarting = false;
 let matchStartTime = null, myFinishTime = null;
-let myFinished = false, oppFinished = false, resultShown = false;
+let myFinished = false, oppFinished = false, resultShown = false, finishBroadcasted = false;
 let timerInterval = null, timeLeft = 180;
 
 function showScreen(id){
@@ -472,6 +472,7 @@ function showScreen(id){
 }
 
 document.getElementById('startBattleBtn').addEventListener('click', startMatchmaking);
+document.getElementById('cancelMatchmakingBtn').addEventListener('click', cancelMatchmaking);
 document.getElementById('createPrivateBtn').addEventListener('click', createPrivateMatch);
 document.getElementById('joinPrivateBtn').addEventListener('click', joinPrivateMatch);
 document.getElementById('privateInviteInput').addEventListener('input', e => {
@@ -547,7 +548,7 @@ async function createPrivateMatch(){
   setPrivateHint('جارِ إنشاء رابط التحدي...', 'var(--gold)');
   myName = name;
   myCategory = document.getElementById('battleCategory').value;
-  isBot = false; privateMode = true; privateRole = 'host'; privateStarted = false; privateStarting = false;
+  privateMode = true; privateRole = 'host'; privateStarted = false; privateStarting = false;
   try{
     const data = await privateRpc('create_private_battle', { p_host_name: myName, p_category: myCategory });
     matchId = data.match_id;
@@ -572,7 +573,7 @@ async function joinPrivateMatch(){
   if(!name){ setPrivateHint('اكتب اسمك الأول عشان تنضم.', 'var(--red)'); return; }
   if(!/^[A-Z0-9]{8}$/.test(code)){ setPrivateHint('اكتب كود دعوة صحيح من 8 حروف/أرقام.', 'var(--red)'); return; }
   setPrivateHint('جارِ الانضمام للتحدي...', 'var(--gold)');
-  myName = name; privateInviteCode = code; privateMode = true; privateRole = 'guest'; isBot = false; privateStarted = false; privateStarting = false;
+  myName = name; privateInviteCode = code; privateMode = true; privateRole = 'guest'; privateStarted = false; privateStarting = false;
   try{
     const data = await privateRpc('join_private_battle', { p_invite_code: code, p_guest_name: myName });
     matchId = data.match_id;
@@ -704,6 +705,8 @@ initializePrivateInvite();
 
 async function startMatchmaking(){
   resetPrivateUi();
+  if(queueRetryTimer){ clearTimeout(queueRetryTimer); queueRetryTimer = null; }
+  matchmakingActive = true;
   const name = document.getElementById('battleName').value.trim();
   const errEl = document.getElementById('entryErr');
   if(!name){
@@ -714,11 +717,10 @@ async function startMatchmaking(){
   errEl.style.display = 'none';
   myName = name;
   myCategory = document.getElementById('battleCategory').value;
-  isBot = false;
   resultShown = false;
 
   showScreen('waitScreen');
-  document.getElementById('waitText').textContent = 'بندوّر على خصم...';
+  document.getElementById('waitText').textContent = 'بندوّر على لاعب تاني حقيقي...';
 
   let secondsWaited = 0;
   document.getElementById('waitCount').textContent = '';
@@ -741,17 +743,18 @@ async function startMatchmaking(){
       opponentName = data.opponent_name;
       await joinMatchChannel(true);
     } else {
-      // we're now waiting — listen for our row to flip to 'matched'
+      // We stay in the real-player queue. A solo player must never start a match.
       listenForMatch();
-      waitTimeout = setTimeout(() => fallbackToBot(), 20000);
     }
   }catch(e){
-    fallbackToBot();
+    document.getElementById('waitText').textContent = 'تعذر الاتصال بالطابور — سنحاول مرة أخرى تلقائيًا.';
+    queueRetryTimer = setTimeout(() => { if(matchmakingActive) startMatchmaking(); }, 5000);
   }
 }
 
 function listenForMatch(){
-  sb.channel('queue-watch-' + myName)
+  if(queueChannel) queueChannel.unsubscribe();
+  queueChannel = sb.channel('queue-watch-' + myName)
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'matchmaking_queue', filter: `player_name=eq.${myName}` }, (payload) => {
       if(payload.new.status === 'matched' && !matchId){
         clearTimeout(waitTimeout);
@@ -763,32 +766,24 @@ function listenForMatch(){
     .subscribe();
 }
 
-async function fallbackToBot(){
-  if(matchId) return; // already matched for real, ignore
-  clearInterval(waitInterval);
-  isBot = true;
-  document.getElementById('waitText').textContent = 'الوقت طال شوية ومحدش دخل معاك — دلوقتي في مواجهة خصم افتراضي قريب من مستواك 🤖';
-  document.getElementById('waitCount').textContent = '';
-  await fetch(`${SUPABASE_URL}/rest/v1/rpc/cancel_battle_wait`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
-    body: JSON.stringify({ p_player_name: myName, p_category: myCategory })
-  }).catch(()=>{});
-
-  opponentName = 'خصم افتراضي';
-  const qRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_random_battle_questions_for_mode`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
-    body: JSON.stringify({ p_category: myCategory, p_mode: 'bot', p_count: 10 })
-  });
-  questions = await qRes.json();
-
-  setTimeout(() => { startBattle(); simulateBot(); }, 2000);
+async function cancelMatchmaking(){
+  matchmakingActive = false;
+  if(queueRetryTimer){ clearTimeout(queueRetryTimer); queueRetryTimer = null; }
+  clearInterval(waitInterval); waitInterval = null;
+  clearTimeout(waitTimeout); waitTimeout = null;
+  if(queueChannel){ await queueChannel.unsubscribe().catch(()=>{}); queueChannel = null; }
+  if(matchChannel){ await matchChannel.unsubscribe().catch(()=>{}); matchChannel = null; }
+  await fetch(`${SUPABASE_URL}/rest/v1/rpc/cancel_battle_wait`, { method:'POST', headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY}, body:JSON.stringify({p_player_name:myName,p_category:myCategory}) }).catch(()=>{});
+  showScreen('entryScreen');
+  document.getElementById('entryErr').textContent = 'تم إلغاء الانتظار. لا تبدأ المباراة إلا عند وجود لاعبين حقيقيين.';
+  document.getElementById('entryErr').style.display = 'block';
 }
 
 async function joinMatchChannel(isMatcher){
   clearInterval(waitInterval);
   clearTimeout(waitTimeout);
+  matchmakingActive = false;
+  if(queueChannel){ await queueChannel.unsubscribe().catch(()=>{}); queueChannel = null; }
 
   matchChannel = sb.channel('battle-' + matchId, { config: { presence: { key: myName } } });
 
@@ -841,7 +836,7 @@ function startBattle(){
   document.getElementById('oppName').textContent = opponentName || 'الخصم';
   buildDots('meDots'); buildDots('oppDots');
   currentQ = 0; myCorrect = 0; oppCorrect = 0; oppProgress = 0; myAnswers = [];
-  myFinished = false; oppFinished = false; resultShown = false;
+  myFinished = false; oppFinished = false; resultShown = false; finishBroadcasted = false;
   matchStartTime = Date.now();
   myFinishTime = null;
   clearInterval(timerInterval);
@@ -918,22 +913,19 @@ function updateOpponentProgress(index, correct){
 }
 
 function finishBattle(){
-  if(myFinished && matchChannel){
-    matchChannel.send({ type:'broadcast', event:'finished', payload:{ name: myName, correct: myCorrect, time: myFinishTime } });
+  if(!myFinished){
+    myFinished = true;
+    myFinishTime = ((Date.now()-matchStartTime)/1000).toFixed(1);
   }
-  if(isBot && !myFinished){
-    // time ran out before finishing vs bot — count as finished with current score
-    myFinished = true; myFinishTime = ((Date.now()-matchStartTime)/1000).toFixed(1);
+  if(matchChannel && !finishBroadcasted){
+    finishBroadcasted = true;
+    matchChannel.send({ type:'broadcast', event:'finished', payload:{ name: myName, correct: myCorrect, time: myFinishTime } });
   }
   checkForResult(myFinishTime);
 }
 
 function checkForResult(oppTime){
   if(resultShown) return;
-  if(isBot){
-    if(myFinished || timeLeft <= 0) showResult(oppTime);
-    return;
-  }
   if(myFinished && oppFinished) showResult(oppTime);
 }
 
@@ -971,7 +963,6 @@ async function showResult(oppTime, forfeit){
   document.getElementById('performanceNote').textContent = myCorrect === oppCorrect
     ? `تعادل في الإجابات — الحسم كان بالسرعة: ${parseFloat(myTime) <= parseFloat(oppTime || myTime) ? 'كنت الأسرع.' : 'الخصم كان الأسرع.'}`
     : `أجبت ${myAccuracy}% من الأسئلة بشكل صحيح، بفارق ${Math.abs(myCorrect - oppCorrect)} إجابة عن الخصم.`;
-  document.getElementById('botNote').style.display = isBot ? 'block' : 'none';
   SiteRecommendations.show('nextStep', iWon ? {title:'حافظ على الفوز بتحدي اليوم',body:'نتيجتك اتحفظت والتحدي اليومي بيديك نقاط ومكافأة إضافية.',label:'تحدي اليوم',href:'/daily-challenge.html'} : {title:'خلّي الجولة الجاية لصالحك',body:'راجع أداءك وشوف إحصائياتك قبل ما تبدأ تحدي جديد.',label:'فتح حسابي',href:'/profile.html'});
   document.getElementById('ratingResult').style.display = 'none';
 
@@ -979,16 +970,16 @@ async function showResult(oppTime, forfeit){
     const { error: saveError } = await sb.rpc('save_battle_result', {
       p_match_id: matchId || crypto.randomUUID(),
       p_player_name: myName,
-      p_opponent_name: opponentName || 'خصم افتراضي',
+      p_opponent_name: opponentName || 'لاعب آخر',
       p_player_correct: myCorrect,
       p_opponent_correct: oppCorrect,
       p_player_time_seconds: parseFloat(myTime),
       p_opponent_time_seconds: oppTime ? parseFloat(oppTime) : null,
-      p_vs_bot: isBot,
+      p_vs_bot: false,
       p_category: myCategory
     });
     if(saveError) console.warn('Battle result was not saved:', saveError.message);
-    if(!saveError && !isBot){
+    if(!saveError){
       const { data: rating } = await sb.rpc('get_my_battle_rating');
       if(rating && Number.isFinite(Number(rating.rating_points))){
         document.getElementById('ratingRank').textContent = rating.rank_name || 'Bronze';
@@ -1006,26 +997,8 @@ async function showResult(oppTime, forfeit){
   loadBattleLeaderboard();
 }
 
-function simulateBot(){
-  let botIndex = 0, botCorrect = 0;
-  function botStep(){
-    if(botIndex >= 10 || myFinished || resultShown) return;
-    const delay = 2000 + Math.random()*4000;
-    setTimeout(() => {
-      if(myFinished || resultShown) return;
-      const gotItRight = Math.random() < 0.78;
-      if(gotItRight) botCorrect++;
-      botIndex++;
-      updateOpponentProgress(botIndex, botCorrect);
-      if(botIndex >= 10){ oppFinished = true; checkForResult(((Date.now()-matchStartTime)/1000).toFixed(1)); }
-      else botStep();
-    }, delay);
-  }
-  botStep();
-}
-
 document.getElementById('rematchBtn').addEventListener('click', () => {
-  questions = []; matchId = null; opponentName = ''; isBot = false;
+  questions = []; matchId = null; opponentName = ''; finishBroadcasted = false;
   if(history.replaceState) history.replaceState({}, document.title, location.pathname);
   resetPrivateUi();
   document.getElementById('entryErr').style.display = 'none';

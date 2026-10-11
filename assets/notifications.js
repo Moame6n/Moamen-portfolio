@@ -4,6 +4,7 @@
   const vapidPublicKey = window.PUSH_VAPID_PUBLIC_KEY || '';
   const DISMISS_KEY = 'moamen_notify_prompt_dismissed_v2';
   const DISMISS_DAYS = 7;
+  const GAME_RULE_UPDATE_KEY = 'moamen_game_rule_update_20261011';
   const state = { registration: null, subscription: null, panel: null, busy: false };
 
   const supported = () => Boolean(
@@ -45,6 +46,19 @@
       body: JSON.stringify({ action, subscription })
     });
     if (!response.ok) throw new Error('تعذر حفظ حالة الإشعارات');
+  }
+
+  function showGameRuleUpdate() {
+    if (localStorage.getItem(GAME_RULE_UPDATE_KEY) || !state.subscription) return;
+    const toast = document.createElement('div');
+    toast.className = 'notify-toast is-visible success';
+    toast.id = 'gameRuleUpdateToast';
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = '<strong style="display:block;margin-bottom:3px;color:var(--emerald)">تحديث مهم في نظام اللعب</strong><span>لا تبدأ لعبة التحدي أو كأس المحاسبة بلاعب واحد؛ يلزم لاعب حقيقي ثانٍ على الأقل.</span>';
+    document.body.appendChild(toast);
+    localStorage.setItem(GAME_RULE_UPDATE_KEY, String(Date.now()));
+    setTimeout(() => toast.classList.remove('is-visible'), 7200);
+    setTimeout(() => toast.remove(), 7600);
   }
 
   function permissionText() {
@@ -196,7 +210,10 @@
   function init() {
     if (!supported()) return;
     const hasBell = mountBell();
-    syncState().then(enabled => { if (!hasBell && !enabled) setTimeout(mountFallbackPrompt, 800); });
+    syncState().then(enabled => {
+      if (enabled) setTimeout(showGameRuleUpdate, 1200);
+      if (!hasBell && !enabled) setTimeout(mountFallbackPrompt, 800);
+    });
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncState(); });
     document.addEventListener('click', e => { if (state.panel && !state.panel.contains(e.target) && !e.target.closest('#notifyBellBtn')) closePanel(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
