@@ -263,3 +263,121 @@ body{overflow-x:hidden;}
   .btn{min-height:44px;padding:11px 17px;}
   .section-title{font-size:27px;}
 }
+
+
+/* Shared responsive layout and navigation refinement */
+:root{
+  --page-gutter: clamp(14px, 3vw, 30px);
+  --content-max: 1100px;
+}
+
+/* One inherited rhythm for every page: content never hugs the viewport edge. */
+.container{
+  width: min(100%, var(--content-max));
+  box-sizing: border-box;
+  padding-inline: var(--page-gutter);
+}
+
+.site-nav .container{
+  width: min(100%, var(--content-max));
+  padding-inline: var(--page-gutter);
+}
+
+/* Desktop navigation: calmer spacing and a clearer active surface on hover. */
+.site-nav nav{
+  align-items: center;
+  gap: clamp(14px, 2.1vw, 26px);
+}
+.site-nav nav a{
+  position: relative;
+  padding: 8px 2px;
+}
+.site-nav nav a::after{
+  content: '';
+  position: absolute;
+  inset-inline: 2px;
+  bottom: 1px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--primary-gradient);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform .18s ease;
+}
+.site-nav nav a:hover::after,
+.site-nav nav a:focus-visible::after{ transform: scaleX(1); }
+
+/* Account dropdown: flexible on wide screens and safe on narrow screens. */
+.account-dropdown{
+  width: clamp(210px, 24vw, 270px);
+  min-width: 0;
+  padding: 9px;
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 45px rgba(0,0,0,.28), 0 0 0 1px color-mix(in srgb, var(--emerald) 8%, transparent);
+}
+.account-dropdown-name{ padding: 10px 11px; }
+.account-dropdown a, .account-dropdown button{
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: 10px;
+}
+.account-dropdown a:hover, .account-dropdown button:hover{
+  background: color-mix(in srgb, var(--emerald) 10%, var(--surface-2));
+}
+
+@media (max-width: 820px){
+  .site-nav .container{ padding-block: 11px; }
+  .site-nav nav{
+    display: none;
+    position: absolute;
+    top: calc(100% + 9px);
+    inset-inline: var(--page-gutter);
+    width: auto;
+    max-height: min(70vh, 480px);
+    overflow-y: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 9px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--bg-alt) 94%, transparent);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 48px rgba(0,0,0,.30), 0 0 0 1px color-mix(in srgb, var(--emerald) 7%, transparent);
+    animation: navDropIn .18s ease both;
+  }
+  .site-nav nav.open{ display: flex; }
+  .site-nav nav a{
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    white-space: normal;
+  }
+  .site-nav nav a:hover,
+  .site-nav nav a:focus-visible{
+    color: var(--text);
+    background: color-mix(in srgb, var(--emerald) 10%, var(--surface-2));
+  }
+  .site-nav nav a::after{ display: none; }
+  .account-dropdown{
+    width: min(270px, calc(100vw - (var(--page-gutter) * 2)));
+  }
+}
+
+@keyframes navDropIn{
+  from{ opacity: 0; transform: translateY(-6px) scale(.985); }
+  to{ opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 420px){
+  :root{ --page-gutter: 14px; }
+  .site-nav nav{ top: calc(100% + 7px); }
+  .site-nav nav a{ min-height: 44px; }
+}

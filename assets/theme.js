@@ -234,3 +234,29 @@ if(document.readyState === 'complete'){ initAccountWidget(); }
 else { window.addEventListener('load', initAccountWidget); }
 
 // Push notifications are managed by /assets/notifications.js so every page uses one consistent flow.
+
+
+// Shared navigation polish: close the mobile menu after navigation and on Escape.
+(function initSharedNavigation(){
+  function bind(){
+    const nav = document.getElementById('mainNav');
+    if(!nav) return;
+    const toggle = document.querySelector('.navtoggle');
+    const close = () => {
+      nav.classList.remove('open');
+      if(toggle) toggle.setAttribute('aria-expanded', 'false');
+    };
+    if(toggle){
+      toggle.setAttribute('aria-expanded', nav.classList.contains('open') ? 'true' : 'false');
+      toggle.addEventListener('click', () => {
+        requestAnimationFrame(() => toggle.setAttribute('aria-expanded', nav.classList.contains('open') ? 'true' : 'false'));
+      });
+    }
+    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', close));
+    document.addEventListener('keydown', event => {
+      if(event.key === 'Escape') close();
+    });
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
+  else bind();
+})();
